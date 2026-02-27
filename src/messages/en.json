@@ -1,0 +1,54 @@
+{
+    "navbar": {
+        "home": {
+            "title": "Back to the beginning",
+            "subtitle": "Home"
+        },
+        "about": {
+            "title": "Learn more",
+            "subtitle": "About Me"
+        },
+        "projects": {
+            "title": "Things I've built",
+            "subtitle": "Projects"
+        },
+        "blog": {
+            "title": "Thought and Thinkings",
+            "subtitle": "Blog"
+        },
+        "mbti": {
+            "title": "What type are you?",
+            "subtitle": "MBTI Test"
+        },
+        "interaction": {
+            "title": "Leave your mark",
+            "subtitle": "Interaction"
+        }
+    },
+    "home": {
+        "logo": "AntXZ",
+        "hero_title": "Hi, I'm Anthony",
+        "hero_subtitle": "Full-stack developer",
+        "intro_title": "About Me",
+        "intro_body": "I'm a full-stack developer specializing in building web applications with Next.js, TypeScript, and Tailwind CSS. In my spare time, I enjoy photography, blogging, and exploring new technologies."
+    },
+    "mbti": {
+        "start_button": "Start Test",
+        "result_title": "Your personality type is"
+    },
+    "footer": {
+        "name": "Anthony Zhang",
+        "tagline": "building things on the internet",
+        "blog": "Blog",
+        "projects": "Projects",
+        "mbti": "MBTI",
+        "about": "About",
+        "rights": "All rights reserved.",
+        "built_with": "Built with",
+        "motto": "Code, Create, Connect."
+    },
+    "not-found": {
+        "message": "Oops! It seems you've entered a noman's land. The page you're looking for doesn't exist.",
+        "home_link": "Go back to Home"
+    }
+}

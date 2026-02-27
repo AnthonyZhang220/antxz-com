@@ -1,0 +1,54 @@
+{
+    "navbar": {
+        "home": {
+            "title": "回到起点",
+            "subtitle": "首页"
+        },
+        "about": {
+            "title": "了解更多",
+            "subtitle": "关于我"
+        },
+        "projects": {
+            "title": "我做过的东西",
+            "subtitle": "项目"
+        },
+        "blog": {
+            "title": "记录与思考",
+            "subtitle": "博客"
+        },
+        "mbti": {
+            "title": "你是什么类型",
+            "subtitle": "性格测试"
+        },
+        "interaction": {
+            "title": "留下你的痕迹",
+            "subtitle": "访客互动"
+        }
+    },
+    "home": {
+        "logo": "AntXZ",
+        "hero_title": "你好，我是张小花",
+        "hero_subtitle": "全栈开发者",
+        "intro_title": "关于我",
+        "intro_body": "我是一个全栈开发者，专注于使用 Next.js、TypeScript 和 Tailwind CSS 构建 Web 应用。在业余时间，我喜欢摄影、写博客和探索新技术。"
+    },
+    "mbti": {
+        "start_button": "开始测试",
+        "result_title": "你的性格类型是"
+    },
+    "footer": {
+        "name": "张小花",
+        "tagline": "在互联网上构建一些东西",
+        "blog": "博客",
+        "projects": "项目",
+        "mbti": "MBTI",
+        "about": "关于",
+        "rights": "保留所有权利。",
+        "built_with": "构建于",
+        "motto": "无执，无为，无拘。"
+    },
+    "not-found": {
+        "message": "哎呀！看起来你进入了一个无人之地。你正在寻找的页面不存在。",
+        "home_link": "返回首页"
+    }
+}
