@@ -50,5 +50,19 @@
     "not-found": {
         "message": "哎呀！看起来你进入了一个无人之地。你正在寻找的页面不存在。",
         "home_link": "返回首页"
+    },
+    "blog": {
+        "title": "博客",
+        "writingCount": "文章 · 共 {count} 篇",
+        "readingTime": "{minutes} 分钟阅读",
+        "readingTimeShort": "{minutes} 分钟",
+        "noResults": "没有符合条件的文章。",
+        "clearFilters": "清除所有筛选",
+        "filterAll": "全部",
+        "filterTopic": "分类",
+        "filterYear": "年份范围",
+        "filterReadingTime": "阅读时长",
+        "featured": "精选",
+        "noMatches": "没有符合条件的文章。"
     }
 }

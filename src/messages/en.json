@@ -50,5 +50,19 @@
     "not-found": {
         "message": "Oops! It seems you've entered a noman's land. The page you're looking for doesn't exist.",
         "home_link": "Go back to Home"
+    },
+    "blog": {
+        "title": "Blog",
+        "writingCount": "Writing · {count} articles",
+        "readingTime": "{minutes} min read",
+        "readingTimeShort": "{minutes} min",
+        "noResults": "No articles match your filters.",
+        "clearFilters": "Clear all filters",
+        "filterAll": "All",
+        "filterTopic": "Topic",
+        "filterYear": "Year Range",
+        "filterReadingTime": "Reading time",
+        "featured": "Featured",
+        "noMatches": "No articles match your filters."
     }
 }

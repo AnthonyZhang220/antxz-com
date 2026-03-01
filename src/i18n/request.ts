@@ -13,5 +13,29 @@ export default getRequestConfig(async ({ requestLocale }) => {
 	return {
 		locale,
 		messages: (await import(`@/messages/${locale}.json`)).default,
+		// ── 日期格式定义 ──────────────────────────────────────────────
+		// 在组件里用 fmt.dateTime(date, "short") 调用
+		formats: {
+			dateTime: {
+				// Feb 10, 2026  /  2026年2月10日
+				short: {
+					month: "short",
+					day: "numeric",
+					year: "numeric",
+				},
+				// February 10, 2026  /  2026年2月10日（长格式）
+				long: {
+					month: "long",
+					day: "numeric",
+					year: "numeric",
+				},
+				// 02/10/2026  /  2026/02/10
+				numeric: {
+					month: "2-digit",
+					day: "2-digit",
+					year: "numeric",
+				},
+			},
+		},
 	};
 });
