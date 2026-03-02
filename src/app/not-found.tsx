@@ -2,7 +2,7 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
 export default async function NotFound() {
-	const t = await getTranslations("not-found");
+	const t = await getTranslations("notFound");
 
 	return (
 		<section className="flex min-h-screen w-full items-center justify-center bg-zinc-50 dark:bg-black">
@@ -15,7 +15,7 @@ export default async function NotFound() {
 					href="/"
 					className="mt-6 inline-block text-lg text-zinc-700 dark:text-zinc-300 hover:underline"
 				>
-					{t("home_link")}
+					{t("homeLink")}
 				</Link>
 			</div>
 		</section>

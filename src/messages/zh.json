@@ -27,14 +27,14 @@
     },
     "home": {
         "logo": "AntXZ",
-        "hero_title": "你好，我是张小花",
-        "hero_subtitle": "全栈开发者",
-        "intro_title": "关于我",
-        "intro_body": "我是一个全栈开发者，专注于使用 Next.js、TypeScript 和 Tailwind CSS 构建 Web 应用。在业余时间，我喜欢摄影、写博客和探索新技术。"
+        "heroTitle": "你好，我是张小花",
+        "heroSubtitle": "全栈开发者",
+        "introTitle": "关于我",
+        "introBody": "我是一个全栈开发者，专注于使用 Next.js、TypeScript 和 Tailwind CSS 构建 Web 应用。在业余时间，我喜欢摄影、写博客和探索新技术。"
     },
     "mbti": {
-        "start_button": "开始测试",
-        "result_title": "你的性格类型是"
+        "startButton": "开始测试",
+        "resultTitle": "你的性格类型是"
     },
     "footer": {
         "name": "张小花",
@@ -44,12 +44,12 @@
         "mbti": "MBTI",
         "about": "关于",
         "rights": "保留所有权利。",
-        "built_with": "构建于",
+        "builtWith": "构建于",
         "motto": "无执，无为，无拘。"
     },
-    "not-found": {
+    "notFound": {
         "message": "哎呀！看起来你进入了一个无人之地。你正在寻找的页面不存在。",
-        "home_link": "返回首页"
+        "homeLink": "返回首页"
     },
     "blog": {
         "title": "博客",
@@ -64,5 +64,54 @@
         "filterReadingTime": "阅读时长",
         "featured": "精选",
         "noMatches": "没有符合条件的文章。"
+    },
+    "auth": {
+        "loginForm": {
+            "button": "登录",
+            "description": "输入您的邮箱以登录您的账户。",
+            "emailLabel": "邮箱",
+            "passwordLabel": "密码",
+            "forgotPasswordLabel": "忘记密码？",
+            "dontHaveAccount": "没有账户？",
+            "signupLink": "注册",
+            "loading": "登录中"
+        },
+        "signupForm": {
+            "button": "注册",
+            "description": "创建一个新账户",
+            "emailLabel": "邮箱",
+            "passwordLabel": "密码",
+            "confirmPasswordLabel": "确认密码",
+            "haveAccount": "已有账户？",
+            "loginLink": "登录"
+        },
+        "forgotPasswordForm": {
+            "title": "重置密码",
+            "description": "请输入您的邮箱，我们将发送重置密码的说明。",
+            "emailLabel": "邮箱",
+            "haveAccount": "已有账户？",
+            "loginLink": "登录"
+        },
+        "logoutForm": {
+            "button": "退出登录",
+            "description": "确认退出登录？"
+        },
+        "updatePasswordForm": {
+            "title": "重置密码",
+            "description": "请输入您的新密码。",
+            "newPasswordLabel": "新密码",
+            "confirmPasswordLabel": "确认新密码",
+            "loading": "保存中",
+            "button": "保存新密码"
+        },
+        "errorPage": {
+            "title": "发生错误",
+            "description": "发生了一个错误，请稍后再试。"
+        },
+        "signupSuccess": {
+            "title": "感谢注册！",
+            "subtitle": "请检查您的邮箱以确认账户",
+            "description": "您已成功创建账户。请检查您的邮箱以确认账户后再登录。"
+        }
     }
 }

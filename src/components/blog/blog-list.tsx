@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Clock, Calendar, ChevronLeft, ChevronRight } from "lucide-react";
 import BlogFilter from "@/components/blog/blog-filter";
-import { useBlogFilter } from "@/components/blog/useBlogFilter";
+import { useBlogFilter } from "@/hooks/useBlogFilter";
 import { Separator } from "@/components/ui/separator";
 
 // ─── Constants ────────────────────────────────────────────────────────────────

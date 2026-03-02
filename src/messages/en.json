@@ -27,14 +27,14 @@
     },
     "home": {
         "logo": "AntXZ",
-        "hero_title": "Hi, I'm Anthony",
-        "hero_subtitle": "Full-stack developer",
-        "intro_title": "About Me",
-        "intro_body": "I'm a full-stack developer specializing in building web applications with Next.js, TypeScript, and Tailwind CSS. In my spare time, I enjoy photography, blogging, and exploring new technologies."
+        "heroTitle": "Hi, I'm Anthony",
+        "heroSubtitle": "Full-stack developer",
+        "introTitle": "About Me",
+        "introBody": "I'm a full-stack developer specializing in building web applications with Next.js, TypeScript, and Tailwind CSS. In my spare time, I enjoy photography, blogging, and exploring new technologies."
     },
     "mbti": {
-        "start_button": "Start Test",
-        "result_title": "Your personality type is"
+        "startButton": "Start Test",
+        "resultTitle": "Your personality type is"
     },
     "footer": {
         "name": "Anthony Zhang",
@@ -44,12 +44,12 @@
         "mbti": "MBTI",
         "about": "About",
         "rights": "All rights reserved.",
-        "built_with": "Built with",
+        "builtWith": "Built with",
         "motto": "Code, Create, Connect."
     },
-    "not-found": {
+    "notFound": {
         "message": "Oops! It seems you've entered a noman's land. The page you're looking for doesn't exist.",
-        "home_link": "Go back to Home"
+        "homeLink": "Go back to Home"
     },
     "blog": {
         "title": "Blog",
@@ -64,5 +64,56 @@
         "filterReadingTime": "Reading time",
         "featured": "Featured",
         "noMatches": "No articles match your filters."
+    },
+    "auth": {
+        "loginForm": {
+            "button": "Login",
+            "description": "Enter your email below to login to your account.",
+            "emailLabel": "Email",
+            "passwordLabel": "Password",
+            "forgotPasswordLabel": "Forgot your password?",
+            "dontHaveAccount": "Don't have an account?",
+            "signupLink": "Sign up",
+            "loading": "Logging in"
+        },
+        "signupForm": {
+            "button": "Sign Up",
+            "description": "Create a new account",
+            "emailLabel": "Email",
+            "passwordLabel": "Password",
+            "confirmPasswordLabel": "Confirm Password",
+            "haveAccount": "Already have an account?",
+            "loginLink": "Login"
+        },
+        "forgotPasswordForm": {
+            "title": "Reset Your Password",
+            "description": "Type in your email and we'll send you instructions to reset your password.",
+            "emailLabel": "Email",
+            "haveAccount": "Already have an account?",
+            "loginLink": "Login"
+        },
+        "logoutForm": {
+            "button": "Logout",
+            "description": "Are you sure you want to logout?"
+        },
+        "updatePasswordForm": {
+            "title": "Reset Your Password",
+            "description": "Please enter your new password below.",
+            "newPasswordLabel": "New Password",
+            "confirmPasswordLabel": "Confirm New Password",
+            "loading": "Saving",
+            "button": "Save New Password"
+        },
+        "errorPage": {
+            "title": "Sorry, something went wrong.",
+            "code": "Code error: {code}",
+            "passwordMismatch": "Passwords do not match.",
+            "unknownError": "An unspecified error occurred."
+        },
+        "signupSuccess": {
+            "title": "Thank you for signing up!",
+            "subtitle": "Check your email to confirm",
+            "description": "You've successfully created an account. Please check your email to confirm your account before signing in."
+        }
     }
 }
