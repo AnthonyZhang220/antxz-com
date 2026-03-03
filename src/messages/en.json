@@ -32,6 +32,38 @@
         "introTitle": "About Me",
         "introBody": "I'm a full-stack developer specializing in building web applications with Next.js, TypeScript, and Tailwind CSS. In my spare time, I enjoy photography, blogging, and exploring new technologies."
     },
+    "about": {
+        "me": {
+            "title": "About Me",
+            "subtitle": "Get to know me, in a blink of an eye.",
+            "sections": {
+                "me": {
+                    "title": "Who is Anthony?",
+                    "content": "A Front End Engineer with three years of experience. I have written React, Typescript, C#. I thrive on crafting interactive, responsive, and user-friendly web applications that scale seamlessly. My journey is fueled by a self-driven passion for learning programming languages and staying abreast of modern web technologies."
+                },
+                "background": {
+                    "title": "About my background",
+                    "content": "Rather than having an education in Computer Science, at 18 years old without knowing where my passion was, I decided to pursue a bachelor's degree in Mathematics from NYU. As a person who built my own pc and always want to customize any configurations related to personsal preferences, I realize that software engineer is exactly the place I want to be because it gives me full control over the things I want to build"
+                },
+                "blog": {
+                    "title": "About my blog",
+                    "content": "I will post things like blogs, thoughts, and sometimes my life anecdotes here. If you find anything interesting, please do not hestitate to share and comment."
+                }
+            }
+        },
+        "cv": {
+            "title": "My CV",
+            "subtitle": "A brief overview of my professional experience and skills."
+        }
+    },
+    "contact": {
+        "title": "Contact Me",
+        "subtitle": "It's never hard to reach out to me, at any time."
+    },
+    "project": {
+        "title": "Projects",
+        "subtitle": "Take a look at what I have built, in the past"
+    },
     "mbti": {
         "startButton": "Start Test",
         "resultTitle": "Your personality type is"
@@ -67,22 +99,25 @@
     },
     "auth": {
         "loginForm": {
-            "button": "Login",
+            "title": "Login",
             "description": "Enter your email below to login to your account.",
             "emailLabel": "Email",
             "passwordLabel": "Password",
             "forgotPasswordLabel": "Forgot your password?",
             "dontHaveAccount": "Don't have an account?",
             "signupLink": "Sign up",
-            "loading": "Logging in"
+            "button": "Login",
+            "loading": "Logging in",
+            "separator": "Or continue with"
         },
         "signupForm": {
-            "button": "Sign Up",
+            "title": "Sign Up",
             "description": "Create a new account",
             "emailLabel": "Email",
             "passwordLabel": "Password",
             "confirmPasswordLabel": "Confirm Password",
             "haveAccount": "Already have an account?",
+            "button": "Sign Up",
             "loginLink": "Login"
         },
         "forgotPasswordForm": {
@@ -90,7 +125,14 @@
             "description": "Type in your email and we'll send you instructions to reset your password.",
             "emailLabel": "Email",
             "haveAccount": "Already have an account?",
-            "loginLink": "Login"
+            "button": "Send reset email",
+            "loading": "Sending",
+            "loginLink": "Login",
+            "successPage": {
+                "title": "Check Your Email",
+                "description": "Password reset instructions sent",
+                "content": "If you registered using your email and password, you will receive a password reset email."
+            }
         },
         "logoutForm": {
             "button": "Logout",
@@ -114,6 +156,25 @@
             "title": "Thank you for signing up!",
             "subtitle": "Check your email to confirm",
             "description": "You've successfully created an account. Please check your email to confirm your account before signing in."
+        },
+        "socialButton": {
+            "github": "Login with GitHub",
+            "google": "Login with Google"
         }
+    },
+    "hearme": {
+        "title": "How did you hear about me?",
+        "description": "Select the best option that describes how you found out about me.",
+        "options": {
+            "linkedin": "LinkedIn",
+            "github": "GitHub",
+            "devTo": "Dev.to",
+            "medium": "Medium",
+            "upwork": "Upwork",
+            "friend": "Friend",
+            "other": "Other"
+        },
+        "submitButton": "Submit",
+        "successMessage": "Thank you for your feedback!"
     }
 }

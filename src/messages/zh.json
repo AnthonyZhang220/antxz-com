@@ -32,6 +32,38 @@
         "introTitle": "关于我",
         "introBody": "我是一个全栈开发者，专注于使用 Next.js、TypeScript 和 Tailwind CSS 构建 Web 应用。在业余时间，我喜欢摄影、写博客和探索新技术。"
     },
+    "about": {
+        "me": {
+            "title": "关于我",
+            "subtitle": "一眼看穿我",
+            "sections": {
+                "me": {
+                    "title": "谁是张小花？",
+                    "content": "一名前端工程师，拥有三年的经验。我编写过 React、Typescript 和 C#。我热衷于打造交互式、响应式和用户友好的 Web 应用程序，并且能够无缝扩展。我的旅程是由自我驱动的学习编程语言和紧跟现代 Web 技术的热情所推动的。"
+                },
+                "background": {
+                    "title": "关于我的背景",
+                    "content": "我没有计算机科学的教育背景，在18岁时不知道自己的兴趣所在，我决定攻读纽约大学的数学学士学位。作为一个自己组装电脑并且总是想根据个人喜好定制配置的人，我意识到软件工程正是我想要的地方，因为它让我对我想要构建的东西有完全的控制权。"
+                },
+                "blog": {
+                    "title": "关于我的博客",
+                    "content": "我将在这里发布博客、想法，有时还有我的生活轶事。如果你发现任何有趣的东西，请不要犹豫分享和评论。"
+                }
+            }
+        },
+        "cv": {
+            "title": "我的简历",
+            "subtitle": "我的专业经验和技能的简要概述。"
+        }
+    },
+    "contact": {
+        "title": "联系我",
+        "subtitle": "随时联系我都不难。"
+    },
+    "project": {
+        "title": "项目",
+        "subtitle": "看看我过去做过什么"
+    },
     "mbti": {
         "startButton": "开始测试",
         "resultTitle": "你的性格类型是"
@@ -67,22 +99,25 @@
     },
     "auth": {
         "loginForm": {
-            "button": "登录",
+            "title": "登录",
             "description": "输入您的邮箱以登录您的账户。",
             "emailLabel": "邮箱",
             "passwordLabel": "密码",
             "forgotPasswordLabel": "忘记密码？",
             "dontHaveAccount": "没有账户？",
             "signupLink": "注册",
-            "loading": "登录中"
+            "button": "登录",
+            "loading": "登录中",
+            "separator": "或，使用以下方式登录"
         },
         "signupForm": {
-            "button": "注册",
+            "title": "注册",
             "description": "创建一个新账户",
             "emailLabel": "邮箱",
             "passwordLabel": "密码",
             "confirmPasswordLabel": "确认密码",
             "haveAccount": "已有账户？",
+            "button": "注册",
             "loginLink": "登录"
         },
         "forgotPasswordForm": {
@@ -90,6 +125,8 @@
             "description": "请输入您的邮箱，我们将发送重置密码的说明。",
             "emailLabel": "邮箱",
             "haveAccount": "已有账户？",
+            "button": "发送重置密码邮件",
+            "loading": "发送中",
             "loginLink": "登录"
         },
         "logoutForm": {
@@ -105,13 +142,34 @@
             "button": "保存新密码"
         },
         "errorPage": {
-            "title": "发生错误",
-            "description": "发生了一个错误，请稍后再试。"
+            "title": "哎呀，好像出了一点问题",
+            "code": "错误代码: {code}",
+            "passwordMismatch": "密码错误",
+            "unknownError": "发生了一个未知错误"
         },
         "signupSuccess": {
             "title": "感谢注册！",
             "subtitle": "请检查您的邮箱以确认账户",
             "description": "您已成功创建账户。请检查您的邮箱以确认账户后再登录。"
+        },
+        "socialButton": {
+            "github": "使用GitHub登录",
+            "google": "使用Google登录"
         }
+    },
+    "hearme": {
+        "title": "你是如何听说我的？",
+        "description": "选择最能描述你如何发现我的选项。",
+        "options": {
+            "linkedin": "领英",
+            "weixin": "微信",
+            "qq": "QQ",
+            "github": "GitHub",
+            "upwork": "Upwork",
+            "friend": "朋友推荐",
+            "other": "其他渠道"
+        },
+        "submitButton": "提交",
+        "successMessage": "感谢你的反馈！"
     }
 }

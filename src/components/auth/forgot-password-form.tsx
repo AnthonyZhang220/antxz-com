@@ -52,13 +52,12 @@ export function ForgotPasswordForm({
 			{success ? (
 				<Card>
 					<CardHeader>
-						<CardTitle className="text-2xl">Check Your Email</CardTitle>
-						<CardDescription>Password reset instructions sent</CardDescription>
+						<CardTitle className="text-2xl">{t("successPage.title")}</CardTitle>
+						<CardDescription>{t("successPage.description")}</CardDescription>
 					</CardHeader>
 					<CardContent>
 						<p className="text-sm text-muted-foreground">
-							If you registered using your email and password, you will receive
-							a password reset email.
+							{t("successPage.content")}
 						</p>
 					</CardContent>
 				</Card>
@@ -84,7 +83,7 @@ export function ForgotPasswordForm({
 								</div>
 								{error && <p className="text-sm text-red-500">{error}</p>}
 								<Button type="submit" className="w-full" disabled={isLoading}>
-									{isLoading ? "Sending..." : "Send reset email"}
+									{isLoading ? t("loading") : t("button")}
 								</Button>
 							</div>
 							<div className="mt-4 text-center text-sm">

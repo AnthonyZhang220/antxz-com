@@ -2,9 +2,8 @@
 
 import { useTranslations } from "next-intl";
 
-export default function Project() {
-	const t = useTranslations("project");
-
+export default function Me() {
+	const t = useTranslations("about.me");
 	return (
 		<main>
 			<div>

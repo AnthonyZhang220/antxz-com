@@ -1,5 +1,4 @@
-import Navbar from "@/components/shared/navbar";
-import Footer from "@/components/shared/footer";
+import { HearMeCard } from "@/components/shared/hear-me";
 import { NextIntlClientProvider } from "next-intl";
 
 export default function LocaleLayout({
@@ -9,9 +8,8 @@ export default function LocaleLayout({
 }>) {
 	return (
 		<NextIntlClientProvider>
-			<Navbar />
 			{children}
-			<Footer />
+			<HearMeCard />
 		</NextIntlClientProvider>
 	);
 }

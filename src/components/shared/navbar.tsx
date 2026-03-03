@@ -19,7 +19,7 @@ export default function Navbar() {
 	const h = useTranslations("home");
 
 	return (
-		<header className="top-0 inset-x-0 flex items-center justify-between px-8 py-4 z-50">
+		<header className="fixed top-0 inset-x-0 flex items-center justify-between px-8 py-4 z-50">
 			{/* Logo */}
 			<Link href="/">
 				<span className="font-montserrat tracking-widest text-2xl">
