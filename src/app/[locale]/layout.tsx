@@ -1,4 +1,3 @@
-import { HearMeCard } from "@/components/shared/hear-me";
 import { NextIntlClientProvider } from "next-intl";
 
 export default function LocaleLayout({
@@ -6,10 +5,5 @@ export default function LocaleLayout({
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
-	return (
-		<NextIntlClientProvider>
-			{children}
-			<HearMeCard />
-		</NextIntlClientProvider>
-	);
+	return <NextIntlClientProvider>{children}</NextIntlClientProvider>;
 }

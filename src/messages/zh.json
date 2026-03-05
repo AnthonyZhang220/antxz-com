@@ -77,7 +77,21 @@
         "about": "关于",
         "rights": "保留所有权利。",
         "builtWith": "构建于",
-        "motto": "无执，无为，无拘。"
+        "motto": "无执，无为，无拘。",
+        "nav": {
+            "youAreIn": "你当前所在",
+            "back": "返回上级",
+            "section": "模块首页",
+            "home": "首页",
+            "about": "关于",
+            "projects": "项目",
+            "blog": "博客",
+            "mbti": "MBTI",
+            "dashboard": "控制台",
+            "auth": "账户",
+            "nextjs": "Next.js",
+            "protected": "受保护页面"
+        }
     },
     "notFound": {
         "message": "哎呀！看起来你进入了一个无人之地。你正在寻找的页面不存在。",
@@ -114,11 +128,15 @@
             "title": "注册",
             "description": "创建一个新账户",
             "emailLabel": "邮箱",
+            "emailDescription": "我们不会向任何人分享您的邮箱。",
             "passwordLabel": "密码",
+            "passwordDescription": "您的密码必须至少包含 8 个字符。",
             "confirmPasswordLabel": "确认密码",
             "haveAccount": "已有账户？",
             "button": "注册",
-            "loginLink": "登录"
+            "loginLink": "登录",
+            "loading": "注册中",
+            "separator": "或，使用以下方式注册"
         },
         "forgotPasswordForm": {
             "title": "重置密码",
@@ -137,6 +155,7 @@
             "title": "重置密码",
             "description": "请输入您的新密码。",
             "newPasswordLabel": "新密码",
+            "newPasswordPlaceholder": "新密码",
             "confirmPasswordLabel": "确认新密码",
             "loading": "保存中",
             "button": "保存新密码"
@@ -171,5 +190,30 @@
         },
         "submitButton": "提交",
         "successMessage": "感谢你的反馈！"
+    },
+    "themeMode": {
+        "light": "浅色",
+        "dark": "深色",
+        "system": "系统"
+    },
+    "languageRegion": {
+        "language": {
+            "en": "English",
+            "zh": "中文"
+        },
+        "region": {
+            "us": "美国",
+            "cn": "中国",
+            "global": "全球"
+            
+        }
+    },
+    "preferences": {
+        "title": "偏好设置",
+        "description": "请选择你的语言和地区。",
+        "languageLabel": "语言",
+        "regionLabel": "地区",
+        "saveButton": "保存",
+        "cancelButton": "取消"
     }
 }

@@ -77,7 +77,21 @@
         "about": "About",
         "rights": "All rights reserved.",
         "builtWith": "Built with",
-        "motto": "Code, Create, Connect."
+        "motto": "Code, Create, Connect.",
+        "nav": {
+            "youAreIn": "You're in",
+            "back": "Back",
+            "section": "Section",
+            "home": "Home",
+            "about": "About",
+            "projects": "Projects",
+            "blog": "Blog",
+            "mbti": "MBTI",
+            "dashboard": "Dashboard",
+            "auth": "Auth",
+            "nextjs": "Next.js",
+            "protected": "Protected"
+        }
     },
     "notFound": {
         "message": "Oops! It seems you've entered a noman's land. The page you're looking for doesn't exist.",
@@ -114,11 +128,15 @@
             "title": "Sign Up",
             "description": "Create a new account",
             "emailLabel": "Email",
+            "emailDescription": "We'll never share your email with anyone else.",
             "passwordLabel": "Password",
+            "passwordDescription": "Your password must be at least 8 characters long.",
             "confirmPasswordLabel": "Confirm Password",
             "haveAccount": "Already have an account?",
             "button": "Sign Up",
-            "loginLink": "Login"
+            "loginLink": "Login",
+            "loading": "Signing Up",
+            "separator": "Or continue with"
         },
         "forgotPasswordForm": {
             "title": "Reset Your Password",
@@ -142,6 +160,7 @@
             "title": "Reset Your Password",
             "description": "Please enter your new password below.",
             "newPasswordLabel": "New Password",
+            "newPasswordPlaceholder": "New Password",
             "confirmPasswordLabel": "Confirm New Password",
             "loading": "Saving",
             "button": "Save New Password"
@@ -176,5 +195,29 @@
         },
         "submitButton": "Submit",
         "successMessage": "Thank you for your feedback!"
+    },
+    "themeMode": {
+        "light": "Light",
+        "dark": "Dark",
+        "system": "System"
+    },
+    "languageRegion": {
+        "language": {
+            "en": "English",
+            "zh": "中文"
+        },
+        "region": {
+            "us": "United States",
+            "cn": "China",
+            "global": "Global"
+        }
+    },
+    "preferences": {
+        "title": "Preferences",
+        "description": "Choose your language and region.",
+        "languageLabel": "Language",
+        "regionLabel": "Region",
+        "saveButton": "Save",
+        "cancelButton": "Cancel"
     }
 }
