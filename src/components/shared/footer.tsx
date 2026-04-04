@@ -37,14 +37,9 @@ export default function Footer() {
 	);
 
 	return (
-		<footer className="mt-auto p-36 bg-white dark:bg-black">
-			<div className="w-full bg-white dark:bg-black py-18">
-				<span className="text-8xl max-w-4xl mx-auto text-center">
-					{t("motto")}
-				</span>
-			</div>
+		<footer className="mt-auto bg-white px-4 py-8 dark:bg-black sm:px-6 sm:py-10 lg:px-10 lg:py-12">
 			{showContextNav && (
-				<div className="mx-auto max-w-4xl px-6 py-3 text-xs text-zinc-500 dark:text-zinc-400">
+				<div className="mx-auto max-w-4xl px-2 py-2 text-xs text-zinc-500 dark:text-zinc-400 sm:px-4 sm:py-3">
 					<Breadcrumb>
 						<BreadcrumbList className="text-xs text-zinc-500 dark:text-zinc-400">
 							{breadcrumbItems.map((item, index) => (
@@ -70,7 +65,7 @@ export default function Footer() {
 				</div>
 			)}
 			<Separator />
-			<div className="mx-auto max-w-4xl px-6 py-6 flex items-center justify-between">
+			<div className="mx-auto flex max-w-4xl flex-col items-start justify-between gap-4 px-2 py-5 sm:flex-row sm:items-center sm:px-4 sm:py-6">
 				{/* Left — Name */}
 				<span className="font-mono text-sm text-zinc-500 dark:text-zinc-400">
 					{t("name")}
@@ -78,7 +73,7 @@ export default function Footer() {
 				</span>
 
 				{/* Right — Socials + copyright */}
-				<div className="flex items-center gap-4">
+				<div className="flex w-full flex-wrap items-center gap-3 sm:w-auto sm:gap-4">
 					<GlobeButton />
 					<ThemeModeButton />
 					{socialLinks.map(({ icon: Icon, href, label }) => (

@@ -10,7 +10,7 @@ import React, { useEffect, useRef, useState } from "react";
 
 export default function Blogs({
 	posts = [],
-	speed = 0.5,
+	speed = 0.2,
 }: {
 	posts: BlogPost[];
 	speed?: number;
@@ -25,15 +25,23 @@ export default function Blogs({
 		if (!el || posts.length === 0) return;
 
 		let running = true;
+		let reachedEnd = false;
+		let pendingScroll = 0;
 
 		const step = () => {
 			if (!running) return;
-			if (!isHover) {
-				// increment scroll
-				el.scrollLeft += speed;
-				if (el.scrollLeft >= el.scrollWidth - el.clientWidth) {
-					// smooth jump back to start
-					el.scrollLeft = 0;
+			if (!isHover && !reachedEnd) {
+				// Accumulate sub-pixel speed so very slow motion still progresses.
+				pendingScroll += speed;
+				const delta = Math.floor(pendingScroll);
+				if (delta > 0) {
+					el.scrollLeft += delta;
+					pendingScroll -= delta;
+				}
+				const maxScrollLeft = el.scrollWidth - el.clientWidth;
+				if (el.scrollLeft >= maxScrollLeft) {
+					el.scrollLeft = maxScrollLeft;
+					reachedEnd = true;
 				}
 			}
 			rafRef.current = requestAnimationFrame(step);
@@ -53,19 +61,28 @@ export default function Blogs({
 	);
 
 	return (
-		<section className="w-full bg-white dark:bg-black">
-			<div className="w-full">
+		<section className="relative w-full overflow-hidden">
+			<div className="absolute inset-0 bg-linear-to-b from-zinc-50 to-zinc-100 dark:from-slate-950 dark:to-slate-900" />
+			<div
+				className="pointer-events-none absolute inset-0 opacity-40 dark:opacity-20"
+				style={{
+					backgroundImage: "radial-gradient(circle at 1px 1px, rgba(0,0,0,0.05) 1px, transparent 1px)",
+					backgroundSize: "40px 40px",
+				}}
+			/>
+			<div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(251,191,36,0.08),transparent_50%),radial-gradient(ellipse_at_bottom_right,rgba(168,85,247,0.08),transparent_50%)] dark:bg-[radial-gradient(ellipse_at_top_left,rgba(253,224,71,0.1),transparent_50%),radial-gradient(ellipse_at_bottom_right,rgba(196,181,253,0.1),transparent_50%)]" />
+			<div className="relative z-10 w-full px-4 sm:px-6 lg:px-8">
 				<div
 					ref={containerRef}
 					onMouseEnter={() => setIsHover(true)}
 					onMouseLeave={() => setIsHover(false)}
 					className="overflow-x-auto scrollbar-hide"
 				>
-					<div className="flex gap-6 px-4">
+					<div className="flex gap-4 sm:gap-5 lg:gap-6">
 						{sorted.map((post) => (
 							<article
 								key={post._id}
-								className="min-w-[calc(100vw/3-10rem)] shrink-0 h-[70vh] overflow-hidden flex flex-col"
+								className="h-[68vh] min-w-[16rem] w-[78vw] shrink-0 overflow-hidden sm:w-[52vw] md:w-[40vw] lg:w-[31vw] xl:w-[24vw]"
 							>
 								<Link
 									href={post.slug ? `/blog/${post.slug}` : "/blog"}
@@ -92,7 +109,7 @@ export default function Blogs({
 											}
 											alt={post.title}
 											fill
-											sizes="(max-width: 768px) 100vw, 33vw"
+											sizes="(max-width: 639px) 78vw, (max-width: 767px) 52vw, (max-width: 1023px) 40vw, (max-width: 1279px) 31vw, 24vw"
 											className="object-cover transition-transform duration-300 hover:scale-105"
 										/>
 									</div>
@@ -116,7 +133,7 @@ export default function Blogs({
 								</Link>
 							</article>
 						))}
-						<div className="min-w-[calc(100vw/3-10rem)] shrink-0 h-[70vh] flex items-center justify-center">
+						<div className="h-[68vh] min-w-[16rem] w-[78vw] shrink-0 sm:w-[52vw] md:w-[40vw] lg:w-[31vw] xl:w-[24vw] flex items-center justify-center">
 							<Link
 								href="/blog"
 								className="flex h-full w-full items-center justify-center border-l border-zinc-200 dark:border-zinc-800 p-6 text-center hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors"

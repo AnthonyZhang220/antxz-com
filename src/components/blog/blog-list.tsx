@@ -6,7 +6,20 @@ import { urlFor } from "@/sanity/lib/image";
 import { BlogPost } from "@/types/blog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Clock, Calendar, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+	Sheet,
+	SheetClose,
+	SheetContent,
+	SheetTrigger,
+} from "@/components/ui/sheet";
+import {
+	Clock,
+	Calendar,
+	ChevronLeft,
+	ChevronRight,
+	SlidersHorizontal,
+	X,
+} from "lucide-react";
 import BlogFilter from "@/components/blog/blog-filter";
 import { useBlogFilter } from "@/hooks/useBlogFilter";
 import { Separator } from "@/components/ui/separator";
@@ -249,7 +262,53 @@ export default function BlogListPage({
 				</div>
 
 				{/* ── Body ── */}
-				<div className="flex gap-10 items-start">
+				<div className="flex flex-col gap-8 md:gap-10 lg:flex-row lg:items-start">
+					{/* Filters (mobile/tablet) */}
+					<div className="lg:hidden">
+						<Sheet>
+							<SheetTrigger asChild>
+								<Button
+									variant="outline"
+									className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.14em]"
+								>
+									<SlidersHorizontal className="h-3.5 w-3.5" />
+									Filters
+								</Button>
+							</SheetTrigger>
+							<SheetContent side="top" className="h-screen w-screen max-w-none p-0 overflow-y-auto">
+								<div className="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-background/95 px-4 py-4 backdrop-blur supports-backdrop-filter:bg-background/75">
+									<p className="font-mono text-xs uppercase tracking-[0.14em] text-foreground/90">
+										Filters
+									</p>
+									<SheetClose asChild>
+										<Button variant="ghost" size="icon" aria-label="Close filters">
+											<X className="h-4 w-4" />
+										</Button>
+									</SheetClose>
+								</div>
+								<div className="p-4 sm:p-6">
+									<BlogFilter
+										posts={posts}
+										tag={tag}
+										setTag={setTag}
+										allTags={allTags}
+										tagCounts={tagCounts}
+										yearRange={yearRange}
+										setYearRange={setYearRange}
+										minYear={minYear}
+										maxYear={maxYear}
+										allYears={allYears}
+										readTime={readTime}
+										setReadTime={setReadTime}
+										isDefault={isDefault}
+										clearAll={clearAll}
+										go={go}
+									/>
+								</div>
+							</SheetContent>
+						</Sheet>
+					</div>
+
 					{/* Content */}
 					<div className="flex-1 min-w-0">
 						{featured && <FeaturedCard post={featured} />}
@@ -280,25 +339,27 @@ export default function BlogListPage({
 							onChange={setPage}
 						/>
 					</div>
-					<Separator orientation="vertical" className="self-stretch h-auto" />
-					{/* Filters sidebar */}
-					<BlogFilter
-						posts={posts}
-						tag={tag}
-						setTag={setTag}
-						allTags={allTags}
-						tagCounts={tagCounts}
-						yearRange={yearRange}
-						setYearRange={setYearRange}
-						minYear={minYear}
-						maxYear={maxYear}
-						allYears={allYears}
-						readTime={readTime}
-						setReadTime={setReadTime}
-						isDefault={isDefault}
-						clearAll={clearAll}
-						go={go}
-					/>
+					<Separator orientation="vertical" className="hidden self-stretch h-auto lg:block" />
+					{/* Filters sidebar (desktop) */}
+					<div className="hidden lg:block">
+						<BlogFilter
+							posts={posts}
+							tag={tag}
+							setTag={setTag}
+							allTags={allTags}
+							tagCounts={tagCounts}
+							yearRange={yearRange}
+							setYearRange={setYearRange}
+							minYear={minYear}
+							maxYear={maxYear}
+							allYears={allYears}
+							readTime={readTime}
+							setReadTime={setReadTime}
+							isDefault={isDefault}
+							clearAll={clearAll}
+							go={go}
+						/>
+					</div>
 				</div>
 			</div>
 		</main>

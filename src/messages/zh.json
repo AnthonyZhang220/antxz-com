@@ -27,8 +27,10 @@
     },
     "home": {
         "logo": "AntXZ",
+        "motto": "无执，无为，无拘。",
         "heroTitle": "你好，我是张小花",
         "heroSubtitle": "全栈开发者",
+        "aboutMeButton": "我是谁",
         "introTitle": "关于我",
         "introBody": "我是一个全栈开发者，专注于使用 Next.js、TypeScript 和 Tailwind CSS 构建 Web 应用。在业余时间，我喜欢摄影、写博客和探索新技术。"
     },
@@ -77,7 +79,6 @@
         "about": "关于",
         "rights": "保留所有权利。",
         "builtWith": "构建于",
-        "motto": "无执，无为，无拘。",
         "nav": {
             "youAreIn": "你当前所在",
             "back": "返回上级",
@@ -205,7 +206,6 @@
             "us": "美国",
             "cn": "中国",
             "global": "全球"
-            
         }
     },
     "preferences": {

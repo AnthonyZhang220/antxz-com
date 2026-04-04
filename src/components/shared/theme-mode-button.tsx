@@ -12,19 +12,26 @@ import {
 	DropdownMenuRadioItem,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { setCookie } from "@/lib/cookies";
 
 export default function ThemeModeButton() {
 	const t = useTranslations("themeMode");
 	const { theme, setTheme, systemTheme } = useTheme();
 
 	const handleTheme = (value: string) => {
+		setCookie("preferred_theme", value); // 保存一年
 		setTheme(value);
 	};
 
 	// 获取当前显示的图标和文本
 	const getDisplayContent = () => {
 		if (theme === "system") {
-			const icon = systemTheme === "light" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />;
+			const icon =
+				systemTheme === "light" ? (
+					<Sun className="h-4 w-4" />
+				) : (
+					<Moon className="h-4 w-4" />
+				);
 			return { icon, text: t("system") };
 		}
 		if (theme === "light") {

@@ -19,52 +19,50 @@ export default function Navbar() {
 	const h = useTranslations("home");
 
 	return (
-		<header className="fixed top-0 inset-x-0 flex items-center justify-between px-8 py-4 z-50">
+		<header className="sticky inset-x-0 top-0 z-50 flex h-14 items-center justify-between px-3 sm:h-16 sm:px-6 bg-background/85 backdrop-blur supports-backdrop-filter:bg-background/70 border-b border-border/60">
 			{/* Logo */}
 			<Link href="/">
-				<span className="font-montserrat tracking-widest text-2xl">
+				<span className="font-montserrat text-xl tracking-widest sm:text-2xl">
 					{h("logo")}
 				</span>
 			</Link>
 			{/* Sheet 触发按钮 */}
 			<Sheet>
 				<SheetTrigger asChild>
-					<Button variant="ghost" size="lg">
+					<Button variant="ghost" size="icon" className="h-9 w-9 sm:h-10 sm:w-10">
 						<Menu className="h-5 w-5" />
 					</Button>
 				</SheetTrigger>
-				<SheetContent side="top" className="h-screen w-screen max-w-none p-0">
-					{/* 顶部栏 — logo 左，关闭按钮右 */}
-					<div className="flex items-center justify-between px-8 py-6">
-						<Link href="/">
-							<span className="font-montserrat tracking-widest text-2xl">
-								{h("logo")}
-							</span>
-						</Link>
-						<SheetClose asChild>
-							<Button variant="ghost" size="lg">
-								<XIcon className="h-5 w-5" />
-							</Button>
-						</SheetClose>
-					</div>
-					{/* 导航链接 — 垂直居中 */}
-					<nav className="flex items-center justify-center h-[calc(100vh-72px)]">
-						<div className="flex flex-col items-start gap-12">
-							{navigationConfig.map(({ key, href }) => (
-								<SheetClose asChild key={key}>
-									<Link
-										href={href}
-										className="flex flex-col items-start gap-2 group"
-									>
-										<span className="text-6xl font-bold group-hover:text-primary transition-colors">
-											{t(`${key}.title`)}
-										</span>
-										<span className="text-xl text-muted-foreground">
-											{t(`${key}.subtitle`)}
-										</span>
-									</Link>
-								</SheetClose>
-							))}
+				<SheetContent side="top" className="h-screen w-screen max-w-none p-0 flex flex-col">
+					<SheetClose asChild>
+						<Button
+							variant="ghost"
+							size="icon"
+							className="absolute right-3 top-3 z-20 h-9 w-9 sm:right-5 sm:top-5 sm:h-10 sm:w-10"
+						>
+							<XIcon className="h-5 w-5" />
+						</Button>
+					</SheetClose>
+					{/* 导航链接 — 以整个视口为基准居中，文字保持左对齐 */}
+					<nav className="flex-1 overflow-y-auto">
+						<div className="mx-auto flex min-h-full w-full max-w-2xl items-center px-3 sm:px-6">
+							<div className="flex w-full flex-col items-start gap-4 sm:gap-7">
+								{navigationConfig.map(({ key, href }) => (
+									<SheetClose asChild key={key}>
+										<Link
+											href={href}
+											className="group flex w-full flex-col items-start gap-1 text-left"
+										>
+											<span className="text-[clamp(1.75rem,7vw,3.75rem)] font-bold group-hover:text-primary transition-colors leading-[1.05] wrap-break-word">
+												{t(`${key}.title`)}
+											</span>
+											<span className="text-sm sm:text-base md:text-lg text-muted-foreground">
+												{t(`${key}.subtitle`)}
+											</span>
+										</Link>
+									</SheetClose>
+								))}
+							</div>
 						</div>
 					</nav>
 				</SheetContent>

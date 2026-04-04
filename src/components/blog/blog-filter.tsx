@@ -60,7 +60,7 @@ export default function BlogFilter({
 	const t = useTranslations("blog");
 
 	return (
-		<aside className="w-48 shrink-0 sticky top-6 flex flex-col gap-5">
+		<aside className="w-full flex flex-col gap-5 lg:w-56 lg:shrink-0 lg:sticky lg:top-6">
 			{/* Topic */}
 			<div>
 				<SectionLabel>{t("filterTopic")}</SectionLabel>
