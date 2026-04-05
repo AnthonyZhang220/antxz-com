@@ -72,7 +72,7 @@ export default function BlogFilter({
 						className={cn(
 							"w-full justify-between font-normal text-sm h-8 px-2.5 rounded-lg",
 							!tag
-								? "bg-foreground text-background hover:bg-foreground hover:text-background"
+								? "bg-foreground text-background hover:bg-foreground hover:text-background dark:hover:bg-foreground dark:hover:text-background"
 								: "text-muted-foreground hover:text-foreground",
 						)}
 					>
@@ -91,7 +91,7 @@ export default function BlogFilter({
 							className={cn(
 								"w-full justify-between font-normal text-sm h-8 px-2.5 rounded-lg",
 								tag === t
-									? "bg-foreground text-background hover:bg-foreground hover:text-background"
+									? "bg-foreground text-background hover:bg-foreground hover:text-background dark:hover:bg-foreground dark:hover:text-background"
 									: "text-muted-foreground hover:text-foreground",
 							)}
 						>
@@ -171,7 +171,9 @@ export default function BlogFilter({
 								"w-full justify-start font-mono text-xs md:text-sm h-8 px-3 rounded-lg",
 								"border border-border",
 								"data-[state=on]:bg-foreground data-[state=on]:text-background data-[state=on]:border-foreground",
-								"hover:bg-background hover:text-foreground hover:border-border",
+								"data-[state=on]:hover:bg-foreground data-[state=on]:hover:text-background data-[state=on]:hover:border-foreground",
+								"dark:data-[state=on]:hover:bg-foreground dark:data-[state=on]:hover:text-background dark:data-[state=on]:hover:border-foreground",
+								"data-[state=off]:hover:bg-background data-[state=off]:hover:text-foreground data-[state=off]:hover:border-border",
 							)}
 						>
 							{label}

@@ -2,6 +2,7 @@
 
 import { useFormatter, useTranslations } from "next-intl";
 import Image from "next/image";
+import Link from "next/link";
 import { urlFor } from "@/sanity/lib/image";
 import { BlogPost } from "@/types/blog";
 import { Button } from "@/components/ui/button";
@@ -34,7 +35,7 @@ function FeaturedCard({ post }: { post: BlogPost }) {
 	const fmt = useFormatter();
 	const t = useTranslations("blog");
 	return (
-		<div className="group rounded-xl overflow-hidden border border-border shadow-sm hover:shadow-md transition-shadow duration-300 cursor-pointer mb-2">
+		<Link href={`/blog/${post.slug}`} className="group block rounded-xl overflow-hidden border border-border shadow-sm hover:shadow-md transition-shadow duration-300 mb-2">
 			<div className="relative aspect-21/9 overflow-hidden">
 				<Image
 					src={
@@ -80,7 +81,7 @@ function FeaturedCard({ post }: { post: BlogPost }) {
 					</span>
 				</div>
 			</div>
-		</div>
+		</Link>
 	);
 }
 
@@ -89,7 +90,7 @@ function SmallCard({ post }: { post: BlogPost }) {
 	const fmt = useFormatter();
 	const t = useTranslations("blog");
 	return (
-		<div className="group flex gap-4 py-4.5 border-b border-border/50 cursor-pointer last:border-0">
+		<Link href={`/blog/${post.slug}`} className="group flex gap-4 py-4.5 border-b border-border/50 last:border-0">
 			<div className="w-36 shrink-0 aspect-3/2 rounded-lg overflow-hidden bg-muted relative">
 				<Image
 					src={
@@ -135,7 +136,7 @@ function SmallCard({ post }: { post: BlogPost }) {
 					</span>
 				</div>
 			</div>
-		</div>
+		</Link>
 	);
 }
 
