@@ -1,5 +1,5 @@
 //region config.ts
-export type Region = "cn" | "global";
+export type Region = "cn" | "us" | "global";
 
 export interface RegionConfig {
 	auth: {
@@ -25,6 +25,18 @@ const configs: Record<Region, RegionConfig> = {
 		},
 		analytics: {
 			provider: "baidu",
+		},
+	},
+	us: {
+		auth: {
+			providers: ["email", "google", "github"],
+			phoneEnabled: false,
+		},
+		payment: {
+			providers: ["stripe"],
+		},
+		analytics: {
+			provider: "google",
 		},
 	},
 	global: {

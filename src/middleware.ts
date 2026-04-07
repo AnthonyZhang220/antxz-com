@@ -3,18 +3,43 @@ import { NextRequest, NextResponse } from "next/server";
 import { withI18n } from "./middlewares/with-i18n";
 import { updateSession } from "@/middlewares/with-supabase";
 
-//detect region based on Cloudflare header or environment variable
-function detectRegion(request: NextRequest): "cn" | "global" {
+
+type Region = "cn" | "us" | "global";
+type Locale = "en" | "zh";
+
+function isRegion(value: string | undefined): value is Region {
+	return value === "cn" || value === "us" || value === "global";
+}
+
+function isLocale(value: string | undefined): value is Locale {
+	return value === "en" || value === "zh";
+}
+
+// detect region based on user preference first, then environment/header fallback
+function detectRegion(request: NextRequest): Region {
+	const preferredRegion = request.cookies.get("preferred_region")?.value;
+	if (isRegion(preferredRegion)) {
+		return preferredRegion;
+	}
+
 	if (process.env.NEXT_PUBLIC_REGION) {
 		const region = process.env.NEXT_PUBLIC_REGION.toLowerCase();
 
-		if (region === "cn" || region === "global") {
+		if (isRegion(region)) {
 			return region;
 		}
 	}
 
 	const country = request.headers.get("cf-ipcountry") || "US";
-	return ["CN", "HK", "TW", "MO"].includes(country) ? "cn" : "global";
+	if (["CN", "HK", "TW", "MO"].includes(country)) {
+		return "cn";
+	}
+
+	if (country === "US") {
+		return "us";
+	}
+
+	return "global";
 }
 
 // This middleware runs on every request and is responsible for:
@@ -23,6 +48,7 @@ function detectRegion(request: NextRequest): "cn" | "global" {
 // 3. Running the next-intl middleware to handle locale redirects
 export async function middleware(request: NextRequest) {
 	const region = detectRegion(request);
+	const preferredLocale = request.cookies.get("preferred_locale")?.value;
 
 	const requestHeaders = new Headers(request.headers);
 	requestHeaders.set("x-region", region);
@@ -34,13 +60,33 @@ export async function middleware(request: NextRequest) {
 	});
 
 	if (request.nextUrl.pathname === "/") {
-		const locale = region === "cn" ? "zh" : "en";
-		return NextResponse.redirect(new URL(`/${locale}`, request.url));
+		const locale = isLocale(preferredLocale)
+			? preferredLocale
+			: region === "cn"
+				? "zh"
+				: "en";
+		const redirectResponse = NextResponse.redirect(new URL(`/${locale}`, request.url));
+		redirectResponse.cookies.set("preferred_locale", locale, {
+			path: "/",
+			maxAge: 60 * 60 * 24 * 365,
+			sameSite: "lax",
+		});
+		redirectResponse.cookies.set("preferred_region", region, {
+			path: "/",
+			maxAge: 60 * 60 * 24 * 365,
+			sameSite: "lax",
+		});
+		return redirectResponse;
 	}
 
 	// run supabase session logic first to ensure cookies are set
 	const supabaseResponse = await updateSession(modifiedRequest);
 	if (supabaseResponse.headers.get("location")) {
+		supabaseResponse.cookies.set("preferred_region", region, {
+			path: "/",
+			maxAge: 60 * 60 * 24 * 365,
+			sameSite: "lax",
+		});
 		return supabaseResponse;
 	}
 
@@ -52,6 +98,12 @@ export async function middleware(request: NextRequest) {
 		intlResponse.cookies.set(cookie.name, cookie.value, {
 			...cookie,
 		});
+	});
+
+	intlResponse.cookies.set("preferred_region", region, {
+		path: "/",
+		maxAge: 60 * 60 * 24 * 365,
+		sameSite: "lax",
 	});
 
 	return intlResponse;

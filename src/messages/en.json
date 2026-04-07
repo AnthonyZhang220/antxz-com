@@ -23,6 +23,12 @@
         "interaction": {
             "title": "Leave your mark",
             "subtitle": "Interaction"
+        },
+        "userMenu": {
+            "open": "Open user menu",
+            "profile": "Profile",
+            "dashboard": "Dashboard",
+            "logout": "Logout"
         }
     },
     "home": {
@@ -241,5 +247,167 @@
         "regionLabel": "Region",
         "saveButton": "Save",
         "cancelButton": "Cancel"
+    },
+    "dashboard": {
+        "navigation": {
+            "overview": "Overview",
+            "comments": "Comments",
+            "settings": "Settings",
+            "help": "Get Help",
+            "search": "Search",
+            "brand": "AntXZ.com"
+        },
+        "overview": {
+            "title": "Overview",
+            "cards": {
+                "totalRevenue": {
+                    "label": "Total Revenue",
+                    "value": "$1,250.00",
+                    "trend": "+12.5%",
+                    "trendingUp": "Trending up this month",
+                    "description": "Visitors for the last 6 months"
+                },
+                "newCustomers": {
+                    "label": "New Customers",
+                    "value": "1,234",
+                    "trend": "-20%",
+                    "trendingDown": "Down 20% this period",
+                    "description": "Acquisition needs attention"
+                },
+                "activeAccounts": {
+                    "label": "Active Accounts",
+                    "value": "45,678",
+                    "trend": "+12.5%",
+                    "trendingUp": "Strong user retention",
+                    "description": "Engagement exceed targets"
+                },
+                "growthRate": {
+                    "label": "Growth Rate",
+                    "value": "4.5%",
+                    "trend": "+4.5%",
+                    "trendingUp": "Steady performance increase",
+                    "description": "Meets growth projections"
+                }
+            }
+        },
+        "comments": {
+            "title": "Comments",
+            "description": "Manage and review your latest blog comments here."
+        },
+        "search": {
+            "title": "Search",
+            "description": "Search across your dashboard content and activity.",
+            "placeholder": "Search..."
+        },
+        "help": {
+            "title": "Support Resources",
+            "subtitle": "Choose the support path that fits your problem best. For bugs, the fastest route is usually a reproducible GitHub issue.",
+            "cards": {
+                "email": {
+                    "title": "Send Me an Email",
+                    "description": "Best for account issues, broken flows, or anything you want to explain in detail.",
+                    "badge": "Direct contact",
+                    "cta": "Email Support",
+                    "points": [
+                        "Describe what you expected to happen.",
+                        "Include screenshots or console errors if possible.",
+                        "Mention your browser and device."
+                    ]
+                },
+                "issue": {
+                    "title": "Submit an Issue",
+                    "description": "Use GitHub Issues when you find a bug, regression, or anything reproducible.",
+                    "badge": "Bug report",
+                    "cta": "Open GitHub Issue",
+                    "points": [
+                        "List the exact steps to reproduce it.",
+                        "Paste the error message if one appears.",
+                        "Explain what should happen instead."
+                    ]
+                },
+                "feature": {
+                    "title": "Request a Feature",
+                    "description": "If you have an idea that would make the site better, send a feature request instead of a bug report.",
+                    "badge": "Feedback",
+                    "cta": "Share an Idea",
+                    "points": [
+                        "Explain the problem you are trying to solve.",
+                        "Describe the ideal user experience.",
+                        "Add references or examples if you have them."
+                    ]
+                },
+                "browse": {
+                    "title": "Check Existing Reports",
+                    "description": "Before opening a new ticket, check current issues to see whether the problem is already tracked.",
+                    "badge": "Self-serve",
+                    "cta": "Browse Issues",
+                    "points": [
+                        "Search by page name, feature, or error text.",
+                        "Add context to an existing issue if it matches.",
+                        "This helps avoid duplicate reports."
+                    ]
+                }
+            },
+            "footer": "Clear reports get fixed faster and make follow-up much easier."
+        },
+        "settings": {
+            "title": "Settings",
+            "description": "Manage your account settings and preferences.",
+            "sections": {
+                "preferences": {
+                    "title": "Preferences",
+                    "description": "Customize your experience"
+                },
+                "notifications": {
+                    "title": "Notifications",
+                    "description": "Choose how you receive updates"
+                }
+            },
+            "fields": {
+                "locale": {
+                    "label": "Language",
+                    "description": "Choose your preferred language"
+                },
+                "region": {
+                    "label": "Region",
+                    "description": "Select your region for localized content"
+                },
+                "theme": {
+                    "label": "Theme",
+                    "description": "Choose your preferred color scheme"
+                },
+                "notifications": {
+                    "label": "Email Notifications",
+                    "description": "Receive important updates via email"
+                }
+            },
+            "buttons": {
+                "save": "Save Changes",
+                "saving": "Saving...",
+                "cancel": "Cancel"
+            },
+            "messages": {
+                "success": "Settings saved successfully!",
+                "error": "Failed to save settings. Please try again.",
+                "noChanges": "No changes to save"
+            }
+        }
+    },
+    "errors": {
+        "dashboard": {
+            "title": "Dashboard temporarily unavailable",
+            "description": "Something went wrong while loading this dashboard page.",
+            "tryAgain": "Try again",
+            "errorId": "Error ID: {id}",
+            "backToDashboard": "Back to dashboard",
+            "goHome": "Go to home"
+        },
+        "global": {
+            "title": "Unexpected application error",
+            "description": "Please refresh or try again in a moment.",
+            "tryAgain": "Try again",
+            "goHome": "Go to home",
+            "errorId": "Error ID: {id}"
+        }
     }
 }

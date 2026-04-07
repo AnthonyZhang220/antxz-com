@@ -17,8 +17,14 @@ export async function savePreferences(locale: string, region: string) {
 
   try {
     const cookieStore = await cookies();
-    cookieStore.set("preferred_locale", locale);
-    cookieStore.set("preferred_region", region);
+    const cookieOptions = {
+      path: "/",
+      maxAge: 60 * 60 * 24 * 365,
+      sameSite: "lax" as const,
+    };
+
+    cookieStore.set("preferred_locale", locale, cookieOptions);
+    cookieStore.set("preferred_region", region, cookieOptions);
 
     return { success: true };
   } catch (error) {

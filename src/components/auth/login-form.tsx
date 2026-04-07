@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
 
 import { cn } from "@/lib/utils";
@@ -17,7 +17,6 @@ import {
 	FieldSeparator,
 } from "@/components/ui/field";
 import { getCookie } from "@/lib/cookies";
-import { handleError, handleSuccess, getErrorMessage } from "@/lib/error-utils";
 import { Provider } from "@supabase/supabase-js";
 
 export function LoginForm({
@@ -31,6 +30,7 @@ export function LoginForm({
 	const [error, setError] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
 	const router = useRouter();
+	const locale = useLocale();
 	const savedRegion = getCookie("preferred_region") || "global";
 	const supabase = createClient();
 
@@ -45,8 +45,7 @@ export function LoginForm({
 				password,
 			});
 			if (error) throw error;
-			// Update this route to redirect to an authenticated route. The user already has an active session.
-			router.push("/protected");
+			router.push(`/${locale}/dashboard`);
 		} catch (error: unknown) {
 			setError(error instanceof Error ? error.message : "An error occurred");
 		} finally {
@@ -59,11 +58,25 @@ export function LoginForm({
 		setError(null);
 
 		try {
-			const { error } = await supabase.auth.signInWithOAuth({
+			const callbackUrl = new URL(
+				`${window.location.origin}/${locale}/auth/callback`
+			);
+			callbackUrl.searchParams.set("next", `/${locale}/dashboard`);
+
+			const { data, error } = await supabase.auth.signInWithOAuth({
 				provider: provider,
+				options: {
+					redirectTo: callbackUrl.toString(),
+				},
 			});
 			if (error) throw error;
-			// The user will be redirected to the GitHub OAuth flow. After successful authentication, they will be redirected back to the app with an active session.
+
+			if (data?.url) {
+				window.location.assign(data.url);
+				return;
+			}
+
+			throw new Error("Missing OAuth redirect URL");
 		} catch (error: unknown) {
 			setError(error instanceof Error ? error.message : "An error occurred");
 		} finally {
@@ -99,7 +112,7 @@ export function LoginForm({
 					<div className="flex items-center">
 						<FieldLabel htmlFor="password">{t("passwordLabel")}</FieldLabel>
 						<Link
-							href="/auth/forgot-password"
+							href={`/${locale}/auth/forgot-password`}
 							className="ml-auto text-sm underline-offset-4 hover:underline"
 						>
 							{t("forgotPasswordLabel")}
@@ -127,6 +140,7 @@ export function LoginForm({
 								onClick={() => handleOAuthLogin("github")}
 								variant="outline"
 								type="button"
+								disabled={isLoading}
 							>
 								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
 									<path
@@ -140,6 +154,7 @@ export function LoginForm({
 								onClick={() => handleOAuthLogin("google")}
 								variant="outline"
 								type="button"
+								disabled={isLoading}
 							>
 								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
 									<path
@@ -155,7 +170,7 @@ export function LoginForm({
 			</FieldGroup>
 			<FieldDescription className="text-center">
 				{t("dontHaveAccount")}{" "}
-				<Link href="/auth/sign-up" className="underline underline-offset-4">
+				<Link href={`/${locale}/auth/sign-up`} className="underline underline-offset-4">
 					{t("signupLink")}
 				</Link>
 			</FieldDescription>

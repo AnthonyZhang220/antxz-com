@@ -75,7 +75,11 @@ export default function PreferencesForm() {
 					<CardContent className="space-y-5">
 						<div className="space-y-2">
 							<Label htmlFor="locale">{t("languageLabel")}</Label>
-							<Select value={locale} onValueChange={setLocale} disabled={isLoading}>
+							<Select
+								value={locale}
+								onValueChange={setLocale}
+								disabled={isLoading}
+							>
 								<SelectTrigger id="locale" className="w-full">
 									<SelectValue placeholder={t("languageLabel")} />
 								</SelectTrigger>
@@ -88,21 +92,25 @@ export default function PreferencesForm() {
 
 						<div className="space-y-2">
 							<Label htmlFor="region">{t("regionLabel")}</Label>
-							<Select value={region} onValueChange={setRegion} disabled={isLoading}>
+							<Select
+								value={region}
+								onValueChange={setRegion}
+								disabled={isLoading}
+							>
 								<SelectTrigger id="region" className="w-full">
 									<SelectValue placeholder={t("regionLabel")} />
 								</SelectTrigger>
 								<SelectContent>
 									{locale === "zh" ? (
 										<>
-											<SelectItem value="cn">中国</SelectItem>{" "}
+											<SelectItem value="cn">中国</SelectItem>
 											<SelectItem value="us">美国</SelectItem>
 											<SelectItem value="global">全球</SelectItem>
 										</>
 									) : (
 										<>
-											<SelectItem value="us">United States</SelectItem>
 											<SelectItem value="cn">China</SelectItem>
+											<SelectItem value="us">United States</SelectItem>
 											<SelectItem value="global">Global</SelectItem>
 										</>
 									)}
@@ -111,9 +119,9 @@ export default function PreferencesForm() {
 						</div>
 					</CardContent>
 					<CardFooter className="justify-end">
-					<Button type="submit" disabled={isLoading}>
-						{isLoading ? "Saving..." : t("saveButton")}
-					</Button>
+						<Button type="submit" disabled={isLoading}>
+							{isLoading ? "Saving..." : t("saveButton")}
+						</Button>
 					</CardFooter>
 				</form>
 			</Card>
