@@ -1,7 +1,21 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-export async function updateSession(request: NextRequest) {
+import {
+	isMissingUserSettingsRowError,
+	isMissingUserSettingsTableError,
+	preferenceCookieOptions,
+	type AppLocale,
+	type AppRegion,
+	type UserSettings,
+} from "@/lib/user-preferences";
+
+type SessionSyncResult = {
+	supabaseResponse: NextResponse;
+	serverSettings?: Pick<UserSettings, "locale" | "region">;
+};
+
+export async function updateSession(request: NextRequest): Promise<SessionSyncResult> {
 	let supabaseResponse = NextResponse.next({
 		request,
 	});
@@ -39,6 +53,30 @@ export async function updateSession(request: NextRequest) {
 	// with the Supabase client, your users may be randomly logged out.
 	const { data } = await supabase.auth.getClaims();
 	const user = data?.claims;
+	const userId = typeof user?.sub === "string" ? user.sub : null;
+	let serverSettings: SessionSyncResult["serverSettings"];
+
+	if (userId) {
+		const { data: settings, error } = await supabase
+			.from("user_settings")
+			.select("locale, region")
+			.eq("user_id", userId)
+			.single();
+
+		if (error && !isMissingUserSettingsRowError(error) && !isMissingUserSettingsTableError(error)) {
+			console.error("Failed to fetch server user settings in middleware:", error);
+		}
+
+		if (settings?.locale && settings?.region) {
+			serverSettings = {
+				locale: settings.locale as AppLocale,
+				region: settings.region as AppRegion,
+			};
+
+			supabaseResponse.cookies.set("preferred_locale", settings.locale, preferenceCookieOptions);
+			supabaseResponse.cookies.set("preferred_region", settings.region, preferenceCookieOptions);
+		}
+	}
 
 	// If there's no authenticated user we no longer redirect automatically.
 	// This allows public pages (like the homepage) to be accessed without
@@ -68,5 +106,5 @@ export async function updateSession(request: NextRequest) {
 	// If this is not done, you may be causing the browser and server to go out
 	// of sync and terminate the user's session prematurely!
 
-	return supabaseResponse;
+	return { supabaseResponse, serverSettings };
 }

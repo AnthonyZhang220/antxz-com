@@ -4,6 +4,7 @@ import {
 	MessageCircleQuestionMark,
 	Search,
 	Settings,
+	User,
 	type LucideIcon,
 } from "lucide-react";
 
@@ -48,6 +49,11 @@ const dashboardNavDefinitions = {
 			slug: "search",
 			icon: Search,
 		},
+		{
+			titleKey: "dashboard.navigation.account",
+			slug: "account",
+			icon: User,
+		},
 	],
 } satisfies {
 	navMain: Array<Omit<DashboardNavItem, "url"> & { titleKey: string }>;
@@ -66,6 +72,7 @@ const slugToTitleKey: Record<string, string> = {
 	settings: dashboardNavDefinitions.navSecondary[0].titleKey,
 	help: dashboardNavDefinitions.navSecondary[1].titleKey,
 	search: dashboardNavDefinitions.navSecondary[2].titleKey,
+	account: dashboardNavDefinitions.navSecondary[3].titleKey,
 };
 
 export function getDashboardTitleKey(segment: string | null): string {

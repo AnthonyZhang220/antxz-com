@@ -5,6 +5,7 @@ import { DashboardHeader } from "@/components/dashboard/header";
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { createClient } from "@/lib/supabase/server";
+import { ensureUserSettingsFromCookies } from "@/lib/user-preferences-server";
 
 type DashboardLayoutProps = {
 	children: ReactNode;
@@ -26,6 +27,10 @@ export default async function DashboardLayout({
 	const {
 		data: { user },
 	} = await supabase.auth.getUser();
+
+	if (user) {
+		await ensureUserSettingsFromCookies(user.id);
+	}
 
 	return (
 		<SidebarProvider

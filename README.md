@@ -34,3 +34,25 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Supabase Migrations
+
+Database schema changes are versioned in `supabase/migrations`.
+
+Run local Supabase and apply all migrations:
+
+```bash
+npx supabase start
+npx supabase db reset
+```
+
+Push local migrations to your linked remote project:
+
+```bash
+npx supabase db push
+```
+
+Current migrations include:
+
+- `supabase/migrations/202604070001_create_comments.sql`
+- `supabase/migrations/202604070002_create_user_settings.sql`

@@ -1,5 +1,6 @@
 "use client";
 
+import { startTransition } from "react";
 import { Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
@@ -13,6 +14,7 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { setCookie } from "@/lib/cookies";
+import { saveThemePreference } from "@/lib/actions/user-preferences";
 
 export default function ThemeModeButton() {
 	const t = useTranslations("themeMode");
@@ -21,6 +23,9 @@ export default function ThemeModeButton() {
 	const handleTheme = (value: string) => {
 		setCookie("preferred_theme", value); // 保存一年
 		setTheme(value);
+		startTransition(() => {
+			void saveThemePreference(value);
+		});
 	};
 
 	// 获取当前显示的图标和文本

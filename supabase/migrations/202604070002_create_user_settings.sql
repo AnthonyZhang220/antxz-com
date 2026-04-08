@@ -15,26 +15,62 @@ create table if not exists public.user_settings (
 alter table public.user_settings enable row level security;
 
 -- Policy: Users can view their own settings
-create policy if not exists "user_settings_public_view_own"
-on public.user_settings
-for select
-to authenticated
-using (auth.uid() = user_id);
+do $$
+begin
+  if not exists (
+    select 1
+    from pg_policies
+    where schemaname = 'public'
+      and tablename = 'user_settings'
+      and policyname = 'user_settings_public_view_own'
+  ) then
+    create policy "user_settings_public_view_own"
+    on public.user_settings
+    for select
+    to authenticated
+    using (auth.uid() = user_id);
+  end if;
+end
+$$;
 
 -- Policy: Users can update their own settings
-create policy if not exists "user_settings_user_update_own"
-on public.user_settings
-for update
-to authenticated
-using (auth.uid() = user_id)
-with check (auth.uid() = user_id);
+do $$
+begin
+  if not exists (
+    select 1
+    from pg_policies
+    where schemaname = 'public'
+      and tablename = 'user_settings'
+      and policyname = 'user_settings_user_update_own'
+  ) then
+    create policy "user_settings_user_update_own"
+    on public.user_settings
+    for update
+    to authenticated
+    using (auth.uid() = user_id)
+    with check (auth.uid() = user_id);
+  end if;
+end
+$$;
 
 -- Policy: Users can insert their own settings
-create policy if not exists "user_settings_user_insert_own"
-on public.user_settings
-for insert
-to authenticated
-with check (auth.uid() = user_id);
+do $$
+begin
+  if not exists (
+    select 1
+    from pg_policies
+    where schemaname = 'public'
+      and tablename = 'user_settings'
+      and policyname = 'user_settings_user_insert_own'
+  ) then
+    create policy "user_settings_user_insert_own"
+    on public.user_settings
+    for insert
+    to authenticated
+    with check (auth.uid() = user_id);
+  end if;
+end
+$$;
 
 -- Auto-update the updated_at timestamp
 create or replace function public.update_user_settings_timestamp()

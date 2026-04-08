@@ -21,7 +21,7 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { getCookie } from "@/lib/cookies";
-import { savePreferences } from "@/app/[locale]/preferences/actions";
+import { savePreferences } from "@/components/preferences/actions";
 import { handleError, handleSuccess } from "@/lib/error-utils";
 
 export default function PreferencesForm() {

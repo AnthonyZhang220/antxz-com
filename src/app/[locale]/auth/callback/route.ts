@@ -6,11 +6,23 @@ interface RouteContext {
 	params: Promise<{ locale: string }>;
 }
 
+function normalizeNextPath(next: string | null, locale: string) {
+	if (!next) {
+		return `/${locale}/dashboard`;
+	}
+
+	if (!next.startsWith("/") || next.startsWith("//")) {
+		return `/${locale}/dashboard`;
+	}
+
+	return next;
+}
+
 export async function GET(request: NextRequest, context: RouteContext) {
 	const { locale } = await context.params;
 	const requestUrl = new URL(request.url);
 	const code = requestUrl.searchParams.get("code");
-	const next = requestUrl.searchParams.get("next") || `/${locale}/dashboard`;
+	const next = normalizeNextPath(requestUrl.searchParams.get("next"), locale);
 
 	if (!code) {
 		return NextResponse.redirect(
@@ -30,5 +42,8 @@ export async function GET(request: NextRequest, context: RouteContext) {
 		);
 	}
 
-	return NextResponse.redirect(new URL(next, request.url));
+	const callbackSuccessUrl = new URL(`/${locale}/auth/callback/success`, request.url);
+	callbackSuccessUrl.searchParams.set("next", next);
+
+	return NextResponse.redirect(callbackSuccessUrl);
 }

@@ -150,7 +150,10 @@
             "signupLink": "Sign up",
             "button": "Login",
             "loading": "Logging in",
-            "separator": "Or continue with"
+            "separator": "Or continue with",
+            "oauthRedirectingGoogle": "Redirecting to Google...",
+            "oauthRedirectingGithub": "Redirecting to GitHub...",
+            "oauthRedirectingHint": "If nothing happens, please allow popups and try again."
         },
         "signupForm": {
             "title": "Sign Up",
@@ -207,6 +210,10 @@
         "socialButton": {
             "github": "Login with GitHub",
             "google": "Login with Google"
+        },
+        "callback": {
+            "title": "Completing sign-in",
+            "description": "We are finalizing your account session and redirecting you now."
         }
     },
     "hearme": {
@@ -255,6 +262,7 @@
             "settings": "Settings",
             "help": "Get Help",
             "search": "Search",
+            "account": "Account",
             "brand": "AntXZ.com"
         },
         "overview": {
@@ -298,6 +306,36 @@
             "title": "Search",
             "description": "Search across your dashboard content and activity.",
             "placeholder": "Search..."
+        },
+        "account": {
+            "title": "Account",
+            "description": "View your account overview and manage your public profile information.",
+            "fields": {
+                "noName": "No display name yet",
+                "provider": "Sign-in provider",
+                "memberSince": "Member since",
+                "lastSignIn": "Last sign in",
+                "fullName": "Display name",
+                "avatarUrl": "Avatar URL",
+                "website": "Website",
+                "bio": "Bio"
+            },
+            "edit": {
+                "title": "Edit profile",
+                "description": "Update how your profile appears across the app."
+            },
+            "placeholders": {
+                "fullName": "How should we call you?",
+                "bio": "Tell people a little about you"
+            },
+            "actions": {
+                "save": "Save changes",
+                "saving": "Saving..."
+            },
+            "messages": {
+                "saved": "Account profile updated",
+                "saveError": "Failed to save account profile"
+            }
         },
         "help": {
             "title": "Support Resources",

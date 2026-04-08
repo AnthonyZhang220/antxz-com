@@ -1,8 +1,10 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
 import { Bell, Globe, Sun } from "lucide-react";
+import { useTheme } from "next-themes";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -28,10 +30,13 @@ import {
 	getUserSettings,
 	saveUserSettings,
 	type UserSettings,
-} from "./actions";
+} from "./settings-actions";
 
 export default function DashboardSettings() {
 	const locale = useLocale();
+	const pathname = usePathname();
+	const router = useRouter();
+	const { setTheme } = useTheme();
 
 	const [settings, setSettings] = useState<Partial<UserSettings>>({
 		locale: "en",
@@ -80,8 +85,22 @@ export default function DashboardSettings() {
 				return;
 			}
 
+			if (settings.theme) {
+				setTheme(settings.theme);
+			}
+
 			handleSuccess("Settings saved successfully!");
 			setHasChanges(false);
+
+			if (settings.locale && settings.locale !== locale) {
+				const nextPath = pathname.startsWith(`/${locale}`)
+					? pathname.replace(`/${locale}`, `/${settings.locale}`)
+					: `/${settings.locale}`;
+				router.replace(nextPath);
+				return;
+			}
+
+			router.refresh();
 		} catch (error) {
 			handleError(error);
 		} finally {
