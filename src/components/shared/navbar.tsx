@@ -42,7 +42,7 @@ export default function Navbar({ initialUser }: NavbarProps) {
 	const a = useTranslations("auth.loginForm");
 	const um = useTranslations("navbar.userMenu");
 	const { user, displayName, initials, signOut } = useAuthUser(initialUser);
-	const { authHref, profileHref, dashboardHref, handleLogout } =
+	const { authHref, accountHref, dashboardHref, handleLogout } =
 		useAuthNavigation(signOut);
 	const avatarUrl = user?.user_metadata?.avatar_url as string | undefined;
 
@@ -74,9 +74,9 @@ export default function Navbar({ initialUser }: NavbarProps) {
 				</DropdownMenuLabel>
 				<DropdownMenuSeparator />
 				<DropdownMenuItem asChild>
-					<Link href={profileHref} className="cursor-pointer">
+					<Link href={accountHref} className="cursor-pointer">
 						<UserIcon className="h-4 w-4" />
-						{um("profile")}
+						{um("account")}
 					</Link>
 				</DropdownMenuItem>
 				<DropdownMenuItem asChild>

@@ -4,18 +4,22 @@ import Link from "next/link";
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Toggle } from "@/components/ui/toggle";
-import { Bold, Code, Italic, LogIn } from "lucide-react";
+import { Bold, Code, Heart, Italic, LogIn } from "lucide-react";
 
 interface CommentItem {
 	id: string;
 	article_key: string;
 	author_name: string;
+	avatar_url: string;
 	content: string;
 	created_at: string;
+	like_count: number;
+	user_liked: boolean;
 }
 
 interface BlogCommentsProps {
@@ -33,6 +37,7 @@ export default function BlogComments({ articleKey }: BlogCommentsProps) {
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
 	const [message, setMessage] = useState("");
 	const [error, setError] = useState<string | null>(null);
+	const [likingId, setLikingId] = useState<string | null>(null);
 
 	const applyWrap = (prefix: string, suffix = prefix) => {
 		const textarea = textareaRef.current;
@@ -159,6 +164,44 @@ export default function BlogComments({ articleKey }: BlogCommentsProps) {
 		}
 	};
 
+	const onToggleLike = async (commentId: string, liked: boolean) => {
+		if (!isLoggedIn) {
+			setError(t("commentsLoginRequired"));
+			return;
+		}
+
+		setLikingId(commentId);
+		setError(null);
+
+		try {
+			const response = await fetch("/api/comments/likes", {
+				method: liked ? "DELETE" : "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ commentId }),
+			});
+
+			if (!response.ok) {
+				throw new Error("Failed to toggle like");
+			}
+
+			setComments((prev) =>
+				prev.map((comment) =>
+					comment.id === commentId
+						? {
+							...comment,
+							user_liked: !liked,
+							like_count: Math.max(0, comment.like_count + (liked ? -1 : 1)),
+						}
+						: comment
+				)
+			);
+		} catch {
+			setError(t("commentsLikeError"));
+		} finally {
+			setLikingId(null);
+		}
+	};
+
 	return (
 		<section className="mt-12 pb-24">
 			<Card className="border-border/70 bg-card/85 backdrop-blur-sm">
@@ -252,9 +295,14 @@ export default function BlogComments({ articleKey }: BlogCommentsProps) {
 								className="rounded-lg border border-border/60 px-4 py-3"
 							>
 								<div className="flex gap-3">
-									<div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-zinc-200 text-xs font-semibold text-zinc-700 dark:bg-zinc-800 dark:text-zinc-200">
-										{getInitials(comment.author_name || "User")}
-									</div>
+									<Avatar className="mt-0.5 h-9 w-9 shrink-0">
+										{comment.avatar_url ? (
+											<AvatarImage src={comment.avatar_url} alt={comment.author_name || "User"} />
+										) : null}
+										<AvatarFallback className="text-xs font-semibold">
+											{getInitials(comment.author_name || "User")}
+										</AvatarFallback>
+									</Avatar>
 									<div className="min-w-0 flex-1">
 										<div className="mb-1 flex items-center justify-between gap-3">
 											<span className="text-sm font-semibold text-foreground">
@@ -266,6 +314,22 @@ export default function BlogComments({ articleKey }: BlogCommentsProps) {
 										</div>
 										<div className="space-y-1">
 											{renderCommentContent(comment.content)}
+											<div className="pt-2">
+												<Button
+													type="button"
+													variant="ghost"
+													size="sm"
+													onClick={() => void onToggleLike(comment.id, comment.user_liked)}
+													disabled={likingId === comment.id}
+													className="-ml-2 h-8 px-2 text-muted-foreground hover:text-foreground"
+												>
+													<Heart className={comment.user_liked ? "mr-1.5 h-4 w-4 fill-current text-red-500" : "mr-1.5 h-4 w-4"} />
+													{comment.user_liked ? t("commentsUnlike") : t("commentsLike")}
+													<span className="ml-1 text-xs text-muted-foreground">
+														{t("commentsLikeCount", { count: comment.like_count })}
+													</span>
+												</Button>
+											</div>
 										</div>
 									</div>
 								</div>

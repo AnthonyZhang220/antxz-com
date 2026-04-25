@@ -31,7 +31,7 @@ export function DashboardSidebar({
 }: DashboardSidebarProps) {
 	const locale = useLocale();
 	const t = useTranslations();
-	const baseUrl = `/${locale}/dashboard`;
+	const baseUrl = `/${locale}`;
 	const rawNavigation = getDashboardNavigation(locale);
 	const { isMobile } = useSidebar();
 	const { user, displayName, isLoading, initials, signOut } =
@@ -42,11 +42,11 @@ export function DashboardSidebar({
 	const navigation = {
 		navMain: rawNavigation.navMain.map((item) => ({
 			...item,
-			title: t(item.title),
+			title: t(item.titleKey),
 		})),
 		navSecondary: rawNavigation.navSecondary.map((item) => ({
 			...item,
-			title: t(item.title),
+			title: t(item.titleKey),
 		})),
 	};
 

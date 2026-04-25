@@ -1,9 +1,8 @@
 "use client";
 
-import { EllipsisVertical, LogOut, Bell, CircleUser } from "lucide-react";
+import { EllipsisVertical, LogOut, Bell, User } from "lucide-react";
 import Link from "next/link";
-import { useLocale } from "next-intl";
-
+import { useLocale, useTranslations } from "next-intl";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { UseAuthUserResult } from "@/hooks/useAuthUser";
 import {
@@ -39,6 +38,7 @@ export function NavUser({
 }: NavUserProps) {
 	const { isMobile } = useSidebar();
 	const locale = useLocale();
+	const t = useTranslations("navbar.userMenu");
 
 	if (!user || isLoading) {
 		return null;
@@ -100,22 +100,22 @@ export function NavUser({
 						<DropdownMenuSeparator />
 						<DropdownMenuGroup>
 							<DropdownMenuItem asChild>
-								<Link href={`/${locale}/about/me`}>
-								<CircleUser />
-								Account
+								<Link href={`/${locale}/dashboard/account`}>
+									<User />
+									{t("account")}
 								</Link>
 							</DropdownMenuItem>
 							<DropdownMenuItem asChild>
-								<Link href={`/${locale}/dashboard/settings`}>
-								<Bell />
-								Notifications
+								<Link href={`/${locale}/dashboard/notifications`}>
+									<Bell />
+									{t("notifications")}
 								</Link>
 							</DropdownMenuItem>
 						</DropdownMenuGroup>
 						<DropdownMenuSeparator />
 						<DropdownMenuItem onClick={onLogout}>
 							<LogOut />
-							Log out
+							{t("logout")}
 						</DropdownMenuItem>
 					</DropdownMenuContent>
 				</DropdownMenu>

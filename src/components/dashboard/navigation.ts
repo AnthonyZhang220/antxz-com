@@ -1,15 +1,15 @@
 import {
+	Bell,
 	LayoutDashboard,
 	MessageCircleMore,
 	MessageCircleQuestionMark,
 	Search,
 	Settings,
-	User,
 	type LucideIcon,
 } from "lucide-react";
 
 export type DashboardNavItem = {
-	title: string;
+	titleKey: string;
 	slug: string;
 	url: string;
 	icon: LucideIcon;
@@ -32,6 +32,11 @@ const dashboardNavDefinitions = {
 			slug: "comments",
 			icon: MessageCircleMore,
 		},
+			{
+				titleKey: "dashboard.navigation.notifications",
+				slug: "notifications",
+				icon: Bell,
+			},
 	],
 	navSecondary: [
 		{
@@ -49,11 +54,6 @@ const dashboardNavDefinitions = {
 			slug: "search",
 			icon: Search,
 		},
-		{
-			titleKey: "dashboard.navigation.account",
-			slug: "account",
-			icon: User,
-		},
 	],
 } satisfies {
 	navMain: Array<Omit<DashboardNavItem, "url"> & { titleKey: string }>;
@@ -69,14 +69,16 @@ export function getDashboardNavDefinitions() {
 const slugToTitleKey: Record<string, string> = {
 	"": dashboardNavDefinitions.navMain[0].titleKey,
 	comments: dashboardNavDefinitions.navMain[1].titleKey,
+	notifications: dashboardNavDefinitions.navMain[2].titleKey,
 	settings: dashboardNavDefinitions.navSecondary[0].titleKey,
 	help: dashboardNavDefinitions.navSecondary[1].titleKey,
 	search: dashboardNavDefinitions.navSecondary[2].titleKey,
-	account: dashboardNavDefinitions.navSecondary[3].titleKey,
 };
 
 export function getDashboardTitleKey(segment: string | null): string {
-	return slugToTitleKey[segment || ""] || dashboardNavDefinitions.navMain[0].titleKey;
+	return (
+		slugToTitleKey[segment || ""] || dashboardNavDefinitions.navMain[0].titleKey
+	);
 }
 
 export function getDashboardNavigation(locale: string): DashboardNavigation {
@@ -84,13 +86,13 @@ export function getDashboardNavigation(locale: string): DashboardNavigation {
 
 	return {
 		navMain: dashboardNavDefinitions.navMain.map((item) => ({
-			title: item.titleKey, // Keep titleKey for now, will be replaced by client
+			titleKey: item.titleKey, // Keep titleKey for now, will be replaced by client
 			slug: item.slug,
 			icon: item.icon,
 			url: item.slug ? `${baseUrl}/${item.slug}` : baseUrl,
 		})),
 		navSecondary: dashboardNavDefinitions.navSecondary.map((item) => ({
-			title: item.titleKey,
+			titleKey: item.titleKey,
 			slug: item.slug,
 			icon: item.icon,
 			url: item.slug ? `${baseUrl}/${item.slug}` : baseUrl,

@@ -26,8 +26,9 @@
         },
         "userMenu": {
             "open": "Open user menu",
-            "profile": "Profile",
+            "account": "Profile",
             "dashboard": "Dashboard",
+            "notifications":"Notifications",
             "logout": "Logout"
         }
     },
@@ -125,12 +126,16 @@
         "commentsEmpty": "Be the first to comment.",
         "commentsLoadError": "Failed to load comments.",
         "commentsSubmitError": "Failed to submit comment.",
+        "commentsLikeError": "Failed to update comment like.",
         "commentsLoginRequired": "Please log in to post a comment.",
         "commentsLoginCta": "Log in",
         "commentsFormattingHint": "Formatting: Bold / Italic / Inline code",
         "commentsFormatBold": "Bold",
         "commentsFormatItalic": "Italic",
         "commentsFormatCode": "Inline code",
+        "commentsLike": "Like",
+        "commentsUnlike": "Liked",
+        "commentsLikeCount": "{count} likes",
         "clearFilters": "Clear all filters",
         "filterAll": "All",
         "filterTopic": "Topic",
@@ -259,6 +264,7 @@
         "navigation": {
             "overview": "Overview",
             "comments": "Comments",
+            "notifications": "Notifications",
             "settings": "Settings",
             "help": "Get Help",
             "search": "Search",
@@ -301,6 +307,47 @@
         "comments": {
             "title": "Comments",
             "description": "Manage and review your latest blog comments here."
+        },
+        "notifications": {
+            "title": "Notifications",
+            "description": "Track reply and like activity from your content.",
+            "unreadCount": "{count} unread",
+            "filters": {
+                "all": "All",
+                "unread": "Unread",
+                "reply": "Replies",
+                "like": "Likes"
+            },
+            "types": {
+                "reply": "Reply",
+                "like": "Like",
+                "mention": "Mention",
+                "system": "System"
+            },
+            "status": {
+                "unread": "New"
+            },
+            "meta": {
+                "from": "From {name}"
+            },
+            "actions": {
+                "refresh": "Refresh",
+                "view": "View",
+                "reply": "Reply",
+                "likeBack": "Like Back",
+                "markRead": "Mark as read",
+                "markAllRead": "Mark all read"
+            },
+            "empty": {
+                "title": "No notifications yet",
+                "description": "When someone replies to or likes your content, it will show up here."
+            },
+            "messages": {
+                "loadError": "Failed to load notifications.",
+                "markReadError": "Failed to update this notification.",
+                "markAllReadError": "Failed to mark all notifications as read.",
+                "markAllReadSuccess": "All notifications marked as read."
+            }
         },
         "search": {
             "title": "Search",

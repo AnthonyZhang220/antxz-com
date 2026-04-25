@@ -8,7 +8,7 @@ export type UseAuthNavigationResult = {
 	locale: string;
 	authHref: string;
 	homeHref: string;
-	profileHref: string;
+	accountHref: string;
 	dashboardHref: string;
 	handleLogout: () => Promise<void>;
 };
@@ -21,7 +21,7 @@ export function useAuthNavigation(
 
 	const authHref = useMemo(() => `/${locale}/auth/login`, [locale]);
 	const homeHref = useMemo(() => `/${locale}`, [locale]);
-	const profileHref = useMemo(() => `/${locale}/about/me`, [locale]);
+	const accountHref = useMemo(() => `/${locale}/dashboard/account`, [locale]);
 	const dashboardHref = useMemo(() => `/${locale}/dashboard`, [locale]);
 
 	const handleLogout = useCallback(async () => {
@@ -33,7 +33,7 @@ export function useAuthNavigation(
 		locale,
 		authHref,
 		homeHref,
-		profileHref,
+		accountHref,
 		dashboardHref,
 		handleLogout,
 	};
