@@ -7,16 +7,10 @@ export default function Intro() {
   const t = useTranslations("home");
 
   return (
-    <section id="intro" className="relative w-full scroll-mt-24 overflow-hidden py-24">
-      <div className="absolute inset-0 bg-linear-to-b from-zinc-100 to-zinc-50 dark:from-slate-900 dark:to-slate-950" />
-      <div
-        className="pointer-events-none absolute inset-0 opacity-40 dark:opacity-20"
-        style={{
-          backgroundImage: "radial-gradient(circle at 1px 1px, rgba(0,0,0,0.05) 1px, transparent 1px)",
-          backgroundSize: "40px 40px",
-        }}
-      />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(34,197,94,0.08),transparent_50%),radial-gradient(ellipse_at_top_left,rgba(59,130,246,0.08),transparent_50%)] dark:bg-[radial-gradient(ellipse_at_bottom_right,rgba(134,239,172,0.1),transparent_50%),radial-gradient(ellipse_at_top_left,rgba(96,165,250,0.1),transparent_50%)]" />
+    <section
+      id="intro"
+      className="relative w-full scroll-mt-24 overflow-hidden pt-20 pb-24 md:pt-24 md:pb-28"
+    >
       <div className="relative z-10 mx-auto max-w-5xl px-4 sm:px-6">
         <div className="grid items-center gap-10 md:grid-cols-[minmax(0,320px)_1fr]">
           <div className="mx-auto w-full max-w-xs sm:max-w-sm">

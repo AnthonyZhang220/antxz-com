@@ -28,41 +28,226 @@
             "open": "打开用户菜单",
             "account": "个人资料",
             "dashboard": "控制台",
-            "notifications":"通知",
+            "notifications": "通知",
             "logout": "退出登录"
         }
     },
     "home": {
         "logo": "AntXZ",
-        "motto": "无执，无为，无拘。",
+        "motto": "常应常静，常清静矣。",
+        "mottoZh": "常应常静，常清静矣。",
+        "mottoEn": "Constantly responding, constantly still, always pure and still.",
         "heroTitle": "你好，我是张小花",
         "heroSubtitle": "全栈开发者",
         "aboutMeButton": "我是谁",
+        "blogButton": "看博客",
+        "contactLabel": "联系我",
+        "contactTitle": "欢迎联系我",
+        "contactBody": "如果你想聊合作、项目，或者只是打个招呼，我都会认真回复。",
+        "contactReplyEta": "通常会在 24 小时内回复。",
         "introTitle": "关于我",
         "introBody": "我是一个全栈开发者，专注于使用 Next.js、TypeScript 和 Tailwind CSS 构建 Web 应用。在业余时间，我喜欢摄影、写博客和探索新技术。"
     },
     "about": {
         "me": {
             "title": "关于我",
-            "subtitle": "一眼看穿我",
+            "subtitle": "我是一个偏全栈方向的开发者，喜欢把想法落成稳定、好用、可维护的产品体验。",
+            "chips": {
+                "role": "全栈开发者",
+                "stack": "Next.js / TypeScript / React",
+                "location": "纽约"
+            },
+            "intro": {
+                "title": "我如何做事",
+                "paragraph1": "我在意的不只是功能能不能跑起来，更在意体验是否顺畅、结构是否清晰、后续是否容易维护。我习惯从用户问题出发，再回到工程实现。",
+                "paragraph2": "除了写代码，我也会写博客、做记录、拍照和复盘。对我来说，工程成长不仅是技术栈的变化，更是思考方式的持续迭代。"
+            },
+            "focus": {
+                "frontend": "打造快速、响应式、易理解的前端体验",
+                "fullstack": "把前端体验和后端稳定性连接起来",
+                "product": "在工程质量与交付速度之间找到平衡"
+            },
             "sections": {
                 "me": {
                     "title": "谁是张小花？",
-                    "content": "一名前端工程师，拥有三年的经验。我编写过 React、Typescript 和 C#。我热衷于打造交互式、响应式和用户友好的 Web 应用程序，并且能够无缝扩展。我的旅程是由自我驱动的学习编程语言和紧跟现代 Web 技术的热情所推动的。"
+                    "content": "我是一名前端倾向的全栈工程师，约三年开发经验。主要使用 React、TypeScript、C# 以及现代 Web 技术栈，持续专注于交互体验、性能和可维护性。"
                 },
                 "background": {
                     "title": "关于我的背景",
-                    "content": "我没有计算机科学的教育背景，在18岁时不知道自己的兴趣所在，我决定攻读纽约大学的数学学士学位。作为一个自己组装电脑并且总是想根据个人喜好定制配置的人，我意识到软件工程正是我想要的地方，因为它让我对我想要构建的东西有完全的控制权。"
+                    "content": "我并非科班计算机背景。18 岁时在探索方向的阶段，我选择了纽约大学数学专业。数学训练给了我很强的逻辑拆解能力，也让我在软件工程里更擅长抽象和结构化思考。"
                 },
                 "blog": {
                     "title": "关于我的博客",
-                    "content": "我将在这里发布博客、想法，有时还有我的生活轶事。如果你发现任何有趣的东西，请不要犹豫分享和评论。"
+                    "content": "我会在这里分享技术文章、项目思考，以及一些生活中的观察。如果你觉得某篇内容有共鸣，欢迎留言交流。"
+                }
+            },
+            "values": {
+                "title": "我看重的事",
+                "ownership": "责任感：做出来只是开始，能长期维护才算完成。",
+                "consistency": "一致性：小的工程决策，长期会放大成系统质量。",
+                "learning": "持续学习：保持好奇，是技术成长最重要的驱动力。"
+            },
+            "next": {
+                "title": "继续了解我",
+                "description": "如果你想更全面了解我的思考方式和技术实践，可以继续看我的项目和博客。",
+                "actions": {
+                    "blog": "阅读博客",
+                    "projects": "查看项目"
                 }
             }
         },
         "cv": {
             "title": "我的简历",
-            "subtitle": "我的专业经验和技能的简要概述。"
+            "subtitle": "我的专业经验与技术能力概述。",
+            "downloadEN": "下载英文简历",
+            "downloadZH": "下载中文简历",
+            "sections": {
+                "summary": "个人简介",
+                "experience": "工作经历",
+                "education": "教育背景",
+                "skills": "技术栈",
+                "projects": "项目经历"
+            },
+            "summary": "前端工程师（React/Next.js），3年Web应用开发经验，具备全栈开发能力。有带领小团队交付AI集成B2B SaaS产品的经验，热衷实时系统与可扩展架构设计。",
+            "experience": [
+                {
+                    "company": "Tovvi",
+                    "role": "前端工程师",
+                    "type": "B2B AI 电商平台",
+                    "period": "2024年1月 - 2025年3月",
+                    "tech": [
+                        "Next.js",
+                        "Redux",
+                        "Auth0",
+                        "FastAPI",
+                        "OpenAI API",
+                        "Azure",
+                        "Figma"
+                    ],
+                    "highlights": [
+                        "带领2人团队进行代码审查，减少了30%的线上缺陷，加快了功能交付节奏。",
+                        "基于 OpenAI API + FastAPI + SSE 构建实时AI数据管道，将UI响应延迟降低40%，显著提升用户参与度。",
+                        "优化数据处理流程，节省25%的API调用成本。",
+                        "通过自定义 Auth0.js 集成（支持SSR/CSR），解决了认证实现的瓶颈问题。"
+                    ]
+                }
+            ],
+            "education": [
+                {
+                    "school": "纽约大学",
+                    "degree": "数学与经济学文学学士，辅修日语",
+                    "period": "2017年9月 - 2021年9月",
+                    "location": "美国纽约"
+                }
+            ],
+            "skills": {
+                "frontend": {
+                    "label": "前端",
+                    "items": [
+                        "React",
+                        "Next.js",
+                        "Redux",
+                        "TypeScript",
+                        "JavaScript",
+                        "HTML",
+                        "CSS",
+                        "SASS",
+                        "Material UI"
+                    ]
+                },
+                "backend": {
+                    "label": "后端",
+                    "items": [
+                        "FastAPI",
+                        "Express",
+                        "GraphQL",
+                        "Apollo"
+                    ]
+                },
+                "cloud": {
+                    "label": "云服务与数据库",
+                    "items": [
+                        "Azure",
+                        "Firebase",
+                        "MongoDB",
+                        "PostgreSQL"
+                    ]
+                },
+                "tools": {
+                    "label": "工具与测试",
+                    "items": [
+                        "Git",
+                        "Docker",
+                        "Webpack",
+                        "Postman",
+                        "Linux",
+                        "Figma",
+                        "Jest"
+                    ]
+                }
+            },
+            "projects": [
+                {
+                    "name": "Moments",
+                    "type": "全栈社交应用",
+                    "period": "2023年7月 - 2023年11月",
+                    "tech": [
+                        "Next.js",
+                        "Apollo GraphQL",
+                        "PostgreSQL",
+                        "Prisma",
+                        "NextAuth.js"
+                    ],
+                    "highlights": [
+                        "设计了好友请求与评论的通知系统，解决了N+1查询问题。",
+                        "借助 NextAuth.js（Google/GitHub OAuth）将认证配置时间缩短80%。"
+                    ]
+                },
+                {
+                    "name": "Discord 克隆",
+                    "type": "实时语音/视频聊天应用",
+                    "period": "2023年1月 - 2023年5月",
+                    "tech": [
+                        "React",
+                        "Redux",
+                        "Firebase",
+                        "Agora SDK"
+                    ],
+                    "highlights": [
+                        "使用 Redux 重构代码库，减少40%状态相关Bug，提升代码可维护性。",
+                        "基于 localStorage 设计用户偏好系统，将会话持久化提升90%。",
+                        "使用 Agora Web SDK 实现50ms低延迟语音/视频通话。"
+                    ]
+                },
+                {
+                    "name": "旅行顾问克隆",
+                    "type": "地图搜索应用",
+                    "period": "2022年3月 - 2022年5月",
+                    "tech": [
+                        "React",
+                        "Axios",
+                        "Google Maps API"
+                    ],
+                    "highlights": [
+                        "通过防抖 + Search This Area 优化，将 Google Maps API 调用量减少90%。",
+                        "集成实时天气数据，用户会话时长提升25%。"
+                    ]
+                },
+                {
+                    "name": "老妈麻辣香锅",
+                    "type": "餐厅前端网站",
+                    "period": "2021年9月 - 2022年1月",
+                    "tech": [
+                        "React",
+                        "Redux",
+                        "Canvas"
+                    ],
+                    "highlights": [
+                        "使用 Canvas 视频渲染将落地页加载时间从3.2s优化至2.9s，提升10%。",
+                        "通过手势友好的购物车设计，移动端转化率提升15%。"
+                    ]
+                }
+            ]
         }
     },
     "contact": {
@@ -71,7 +256,26 @@
     },
     "project": {
         "title": "项目",
-        "subtitle": "看看我过去做过什么"
+        "subtitle": "看看我做的一些东西",
+        "projectCount": "共 {count} 个项目",
+        "viewDetails": "查看详情",
+        "overview": "项目概述",
+        "keyFeatures": "核心功能",
+        "roles": "担任角色",
+        "libraries": "技术库",
+        "process": "实现过程",
+        "challenges": "挑战",
+        "results": "结果",
+        "screenshots": "项目截图",
+        "details": "详情",
+        "liveSite": "在线站点",
+        "sourceCode": "源码",
+        "allProjects": "全部项目",
+        "featured": "精选",
+        "new": "新项目",
+        "emptyTitle": "项目内容即将上线",
+        "emptyDescription": "你可以先在 Sanity Studio 中添加项目内容。",
+        "openStudio": "打开 Studio"
     },
     "mbti": {
         "startButton": "开始测试",
@@ -107,6 +311,7 @@
     },
     "blog": {
         "title": "博客",
+        "subtitle": "记录与思考",
         "writingCount": "文章 · 共 {count} 篇",
         "readingTime": "{minutes} 分钟阅读",
         "readingTimeShort": "{minutes} 分钟",
@@ -128,6 +333,9 @@
         "commentsSubmitError": "评论提交失败。",
         "commentsLikeError": "评论点赞更新失败。",
         "commentsLoginRequired": "请先登录后再发表评论。",
+        "commentsQuarantined": "评论已提交，但目前只有你自己可见。",
+        "commentsHiddenBySafety": "评论已接收，但被安全规则隐藏了。",
+        "commentsVisibleOnlyToYou": "仅你自己可见",
         "commentsLoginCta": "去登录",
         "commentsFormattingHint": "排版：加粗 / 斜体 / 行内代码",
         "commentsFormatBold": "加粗",
@@ -136,9 +344,25 @@
         "commentsLike": "点赞",
         "commentsUnlike": "已点赞",
         "commentsLikeCount": "{count} 个赞",
+        "commentsCountShort": "{count} 条评论",
+        "articleLike": "点赞文章",
+        "articleUnlike": "已点赞",
+        "articleLikeCount": "{count} 个赞",
+        "articleLikeError": "文章点赞更新失败。",
+        "articleLikeLoginRequired": "请先登录后再点赞。",
+        "sourceLabel": "文章来源：{source}",
+        "sourceOpen": "查看原文",
+        "sourceOriginal": "原创",
+        "sourceDevto": "Dev.to",
+        "sourceMedium": "Medium",
+        "sourceExternal": "外部来源",
         "clearFilters": "清除所有筛选",
+        "filterLabel": "筛选",
         "filterAll": "全部",
-        "filterTopic": "分类",
+        "filterCategory": "分类",
+        "filterTopic": "标签",
+        "filterShowMoreTags": "显示更多（+{count}）",
+        "filterShowLessTags": "收起",
         "filterYear": "年份范围",
         "filterReadingTime": "阅读时长",
         "featured": "精选",
@@ -181,7 +405,12 @@
             "haveAccount": "已有账户？",
             "button": "发送重置密码邮件",
             "loading": "发送中",
-            "loginLink": "登录"
+            "loginLink": "登录",
+            "successPage": {
+                "title": "请检查你的邮箱",
+                "description": "重置密码说明已发送",
+                "content": "如果你是通过邮箱和密码注册的账号，你将收到一封重置密码邮件。"
+            }
         },
         "logoutForm": {
             "button": "退出登录",
@@ -224,6 +453,8 @@
             "weixin": "微信",
             "qq": "QQ",
             "github": "GitHub",
+            "devTo": "Dev.to",
+            "medium": "Medium",
             "upwork": "Upwork",
             "friend": "朋友推荐",
             "other": "其他渠道"
@@ -253,7 +484,12 @@
         "languageLabel": "语言",
         "regionLabel": "地区",
         "saveButton": "保存",
-        "cancelButton": "取消"
+        "cancelButton": "取消",
+        "messages": {
+            "saving": "保存中...",
+            "success": "偏好设置已保存！",
+            "error": "保存偏好设置失败，请重试。"
+        }
     },
     "dashboard": {
         "navigation": {
@@ -301,7 +537,17 @@
         },
         "comments": {
             "title": "评论",
-            "description": "在此管理和查看你最新的博客评论。"
+            "description": "在此管理和查看你最新的博客评论。",
+            "safeguardsTitle": "评论安全",
+            "safeguardsDescription": "处理被隔离、标记为垃圾或屏蔽的评论。",
+            "actions": {
+                "retry": "重试"
+            },
+            "messages": {
+                "loadError": "评论审核队列加载失败",
+                "updateError": "更新评论审核状态失败",
+                "updateSuccess": "评论审核状态已更新"
+            }
         },
         "notifications": {
             "title": "通知",
@@ -372,11 +618,13 @@
             },
             "actions": {
                 "save": "保存修改",
-                "saving": "保存中..."
+                "saving": "保存中...",
+                "retry": "重试"
             },
             "messages": {
                 "saved": "账户资料已更新",
-                "saveError": "保存账户资料失败"
+                "saveError": "保存账户资料失败",
+                "loadError": "账户信息加载失败"
             }
         },
         "help": {
@@ -464,12 +712,14 @@
             "buttons": {
                 "save": "保存更改",
                 "saving": "保存中...",
-                "cancel": "取消"
+                "cancel": "取消",
+                "retry": "重试"
             },
             "messages": {
                 "success": "设置保存成功！",
                 "error": "保存设置失败。请重试。",
-                "noChanges": "没有要保存的更改"
+                "noChanges": "没有要保存的更改",
+                "loadError": "设置加载失败"
             }
         }
     },

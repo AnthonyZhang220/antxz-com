@@ -28,41 +28,226 @@
             "open": "Open user menu",
             "account": "Profile",
             "dashboard": "Dashboard",
-            "notifications":"Notifications",
+            "notifications": "Notifications",
             "logout": "Logout"
         }
     },
     "home": {
         "logo": "AntXZ",
-        "motto": "Code, Create, Connect.",
+        "motto": "Constantly responding, constantly still, always pure and still.",
+        "mottoZh": "常应常静，常清静矣。",
+        "mottoEn": "Constantly responding, constantly still, always pure and still.",
         "heroTitle": "Hi, I'm Anthony",
         "heroSubtitle": "Full-stack developer",
         "aboutMeButton": "Who I am",
+        "blogButton": "Read Blog",
+        "contactLabel": "CONTACT",
+        "contactTitle": "Let's connect",
+        "contactBody": "If you want to discuss collaboration, projects, or just say hi, I'd love to hear from you.",
+        "contactReplyEta": "Typically replies within 24 hours.",
         "introTitle": "About Me",
         "introBody": "I'm a full-stack developer specializing in building web applications with Next.js, TypeScript, and Tailwind CSS. In my spare time, I enjoy photography, blogging, and exploring new technologies."
     },
     "about": {
         "me": {
             "title": "About Me",
-            "subtitle": "Get to know me, in a blink of an eye.",
+            "subtitle": "A full-stack developer who enjoys building thoughtful products, telling stories through code, and turning ideas into reliable user experiences.",
+            "chips": {
+                "role": "Full-stack Developer",
+                "stack": "Next.js / TypeScript / React",
+                "location": "NYC"
+            },
+            "intro": {
+                "title": "How I Work",
+                "paragraph1": "I care about both product quality and implementation details. I enjoy translating real user needs into clear interface flows, maintainable architecture, and measurable outcomes.",
+                "paragraph2": "Outside of coding, I write, take photos, and reflect on what I learn while building. These habits help me keep a practical and long-term view of engineering growth."
+            },
+            "focus": {
+                "frontend": "Building fast, responsive, and intuitive interfaces",
+                "fullstack": "Connecting frontend experience with dependable backend logic",
+                "product": "Balancing engineering quality with product delivery"
+            },
             "sections": {
                 "me": {
                     "title": "Who is Anthony?",
-                    "content": "A Front End Engineer with three years of experience. I have written React, Typescript, C#. I thrive on crafting interactive, responsive, and user-friendly web applications that scale seamlessly. My journey is fueled by a self-driven passion for learning programming languages and staying abreast of modern web technologies."
+                    "content": "I am a frontend-leaning full-stack engineer with around three years of experience. I have built with React, TypeScript, C#, and modern web tooling, and I enjoy creating experiences that feel simple for users and maintainable for teams."
                 },
                 "background": {
                     "title": "About my background",
-                    "content": "Rather than having an education in Computer Science, at 18 years old without knowing where my passion was, I decided to pursue a bachelor's degree in Mathematics from NYU. As a person who built my own pc and always want to customize any configurations related to personsal preferences, I realize that software engineer is exactly the place I want to be because it gives me full control over the things I want to build"
+                    "content": "I did not come from a Computer Science background. I studied Mathematics at NYU, and that training shaped how I think about logic, abstraction, and problem decomposition in software."
                 },
                 "blog": {
                     "title": "About my blog",
-                    "content": "I will post things like blogs, thoughts, and sometimes my life anecdotes here. If you find anything interesting, please do not hestitate to share and comment."
+                    "content": "I use this blog to document technical lessons, project retrospectives, and occasional life notes. If something resonates with you, feel free to share your thoughts."
+                }
+            },
+            "values": {
+                "title": "What I Value",
+                "ownership": "Ownership: if I build it, I maintain and improve it.",
+                "consistency": "Consistency: small engineering decisions compound over time.",
+                "learning": "Learning: staying curious is part of the job."
+            },
+            "next": {
+                "title": "Explore More",
+                "description": "If you want to know how I think and build, the best way is to browse my projects and writing.",
+                "actions": {
+                    "blog": "Read Blog",
+                    "projects": "View Projects"
                 }
             }
         },
         "cv": {
             "title": "My CV",
-            "subtitle": "A brief overview of my professional experience and skills."
+            "subtitle": "A brief overview of my professional experience and skills.",
+            "downloadEN": "Download EN Resume",
+            "downloadZH": "Download ZH Resume",
+            "sections": {
+                "summary": "Summary",
+                "experience": "Experience",
+                "education": "Education",
+                "skills": "Technical Skills",
+                "projects": "Projects"
+            },
+            "summary": "Frontend Engineer (React/Next.js) with 3 years of building web apps and full-stack proficiency. Proven leader in AI-integrated B2B SaaS. Passionate about real-time systems and scalable architecture.",
+            "experience": [
+                {
+                    "company": "Tovvi",
+                    "role": "Frontend Engineer",
+                    "type": "B2B AI E-commerce Platform",
+                    "period": "Jan 2024 – Mar 2025",
+                    "tech": [
+                        "Next.js",
+                        "Redux",
+                        "Auth0",
+                        "FastAPI",
+                        "OpenAI API",
+                        "Azure",
+                        "Figma"
+                    ],
+                    "highlights": [
+                        "Led 2-engineer team in code reviews, reducing production bugs by 30% and accelerating feature delivery.",
+                        "Engineered a real-time AI data pipeline with OpenAI API + FastAPI + SSE, cutting UI latency by 40% and boosting user engagement.",
+                        "Optimized data handling, saving 25% in API costs.",
+                        "Eliminated auth bottlenecks through custom Auth0.js integration supporting SSR/CSR."
+                    ]
+                }
+            ],
+            "education": [
+                {
+                    "school": "New York University",
+                    "degree": "Bachelor of Arts in Mathematics and Economics, Minor in Japanese",
+                    "period": "Sep 2017 – Sep 2021",
+                    "location": "New York, NY"
+                }
+            ],
+            "skills": {
+                "frontend": {
+                    "label": "Frontend",
+                    "items": [
+                        "React",
+                        "Next.js",
+                        "Redux",
+                        "TypeScript",
+                        "JavaScript",
+                        "HTML",
+                        "CSS",
+                        "SASS",
+                        "Material UI"
+                    ]
+                },
+                "backend": {
+                    "label": "Backend",
+                    "items": [
+                        "FastAPI",
+                        "Express",
+                        "GraphQL",
+                        "Apollo"
+                    ]
+                },
+                "cloud": {
+                    "label": "Cloud & Database",
+                    "items": [
+                        "Azure",
+                        "Firebase",
+                        "MongoDB",
+                        "PostgreSQL"
+                    ]
+                },
+                "tools": {
+                    "label": "Tools & Testing",
+                    "items": [
+                        "Git",
+                        "Docker",
+                        "Webpack",
+                        "Postman",
+                        "Linux",
+                        "Figma",
+                        "Jest"
+                    ]
+                }
+            },
+            "projects": [
+                {
+                    "name": "Moments",
+                    "type": "Full Stack Social App",
+                    "period": "Jul 2023 – Nov 2023",
+                    "tech": [
+                        "Next.js",
+                        "Apollo GraphQL",
+                        "PostgreSQL",
+                        "Prisma",
+                        "NextAuth.js"
+                    ],
+                    "highlights": [
+                        "Designed a notification system for friend requests and comments, solved the N+1 problem.",
+                        "Reduced auth setup time by 80% with NextAuth.js (Google/GitHub OAuth)."
+                    ]
+                },
+                {
+                    "name": "Discord Clone",
+                    "type": "Real-Time Voice/Video Chat App",
+                    "period": "Jan 2023 – May 2023",
+                    "tech": [
+                        "React",
+                        "Redux",
+                        "Firebase",
+                        "Agora SDK"
+                    ],
+                    "highlights": [
+                        "Cut state-related bugs by 40% and improved code maintainability after refactoring with Redux.",
+                        "Designed user preference system using local storage, improving session persistence by 90%.",
+                        "Implemented 50ms-latency voice/video using Agora Web SDK."
+                    ]
+                },
+                {
+                    "name": "Tripadvisor Clone",
+                    "type": "Map Search App",
+                    "period": "Mar 2022 – May 2022",
+                    "tech": [
+                        "React",
+                        "Axios",
+                        "Google Maps API"
+                    ],
+                    "highlights": [
+                        "Slashed Google Maps API calls by 90% via debounce + Search This Area optimization.",
+                        "Integrated real-time weather data, boosting user session time by 25%."
+                    ]
+                },
+                {
+                    "name": "LaoMa Spicy",
+                    "type": "Frontend Restaurant Website",
+                    "period": "Sep 2021 – Jan 2022",
+                    "tech": [
+                        "React",
+                        "Redux",
+                        "Canvas"
+                    ],
+                    "highlights": [
+                        "Accelerated landing page load time by 10% (3.2s → 2.9s) using Canvas video rendering.",
+                        "Increased mobile conversions by 15% with gesture-friendly cart design."
+                    ]
+                }
+            ]
         }
     },
     "contact": {
@@ -71,7 +256,26 @@
     },
     "project": {
         "title": "Projects",
-        "subtitle": "Take a look at what I have built, in the past"
+        "subtitle": "Things I've built",
+        "projectCount": "Total {count} projects",
+        "viewDetails": "View details",
+        "overview": "Overview",
+        "keyFeatures": "Key Features",
+        "roles": "Roles",
+        "libraries": "Libraries",
+        "process": "Process",
+        "challenges": "Challenges",
+        "results": "Results",
+        "screenshots": "Screenshots",
+        "details": "Details",
+        "liveSite": "Live Site",
+        "sourceCode": "Source Code",
+        "allProjects": "All Projects",
+        "featured": "Featured",
+        "new": "New",
+        "emptyTitle": "Projects are coming soon",
+        "emptyDescription": "You can start adding projects from the Sanity Studio.",
+        "openStudio": "Open Studio"
     },
     "mbti": {
         "startButton": "Start Test",
@@ -107,6 +311,7 @@
     },
     "blog": {
         "title": "Blog",
+        "subtitle": "Thoughts and Thinkings",
         "writingCount": "Writing · {count} articles",
         "readingTime": "{minutes} min read",
         "readingTimeShort": "{minutes} min",
@@ -128,6 +333,9 @@
         "commentsSubmitError": "Failed to submit comment.",
         "commentsLikeError": "Failed to update comment like.",
         "commentsLoginRequired": "Please log in to post a comment.",
+        "commentsQuarantined": "Your comment was posted, but it is currently only visible to you.",
+        "commentsHiddenBySafety": "Your comment was received but hidden by the safety rules.",
+        "commentsVisibleOnlyToYou": "Visible only to you",
         "commentsLoginCta": "Log in",
         "commentsFormattingHint": "Formatting: Bold / Italic / Inline code",
         "commentsFormatBold": "Bold",
@@ -136,9 +344,25 @@
         "commentsLike": "Like",
         "commentsUnlike": "Liked",
         "commentsLikeCount": "{count} likes",
+        "commentsCountShort": "{count} comments",
+        "articleLike": "Like post",
+        "articleUnlike": "Liked",
+        "articleLikeCount": "{count} likes",
+        "articleLikeError": "Failed to update article like.",
+        "articleLikeLoginRequired": "Please log in to like this post.",
+        "sourceLabel": "Source: {source}",
+        "sourceOpen": "Open original",
+        "sourceOriginal": "Original",
+        "sourceDevto": "Dev.to",
+        "sourceMedium": "Medium",
+        "sourceExternal": "External",
         "clearFilters": "Clear all filters",
+        "filterLabel": "Filters",
         "filterAll": "All",
-        "filterTopic": "Topic",
+        "filterCategory": "Category",
+        "filterTopic": "Tags",
+        "filterShowMoreTags": "Show more (+{count})",
+        "filterShowLessTags": "Show less",
         "filterYear": "Year Range",
         "filterReadingTime": "Reading time",
         "featured": "Featured",
@@ -226,6 +450,8 @@
         "description": "Select the best option that describes how you found out about me.",
         "options": {
             "linkedin": "LinkedIn",
+            "weixin": "WeChat",
+            "qq": "QQ",
             "github": "GitHub",
             "devTo": "Dev.to",
             "medium": "Medium",
@@ -258,7 +484,12 @@
         "languageLabel": "Language",
         "regionLabel": "Region",
         "saveButton": "Save",
-        "cancelButton": "Cancel"
+        "cancelButton": "Cancel",
+        "messages": {
+            "saving": "Saving...",
+            "success": "Preferences saved!",
+            "error": "Failed to save preferences. Please try again."
+        }
     },
     "dashboard": {
         "navigation": {
@@ -306,7 +537,17 @@
         },
         "comments": {
             "title": "Comments",
-            "description": "Manage and review your latest blog comments here."
+            "description": "Manage and review your latest blog comments here.",
+            "safeguardsTitle": "Comment Safeguards",
+            "safeguardsDescription": "Handle quarantined, spam, or blocked comments.",
+            "actions": {
+                "retry": "Try again"
+            },
+            "messages": {
+                "loadError": "Failed to load comment moderation queue",
+                "updateError": "Failed to update comment moderation state",
+                "updateSuccess": "Comment moderation updated"
+            }
         },
         "notifications": {
             "title": "Notifications",
@@ -377,11 +618,13 @@
             },
             "actions": {
                 "save": "Save changes",
-                "saving": "Saving..."
+                "saving": "Saving...",
+                "retry": "Try again"
             },
             "messages": {
                 "saved": "Account profile updated",
-                "saveError": "Failed to save account profile"
+                "saveError": "Failed to save account profile",
+                "loadError": "Failed to load account information"
             }
         },
         "help": {
@@ -469,12 +712,14 @@
             "buttons": {
                 "save": "Save Changes",
                 "saving": "Saving...",
-                "cancel": "Cancel"
+                "cancel": "Cancel",
+                "retry": "Try again"
             },
             "messages": {
                 "success": "Settings saved successfully!",
                 "error": "Failed to save settings. Please try again.",
-                "noChanges": "No changes to save"
+                "noChanges": "No changes to save",
+                "loadError": "Failed to load settings"
             }
         }
     },
