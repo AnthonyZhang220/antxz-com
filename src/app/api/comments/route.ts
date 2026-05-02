@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { moderateComment } from "@/lib/comment-moderation";
 import {
 	createNotification,
 	getActorProfile,
@@ -21,13 +22,20 @@ export async function GET(req: NextRequest) {
 	const {
 		data: { user },
 	} = await supabase.auth.getUser();
-	const { data, error } = await supabase
+	let query = supabase
 		.from("comments")
-		.select("id, article_key, author_name, avatar_url, content, created_at")
+		.select("id, article_key, author_name, avatar_url, content, created_at, status, user_id")
 		.eq("article_key", articleKey)
-		.eq("status", "published")
 		.order("created_at", { ascending: false })
 		.limit(100);
+
+	if (user?.id) {
+		query = query.or(`status.eq.published,and(status.eq.quarantine,user_id.eq.${user.id})`);
+	} else {
+		query = query.eq("status", "published");
+	}
+
+	const { data, error } = await query;
 
 	if (error) {
 		return NextResponse.json(
@@ -57,7 +65,13 @@ export async function GET(req: NextRequest) {
 
 	return NextResponse.json({
 		comments: (data ?? []).map((comment) => ({
-			...comment,
+			id: comment.id,
+			article_key: comment.article_key,
+			author_name: comment.author_name,
+			avatar_url: comment.avatar_url,
+			content: comment.content,
+			created_at: comment.created_at,
+			status: comment.status,
 			like_count: likesByCommentId.get(String(comment.id)) ?? 0,
 			user_liked: userLikedCommentIds.has(String(comment.id)),
 		})),
@@ -100,6 +114,25 @@ export async function POST(req: NextRequest) {
 		"User";
 	const defaultAvatarUrl =
 		String(user.user_metadata?.avatar_url || user.user_metadata?.picture || "");
+	const { data: blockedUser } = await supabase
+		.from("comment_blocked_users")
+		.select("user_id")
+		.eq("user_id", user.id)
+		.maybeSingle();
+	const { data: recentComments } = await supabase
+		.from("comments")
+		.select("content, created_at")
+		.eq("user_id", user.id)
+		.order("created_at", { ascending: false })
+		.limit(5);
+	const moderation = blockedUser
+		? { status: "blocked" as const, reasons: ["blocked_user"] }
+		: moderateComment({
+			content,
+			articleKey,
+			userId: user.id,
+			recentComments: recentComments ?? [],
+		});
 
 	const { data, error } = await supabase
 		.from("comments")
@@ -109,9 +142,9 @@ export async function POST(req: NextRequest) {
 			author_name: defaultName,
 			avatar_url: defaultAvatarUrl,
 			content,
-			status: "published",
+			status: moderation.status,
 		})
-		.select("id, article_key, author_name, avatar_url, content, created_at")
+		.select("id, article_key, author_name, avatar_url, content, created_at, status")
 		.single();
 
 	if (error) {
@@ -122,7 +155,7 @@ export async function POST(req: NextRequest) {
 	}
 
 	const articleTargetUserId = await getArticleNotificationTarget(articleKey);
-	if (articleTargetUserId && articleTargetUserId !== user.id) {
+	if (data.status === "published" && articleTargetUserId && articleTargetUserId !== user.id) {
 		const actor = getActorProfile(user);
 		await createNotification({
 			userId: articleTargetUserId,
@@ -141,5 +174,5 @@ export async function POST(req: NextRequest) {
 		});
 	}
 
-	return NextResponse.json({ comment: data }, { status: 201 });
+	return NextResponse.json({ comment: data, moderation }, { status: 201 });
 }
