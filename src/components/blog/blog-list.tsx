@@ -16,6 +16,9 @@ import {
 import {
 	Clock,
 	Calendar,
+	Heart,
+	MessageCircle,
+	Link2,
 	ChevronLeft,
 	ChevronRight,
 	SlidersHorizontal,
@@ -28,36 +31,62 @@ import { Separator } from "@/components/ui/separator";
 // ─── Constants ────────────────────────────────────────────────────────────────
 const PAGE_SIZE = 5;
 
+function getCoverSrc(post: BlogPost) {
+	if (post.coverImage?.url) return post.coverImage.url;
+	if (post.coverImage?.asset?._ref) return urlFor(post.coverImage).url();
+	return null;
+}
+
+function getSourceLabel(post: BlogPost, t: ReturnType<typeof useTranslations<"blog">>) {
+	const platform = String(post.source?.platform ?? "original").toLowerCase();
+	if (platform === "devto") return t("sourceDevto");
+	if (platform === "medium") return t("sourceMedium");
+	if (platform === "original") return t("sourceOriginal");
+	return t("sourceExternal");
+}
+
 // ─── Section Label ────────────────────────────────────────────────────────────
 
 // ─── Featured Card ────────────────────────────────────────────────────────────
 function FeaturedCard({ post }: { post: BlogPost }) {
 	const fmt = useFormatter();
 	const t = useTranslations("blog");
+	const coverSrc = getCoverSrc(post);
+	const sourceLabel = getSourceLabel(post, t);
+	const likeCount = post.likeCount ?? 0;
+	const userLiked = Boolean(post.userLiked);
 	return (
 		<Link href={`/blog/${post.slug}`} className="group block rounded-xl overflow-hidden border border-border shadow-sm hover:shadow-md transition-shadow duration-300 mb-2">
 			<div className="relative aspect-21/9 overflow-hidden">
-				<Image
-					src={
-						post.coverImage.url ||
-						(post.coverImage.asset?._ref ? urlFor(post.coverImage).url() : "")
-					}
-					alt={post.title}
-					fill
-					className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
-				/>
+				{coverSrc ? (
+					<Image
+						src={coverSrc}
+						alt={post.title}
+						fill
+						className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+					/>
+				) : (
+					<div className="flex h-full w-full items-center justify-center bg-zinc-200 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
+						<span className="text-sm">No cover image</span>
+					</div>
+				)}
 				<div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
 				<span className="absolute top-3.5 left-3.5 font-mono text-xs uppercase tracking-[0.14em] bg-card/90 text-foreground px-2.5 py-1 rounded-md">
 					{t("featured")}
 				</span>
 				<div className="absolute bottom-0 left-0 right-0 p-5">
-					<div className="flex gap-2 mb-2">
-						{post.tags.map((t) => (
+					<div className="flex flex-wrap gap-2 mb-2">
+						{post.category?.title ? (
+							<span className="rounded-md border border-white/45 bg-white/30 px-2.5 py-1 font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-white shadow-sm backdrop-blur-sm">
+								{post.category.title}
+							</span>
+						) : null}
+						{(post.tags ?? []).map((t) => (
 							<span
 								key={t}
-								className="font-mono text-xs uppercase tracking-widest text-white/65"
+								className="rounded-md border border-white/20 bg-black/40 px-2 py-0.5 font-mono text-[11px] tracking-wide text-white"
 							>
-								{t}
+								#{t}
 							</span>
 						))}
 					</div>
@@ -70,7 +99,7 @@ function FeaturedCard({ post }: { post: BlogPost }) {
 				<p className="text-sm md:text-base text-muted-foreground leading-relaxed mb-3">
 					{post.excerpt}
 				</p>
-				<div className="flex items-center gap-4">
+				<div className="flex flex-wrap items-center gap-4">
 					<span className="flex items-center gap-1.5 font-mono text-xs md:text-sm text-muted-foreground/70">
 						<Calendar className="h-3 w-3" />
 						{fmt.dateTime(new Date(post.publishedAt), "short")}
@@ -78,6 +107,24 @@ function FeaturedCard({ post }: { post: BlogPost }) {
 					<span className="flex items-center gap-1.5 font-mono text-xs md:text-sm text-muted-foreground/70">
 						<Clock className="h-3 w-3" />
 						{t("readingTime", { minutes: post.readingTime })}
+					</span>
+					<span className="flex items-center gap-1.5 font-mono text-xs md:text-sm text-muted-foreground/70">
+						<Heart
+							className={
+								userLiked
+									? "h-3 w-3 fill-current text-rose-500"
+									: "h-3 w-3"
+							}
+						/>
+						{t("articleLikeCount", { count: likeCount })}
+					</span>
+					<span className="flex items-center gap-1.5 font-mono text-xs md:text-sm text-muted-foreground/70">
+						<MessageCircle className="h-3 w-3" />
+						{t("commentsCountShort", { count: post.commentCount ?? 0 })}
+					</span>
+					<span className="flex items-center gap-1.5 font-mono text-xs md:text-sm text-muted-foreground/70">
+						<Link2 className="h-3 w-3" />
+						{t("sourceLabel", { source: sourceLabel })}
 					</span>
 				</div>
 			</div>
@@ -89,30 +136,44 @@ function FeaturedCard({ post }: { post: BlogPost }) {
 function SmallCard({ post }: { post: BlogPost }) {
 	const fmt = useFormatter();
 	const t = useTranslations("blog");
+	const coverSrc = getCoverSrc(post);
+	const sourceLabel = getSourceLabel(post, t);
+	const likeCount = post.likeCount ?? 0;
+	const userLiked = Boolean(post.userLiked);
 	return (
 		<Link href={`/blog/${post.slug}`} className="group flex gap-4 py-4.5 border-b border-border/50 last:border-0">
 			<div className="w-36 shrink-0 aspect-3/2 rounded-lg overflow-hidden bg-muted relative">
-				<Image
-					src={
-						post.coverImage.url ||
-						(post.coverImage.asset?._ref ? urlFor(post.coverImage).url() : "")
-					}
-					alt={post.title}
-					fill
-					sizes="(max-width: 768px)"
-					className="object-cover transition-transform duration-300 group-hover:scale-[1.06]"
-				/>
+				{coverSrc ? (
+					<Image
+						src={coverSrc}
+						alt={post.title}
+						fill
+						sizes="(max-width: 768px)"
+						className="object-cover transition-transform duration-300 group-hover:scale-[1.06]"
+					/>
+				) : (
+					<div className="flex h-full w-full items-center justify-center bg-zinc-200 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
+						<span className="text-xs">No image</span>
+					</div>
+				)}
 			</div>
 			<div className="flex-1 flex flex-col justify-center gap-1.5">
-				<div className="flex gap-1.5">
-					{post.tags.slice(0, 2).map((t) => (
+				<div className="flex flex-wrap items-center gap-1.5">
+					{post.category?.title ? (
 						<Badge
-							key={t}
 							variant="default"
-							className="font-mono text-xs uppercase tracking-wider px-1.5 py-0 h-4"
+							className="font-mono text-[11px] uppercase tracking-[0.14em] px-2 py-0 h-5 rounded-md"
 						>
-							{t}
+							{post.category.title}
 						</Badge>
+					) : null}
+					{(post.tags ?? []).slice(0, 2).map((t) => (
+						<span
+							key={t}
+							className="rounded-md border border-border/70 bg-muted/55 px-1.5 py-0.5 font-mono text-[11px] tracking-wide text-muted-foreground"
+						>
+							#{t}
+						</span>
 					))}
 				</div>
 				<h3 className="font-serif text-base md:text-lg font-semibold leading-snug text-foreground group-hover:text-muted-foreground transition-colors duration-150 line-clamp-2">
@@ -125,7 +186,7 @@ function SmallCard({ post }: { post: BlogPost }) {
 						</p>
 					)}
 				</span>
-				<div className="flex items-center gap-3">
+				<div className="flex flex-wrap items-center gap-3">
 					<span className="flex items-center gap-1 font-mono text-xs text-muted-foreground/70">
 						<Calendar className="h-2.5 w-2.5" />
 						{fmt.dateTime(new Date(post.publishedAt), "short")}
@@ -133,6 +194,24 @@ function SmallCard({ post }: { post: BlogPost }) {
 					<span className="flex items-center gap-1 font-mono text-xs text-muted-foreground/70">
 						<Clock className="h-2.5 w-2.5" />
 						{t("readingTimeShort", { minutes: post.readingTime })}
+					</span>
+					<span className="flex items-center gap-1 font-mono text-xs text-muted-foreground/70">
+						<Heart
+							className={
+								userLiked
+									? "h-2.5 w-2.5 fill-current text-rose-500"
+									: "h-2.5 w-2.5"
+							}
+						/>
+						{likeCount}
+					</span>
+					<span className="flex items-center gap-1 font-mono text-xs text-muted-foreground/70">
+						<MessageCircle className="h-2.5 w-2.5" />
+						{post.commentCount ?? 0}
+					</span>
+					<span className="flex items-center gap-1 font-mono text-xs text-muted-foreground/70">
+						<Link2 className="h-2.5 w-2.5" />
+						{sourceLabel}
 					</span>
 				</div>
 			</div>
@@ -223,6 +302,8 @@ export default function BlogListPage({
 	// delegate filter state/logic to custom hook
 	const {
 		filtered,
+		category,
+		setCategory,
 		tag,
 		setTag,
 		yearRange,
@@ -234,6 +315,8 @@ export default function BlogListPage({
 		go,
 		isDefault,
 		clearAll,
+		allCategories,
+		categoryCounts,
 		tagCounts,
 		allYears,
 	} = useBlogFilter(posts, minYear, maxYear);
@@ -273,13 +356,13 @@ export default function BlogListPage({
 									className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.14em]"
 								>
 									<SlidersHorizontal className="h-3.5 w-3.5" />
-									Filters
+									{t("filterLabel")}
 								</Button>
 							</SheetTrigger>
 							<SheetContent side="top" className="h-screen w-screen max-w-none p-0 overflow-y-auto">
 								<div className="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-background/95 px-4 py-4 backdrop-blur supports-backdrop-filter:bg-background/75">
 									<p className="font-mono text-xs uppercase tracking-[0.14em] text-foreground/90">
-										Filters
+										{t("filterLabel")}
 									</p>
 									<SheetClose asChild>
 										<Button variant="ghost" size="icon" aria-label="Close filters">
@@ -290,6 +373,10 @@ export default function BlogListPage({
 								<div className="p-4 sm:p-6">
 									<BlogFilter
 										posts={posts}
+										category={category}
+										setCategory={setCategory}
+										allCategories={allCategories}
+										categoryCounts={categoryCounts}
 										tag={tag}
 										setTag={setTag}
 										allTags={allTags}
@@ -342,9 +429,13 @@ export default function BlogListPage({
 					</div>
 					<Separator orientation="vertical" className="hidden self-stretch h-auto lg:block" />
 					{/* Filters sidebar (desktop) */}
-					<div className="hidden lg:block">
+					<div className="hidden lg:block lg:sticky lg:top-24 lg:self-start">
 						<BlogFilter
 							posts={posts}
+							category={category}
+							setCategory={setCategory}
+							allCategories={allCategories}
+							categoryCounts={categoryCounts}
 							tag={tag}
 							setTag={setTag}
 							allTags={allTags}

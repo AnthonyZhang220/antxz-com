@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { PortableText, PortableTextComponents } from "next-sanity";
@@ -8,7 +9,7 @@ import { urlFor } from "@/sanity/lib/image";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Calendar, Clock, User } from "lucide-react";
+import { ArrowLeft, Calendar, Clock, ExternalLink, Heart, MessageCircle, User } from "lucide-react";
 
 // ─── Portable Text Components ─────────────────────────────────────────────────
 const ptComponents: PortableTextComponents = {
@@ -129,6 +130,12 @@ interface BlogPostPageProps {
 		publishedAt: string;
 		_updatedAt?: string;
 		readingTime?: number;
+		commentCount?: number;
+		likeCount?: number;
+		source?: {
+			platform?: string;
+			originalUrl?: string;
+		};
 		tags?: string[];
 		category?: { _id: string; title: string; slug: string };
 		author?: {
@@ -140,28 +147,97 @@ interface BlogPostPageProps {
 	};
 }
 
-function estimateReadingTime(body: unknown[]): number {
-	const text = body
-		.filter((b: unknown) => (b as { _type: string })._type === "block")
-		.flatMap(
-			(b: unknown) =>
-				(b as { children: { text: string }[] }).children?.map((c) => c.text) ??
-				[],
-		)
-		.join(" ");
-	return Math.max(1, Math.ceil(text.split(/\s+/).length / 200));
-}
-
 export default function BlogPostPage({ post }: BlogPostPageProps) {
 	const t = useTranslations("blog");
 	const fmt = useFormatter();
-	const readingTime =
-		post.readingTime ?? (post.body ? estimateReadingTime(post.body) : 1);
+	const articleKey = useMemo(() => `blog:${post.slug}`, [post.slug]);
+	const readingTime = post.readingTime ?? 1;
+	const [likeCount, setLikeCount] = useState(post.likeCount ?? 0);
+	const [userLiked, setUserLiked] = useState(false);
+	const [isLiking, setIsLiking] = useState(false);
+	const [likeError, setLikeError] = useState<string | null>(null);
+
+	const sourcePlatform = String(post.source?.platform ?? "original").toLowerCase();
+	const sourceLabel =
+		sourcePlatform === "devto"
+			? t("sourceDevto")
+			: sourcePlatform === "medium"
+				? t("sourceMedium")
+				: sourcePlatform === "original"
+					? t("sourceOriginal")
+					: t("sourceExternal");
 	const coverSrc =
 		post.coverImage?.url ||
 		(post.coverImage?.asset?._ref
 			? urlFor(post.coverImage).width(1600).url()
 			: null);
+
+	useEffect(() => {
+		let mounted = true;
+
+		const loadArticleLikes = async () => {
+			try {
+				const response = await fetch(
+					`/api/blog/likes?articleKey=${encodeURIComponent(articleKey)}`,
+					{ cache: "no-store" },
+				);
+				if (!response.ok) return;
+				const payload = await response.json();
+				if (!mounted) return;
+				setLikeCount(Number(payload.likeCount ?? 0));
+				setUserLiked(Boolean(payload.userLiked));
+			} catch {
+				// Keep initial server values on request failure.
+			}
+		};
+
+		loadArticleLikes();
+
+		return () => {
+			mounted = false;
+		};
+	}, [articleKey]);
+
+	const onToggleArticleLike = async () => {
+		if (isLiking) return;
+		setIsLiking(true);
+		setLikeError(null);
+
+		try {
+			const response = await fetch("/api/blog/likes", {
+				method: userLiked ? "DELETE" : "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ articleKey }),
+			});
+
+			if (response.status === 401) {
+				setLikeError(t("articleLikeLoginRequired"));
+				return;
+			}
+
+			if (!response.ok) {
+				const payload = await response.json().catch(() => null);
+				const message =
+					typeof payload?.details === "string"
+						? payload.details
+						: typeof payload?.error === "string"
+							? payload.error
+							: "Failed to toggle article like";
+				throw new Error(message);
+			}
+
+			setUserLiked((prev) => !prev);
+			setLikeCount((prev) => Math.max(0, prev + (userLiked ? -1 : 1)));
+		} catch (error) {
+			const message =
+				error instanceof Error && error.message
+					? error.message
+					: t("articleLikeError");
+			setLikeError(message);
+		} finally {
+			setIsLiking(false);
+		}
+	};
 
 	return (
 		<div className="min-h-screen bg-background">
@@ -196,16 +272,24 @@ export default function BlogPostPage({ post }: BlogPostPageProps) {
 					</Button>
 				</div>
 
-				{/* Tags */}
-				{post.tags && post.tags.length > 0 && (
-					<div className="mb-4 flex flex-wrap gap-2">
-						{post.tags.map((tag) => (
+				{/* Category + Tags */}
+				{(post.category || (post.tags && post.tags.length > 0)) && (
+					<div className="mb-4 flex flex-wrap items-center gap-2">
+						{post.category ? (
+							<Badge
+								variant="default"
+								className="font-mono text-xs uppercase tracking-[0.14em]"
+							>
+								{post.category.title}
+							</Badge>
+						) : null}
+						{(post.tags ?? []).map((tag) => (
 							<Badge
 								key={tag}
 								variant="secondary"
-								className="font-mono text-xs uppercase tracking-wider"
+								className="font-mono text-xs tracking-wide"
 							>
-								{tag}
+								#{tag}
 							</Badge>
 						))}
 					</div>
@@ -243,12 +327,39 @@ export default function BlogPostPage({ post }: BlogPostPageProps) {
 						<Clock className="h-3.5 w-3.5" />
 						{t("readingTime", { minutes: readingTime })}
 					</span>
-					{post.category && (
-						<Badge variant="outline" className="font-mono text-xs">
-							{post.category.title}
-						</Badge>
-					)}
+					<Button
+						type="button"
+						variant={userLiked ? "default" : "outline"}
+						size="sm"
+						disabled={isLiking}
+						onClick={() => void onToggleArticleLike()}
+						className="h-7 px-2.5 text-xs"
+					>
+						<Heart className={userLiked ? "mr-1.5 h-3.5 w-3.5 fill-current" : "mr-1.5 h-3.5 w-3.5"} />
+						{t("articleLikeCount", { count: likeCount })}
+					</Button>
+					<span className="flex items-center gap-1.5">
+						<MessageCircle className="h-3.5 w-3.5" />
+						{t("commentsCountShort", { count: post.commentCount ?? 0 })}
+					</span>
+					<span className="flex items-center gap-1.5">
+						{t("sourceLabel", { source: sourceLabel })}
+					</span>
+					{post.source?.originalUrl ? (
+						<a
+							href={post.source.originalUrl}
+							target="_blank"
+							rel="noopener noreferrer"
+							className="inline-flex items-center gap-1.5 text-xs underline underline-offset-2 hover:text-foreground"
+						>
+							<ExternalLink className="h-3.5 w-3.5" />
+							{t("sourceOpen")}
+						</a>
+					) : null}
 				</div>
+				{likeError ? (
+					<p className="mt-2 text-xs text-red-500">{likeError}</p>
+				) : null}
 
 				<Separator className="my-8" />
 

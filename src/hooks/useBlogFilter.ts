@@ -15,6 +15,7 @@ export function useBlogFilter(
 	maxYear: number,
 ) {
 	// filter state
+	const [category, setCategory] = useState<string | null>(null);
 	const [tag, setTag] = useState<string | null>(null);
 	const [yearRange, setYearRange] = useState<[number, number]>([minYear, maxYear]);
 	const [readTime, setReadTime] = useState<string | null>(null);
@@ -29,6 +30,7 @@ export function useBlogFilter(
 		() =>
 			posts.filter((p: BlogPost) => {
 				const y = getYear(p.publishedAt);
+				if (category && p.category?.title !== category) return false;
 				if (tag && !p.tags.includes(tag)) return false;
 				if (y < yearRange[0] || y > yearRange[1]) return false;
 				if (readTime) {
@@ -37,14 +39,29 @@ export function useBlogFilter(
 				}
 				return true;
 			}),
-		[posts, tag, yearRange, readTime],
+		[posts, category, tag, yearRange, readTime],
 	);
 
 	const isDefault =
+		!category &&
 		!tag &&
 		yearRange[0] === minYear &&
 		yearRange[1] === maxYear &&
 		!readTime;
+
+	const categoryCounts = Object.fromEntries(
+		posts
+			.map((p) => p.category?.title)
+			.filter((value): value is string => Boolean(value))
+			.reduce(
+				(map, value) => map.set(value, (map.get(value) || 0) + 1),
+				new Map<string, number>(),
+			),
+	);
+
+	const allCategories = Object.keys(categoryCounts).sort((a, b) =>
+		a.localeCompare(b),
+	);
 
 	const tagCounts = Object.fromEntries(
 		posts.map((p) => p.tags).flat().reduce((map, t) => map.set(t, (map.get(t) || 0) + 1), new Map<string, number>()),
@@ -54,6 +71,8 @@ export function useBlogFilter(
 
 	return {
 		filtered,
+		category,
+		setCategory,
 		tag,
 		setTag,
 		yearRange,
@@ -65,11 +84,14 @@ export function useBlogFilter(
 		go,
 		isDefault,
 		clearAll: () => {
+			setCategory(null);
 			setTag(null);
 			setYearRange([minYear, maxYear]);
 			setReadTime(null);
 			setPage(1);
 		},
+		allCategories,
+		categoryCounts,
 		tagCounts,
 		allYears,
 	};

@@ -18,6 +18,7 @@ interface CommentItem {
 	avatar_url: string;
 	content: string;
 	created_at: string;
+	status?: "published" | "quarantine" | "spam" | "blocked";
 	like_count: number;
 	user_liked: boolean;
 }
@@ -37,7 +38,10 @@ export default function BlogComments({ articleKey }: BlogCommentsProps) {
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
 	const [message, setMessage] = useState("");
 	const [error, setError] = useState<string | null>(null);
+	const [notice, setNotice] = useState<string | null>(null);
 	const [likingId, setLikingId] = useState<string | null>(null);
+
+	const commentsLoadErrorMessage = t("commentsLoadError");
 
 	const applyWrap = (prefix: string, suffix = prefix) => {
 		const textarea = textareaRef.current;
@@ -96,6 +100,7 @@ export default function BlogComments({ articleKey }: BlogCommentsProps) {
 	const loadComments = useCallback(async () => {
 		setIsLoading(true);
 		setError(null);
+		setNotice(null);
 		try {
 			const response = await fetch(
 				`/api/comments?articleKey=${encodeURIComponent(articleKey)}`,
@@ -107,11 +112,11 @@ export default function BlogComments({ articleKey }: BlogCommentsProps) {
 			const payload = await response.json();
 			setComments(payload.comments ?? []);
 		} catch {
-			setError(t("commentsLoadError"));
+			setError(commentsLoadErrorMessage);
 		} finally {
 			setIsLoading(false);
 		}
-	}, [articleKey, t]);
+	}, [articleKey, commentsLoadErrorMessage]);
 
 	useEffect(() => {
 		let mounted = true;
@@ -139,6 +144,7 @@ export default function BlogComments({ articleKey }: BlogCommentsProps) {
 
 		setIsSubmitting(true);
 		setError(null);
+		setNotice(null);
 		try {
 			const response = await fetch("/api/comments", {
 				method: "POST",
@@ -153,6 +159,14 @@ export default function BlogComments({ articleKey }: BlogCommentsProps) {
 
 			if (!response.ok) {
 				throw new Error("Failed to post comment");
+			}
+
+			const payload = await response.json();
+			const status = payload?.moderation?.status as CommentItem["status"] | undefined;
+			if (status === "quarantine") {
+				setNotice(t("commentsQuarantined"));
+			} else if (status === "spam" || status === "blocked") {
+				setNotice(t("commentsHiddenBySafety"));
 			}
 
 			setMessage("");
@@ -172,6 +186,7 @@ export default function BlogComments({ articleKey }: BlogCommentsProps) {
 
 		setLikingId(commentId);
 		setError(null);
+		setNotice(null);
 
 		try {
 			const response = await fetch("/api/comments/likes", {
@@ -266,6 +281,7 @@ export default function BlogComments({ articleKey }: BlogCommentsProps) {
 						</div>
 					)}
 					{error && <p className="text-sm text-red-500">{error}</p>}
+					{notice && <p className="text-sm text-amber-600 dark:text-amber-400">{notice}</p>}
 
 					<div className="flex justify-end">
 						<Button
@@ -313,6 +329,11 @@ export default function BlogComments({ articleKey }: BlogCommentsProps) {
 											</span>
 										</div>
 										<div className="space-y-1">
+											{comment.status === "quarantine" ? (
+												<p className="text-xs text-amber-600 dark:text-amber-400">
+													{t("commentsVisibleOnlyToYou")}
+												</p>
+											) : null}
 											{renderCommentContent(comment.content)}
 											<div className="pt-2">
 												<Button
@@ -321,13 +342,12 @@ export default function BlogComments({ articleKey }: BlogCommentsProps) {
 													size="sm"
 													onClick={() => void onToggleLike(comment.id, comment.user_liked)}
 													disabled={likingId === comment.id}
-													className="-ml-2 h-8 px-2 text-muted-foreground hover:text-foreground"
+													className={comment.user_liked
+														? "-ml-2 h-8 px-2 text-foreground hover:text-foreground"
+														: "-ml-2 h-8 px-2 text-muted-foreground hover:text-foreground"}
 												>
 													<Heart className={comment.user_liked ? "mr-1.5 h-4 w-4 fill-current text-red-500" : "mr-1.5 h-4 w-4"} />
-													{comment.user_liked ? t("commentsUnlike") : t("commentsLike")}
-													<span className="ml-1 text-xs text-muted-foreground">
-														{t("commentsLikeCount", { count: comment.like_count })}
-													</span>
+													{t("commentsLikeCount", { count: comment.like_count })}
 												</Button>
 											</div>
 										</div>

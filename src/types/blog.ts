@@ -38,6 +38,11 @@ export interface BlogAuthor {
 	bio?: string;
 }
 
+export interface BlogSource {
+	platform?: "medium" | "devto" | "original" | string;
+	originalUrl?: string;
+}
+
 // ─── Blog Post ────────────────────────────────────────────────────────────────
 // 完整的文章对象，从 Sanity 查询后返回的结构
 
@@ -52,6 +57,10 @@ export interface BlogPost {
 	updatedAt?: string;
 	readingTime: number; // 分钟数，可在 Sanity 计算或前端估算
 	tags: string[];
+	source?: BlogSource;
+	commentCount?: number;
+	likeCount?: number;
+	userLiked?: boolean;
 	category?: BlogCategory;
 	author?: BlogAuthor;
 	locale: BlogLocale;
@@ -75,6 +84,9 @@ export type BlogPostCard = Pick<
 	| "publishedAt"
 	| "readingTime"
 	| "tags"
+	| "source"
+	| "commentCount"
+	| "likeCount"
 	| "category"
 >;
 

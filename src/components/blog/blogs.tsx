@@ -23,25 +23,31 @@ export default function Blogs({
 	useEffect(() => {
 		const el = containerRef.current;
 		if (!el || posts.length === 0) return;
+		if (el.scrollWidth <= el.clientWidth) return;
 
 		let running = true;
-		let reachedEnd = false;
+		let direction = 1;
 		let pendingScroll = 0;
 
 		const step = () => {
 			if (!running) return;
-			if (!isHover && !reachedEnd) {
+			if (!isHover) {
 				// Accumulate sub-pixel speed so very slow motion still progresses.
 				pendingScroll += speed;
 				const delta = Math.floor(pendingScroll);
 				if (delta > 0) {
-					el.scrollLeft += delta;
+					el.scrollLeft += delta * direction;
 					pendingScroll -= delta;
 				}
 				const maxScrollLeft = el.scrollWidth - el.clientWidth;
 				if (el.scrollLeft >= maxScrollLeft) {
 					el.scrollLeft = maxScrollLeft;
-					reachedEnd = true;
+					direction = -1;
+					pendingScroll = 0;
+				} else if (el.scrollLeft <= 0) {
+					el.scrollLeft = 0;
+					direction = 1;
+					pendingScroll = 0;
 				}
 			}
 			rafRef.current = requestAnimationFrame(step);
@@ -60,79 +66,83 @@ export default function Blogs({
 			new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
 	);
 
+	const getCoverSrc = (post: BlogPost) => {
+		if (post.coverImage?.url) return post.coverImage.url;
+		if (post.coverImage?.asset?._ref) return urlFor(post.coverImage).url();
+		return null;
+	};
+
 	return (
-		<section className="relative w-full overflow-hidden">
-			<div className="absolute inset-0 bg-linear-to-b from-zinc-50 to-zinc-100 dark:from-slate-950 dark:to-slate-900" />
-			<div
-				className="pointer-events-none absolute inset-0 opacity-40 dark:opacity-20"
-				style={{
-					backgroundImage: "radial-gradient(circle at 1px 1px, rgba(0,0,0,0.05) 1px, transparent 1px)",
-					backgroundSize: "40px 40px",
-				}}
-			/>
-			<div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(251,191,36,0.08),transparent_50%),radial-gradient(ellipse_at_bottom_right,rgba(168,85,247,0.08),transparent_50%)] dark:bg-[radial-gradient(ellipse_at_top_left,rgba(253,224,71,0.1),transparent_50%),radial-gradient(ellipse_at_bottom_right,rgba(196,181,253,0.1),transparent_50%)]" />
+		<section className="relative w-full overflow-hidden pt-12 pb-20 md:pt-14 md:pb-24">
 			<div className="relative z-10 w-full px-4 sm:px-6 lg:px-8">
 				<div
 					ref={containerRef}
 					onMouseEnter={() => setIsHover(true)}
 					onMouseLeave={() => setIsHover(false)}
-					className="overflow-x-auto scrollbar-hide"
+					className="overflow-x-auto pb-2 scrollbar-hide"
 				>
 					<div className="flex gap-4 sm:gap-5 lg:gap-6">
-						{sorted.map((post) => (
-							<article
-								key={post._id}
-								className="h-[68vh] min-w-[16rem] w-[78vw] shrink-0 overflow-hidden sm:w-[52vw] md:w-[40vw] lg:w-[31vw] xl:w-[24vw]"
-							>
-								<Link
-									href={post.slug ? `/blog/${post.slug}` : "/blog"}
-									className="flex flex-col h-full"
-								>
-									<div className="p-4 flex flex-col justify-start shrink-0">
-										<h4 className="text-[clamp(1.5rem,4vw,2.5rem)] leading-tight font-bold text-black dark:text-white">
-											{post.title}
-										</h4>
-										{post.excerpt && (
-											<p className="mt-2 text-lg text-zinc-600 dark:text-zinc-400">
-												{post.excerpt}
-											</p>
-										)}
-									</div>
-									<Separator className="my-2" />
-									<div className="flex-1  overflow-hidden bg-zinc-200 aspect-video relative">
-										<Image
-											src={
-												post.coverImage.url ||
-												(post.coverImage.asset?._ref
-													? urlFor(post.coverImage).url()
-													: "")
-											}
-											alt={post.title}
-											fill
-											sizes="(max-width: 639px) 78vw, (max-width: 767px) 52vw, (max-width: 1023px) 40vw, (max-width: 1279px) 31vw, 24vw"
-											className="object-cover transition-transform duration-300 hover:scale-105"
-										/>
-									</div>
+						{sorted.map((post) => {
+							const coverSrc = getCoverSrc(post);
 
-									<div className="p-4 shrink-0 flex flex-col items-center gap-2">
-										<div className="flex flex-wrap justify-center items-center gap-2">
-											{post.tags?.map((tag) => (
-												<Badge
-													key={tag}
-													variant="secondary"
-													className="text-md"
-												>
-													{tag}
-												</Badge>
-											))}
+							return (
+								<article
+									key={post._id}
+									className="h-[68vh] min-w-[16rem] w-[78vw] shrink-0 overflow-hidden rounded-sm transition-transform duration-300 hover:-translate-y-0.5 sm:w-[52vw] md:w-[40vw] lg:w-[31vw] xl:w-[24vw]"
+								>
+									<Link
+										href={post.slug ? `/blog/${post.slug}` : "/blog"}
+										className="flex h-full flex-col"
+									>
+										<div className="p-4 flex flex-col justify-start shrink-0">
+											<h4 className="text-[clamp(1.35rem,3.6vw,2.2rem)] leading-tight font-bold text-black dark:text-white">
+												{post.title}
+											</h4>
+											{post.excerpt && (
+												<p className="mt-2 text-lg text-zinc-600 dark:text-zinc-400">
+													{post.excerpt}
+												</p>
+											)}
 										</div>
-										<span className="text-xs text-zinc-400">
-											{new Date(post.publishedAt).toLocaleDateString()}
-										</span>
-									</div>
-								</Link>
-							</article>
-						))}
+
+										<Separator className="my-3 bg-zinc-300/55 dark:bg-zinc-700/55" />
+
+										<div className="flex-1 overflow-hidden bg-zinc-200 aspect-video relative">
+											{coverSrc ? (
+												<Image
+													src={coverSrc}
+													alt={post.title}
+													fill
+													sizes="(max-width: 639px) 78vw, (max-width: 767px) 52vw, (max-width: 1023px) 40vw, (max-width: 1279px) 30vw, 30vw"
+													className="object-cover transition-transform duration-300 hover:scale-105"
+												/>
+											) : (
+												<div className="flex h-full w-full items-center justify-center bg-zinc-200 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
+													<span className="text-sm">No cover image</span>
+												</div>
+											)}
+										</div>
+
+										<div className="p-4 shrink-0 flex flex-col items-center gap-2">
+											<div className="flex flex-wrap justify-center items-center gap-2">
+												{post.tags?.map((tag) => (
+													<Badge
+														key={tag}
+														variant="secondary"
+														className="text-md"
+													>
+														{tag}
+													</Badge>
+												))}
+											</div>
+											<span className="text-xs text-zinc-400">
+												{new Date(post.publishedAt).toLocaleDateString()}
+											</span>
+										</div>
+									</Link>
+								</article>
+							);
+						})}
 						<div className="h-[68vh] min-w-[16rem] w-[78vw] shrink-0 sm:w-[52vw] md:w-[40vw] lg:w-[31vw] xl:w-[24vw] flex items-center justify-center">
 							<Link
 								href="/blog"

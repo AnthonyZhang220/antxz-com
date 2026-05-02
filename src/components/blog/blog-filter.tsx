@@ -7,6 +7,8 @@ import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { BlogPost } from "@/types/blog";
 
+const TAG_COLLAPSED_LIMIT = 8;
+
 // Helper used for the "reading time" section. Copied from blog-list.tsx
 const READ_DEFS = [
 	{ key: "short", label: "< 5 min", test: (r: number) => r < 5 },
@@ -24,6 +26,10 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 
 interface BlogFilterProps {
 	posts: BlogPost[];
+	category: string | null;
+	setCategory: React.Dispatch<React.SetStateAction<string | null>>;
+	allCategories: string[];
+	categoryCounts: Record<string, number>;
 	tag: string | null;
 	setTag: React.Dispatch<React.SetStateAction<string | null>>;
 	allTags: string[];
@@ -42,6 +48,10 @@ interface BlogFilterProps {
 
 export default function BlogFilter({
 	posts,
+	category,
+	setCategory,
+	allCategories,
+	categoryCounts,
 	tag,
 	setTag,
 	allTags,
@@ -58,10 +68,69 @@ export default function BlogFilter({
 	go,
 }: BlogFilterProps) {
 	const t = useTranslations("blog");
+	const [showAllTags, setShowAllTags] = React.useState(false);
+
+	const visibleTags = React.useMemo(() => {
+		if (showAllTags || allTags.length <= TAG_COLLAPSED_LIMIT) return allTags;
+
+		const initial = allTags.slice(0, TAG_COLLAPSED_LIMIT);
+		if (tag && !initial.includes(tag)) {
+			return [...initial, tag];
+		}
+
+		return initial;
+	}, [allTags, showAllTags, tag]);
+
+	const hiddenTagCount = Math.max(0, allTags.length - TAG_COLLAPSED_LIMIT);
 
 	return (
 		<aside className="w-full flex flex-col gap-5 lg:w-56 lg:shrink-0 lg:sticky lg:top-6">
-			{/* Topic */}
+			{/* Category */}
+			<div>
+				<SectionLabel>{t("filterCategory")}</SectionLabel>
+				<div className="flex flex-col gap-0.5">
+					<Button
+						variant="ghost"
+						size="sm"
+						onClick={() => go(() => setCategory(null))}
+						className={cn(
+							"w-full justify-between font-normal text-sm h-8 px-2.5 rounded-lg",
+							!category
+								? "bg-foreground text-background hover:bg-foreground hover:text-background dark:hover:bg-foreground dark:hover:text-background"
+								: "text-muted-foreground hover:text-foreground",
+						)}
+					>
+						<span>{t("filterAll")}</span>
+						<span className="font-mono text-xs md:text-sm opacity-70">
+							{posts.length}
+						</span>
+					</Button>
+
+					{allCategories.map((value) => (
+						<Button
+							key={value}
+							variant="ghost"
+							size="sm"
+							onClick={() => go(() => setCategory(category === value ? null : value))}
+							className={cn(
+								"w-full justify-between font-normal text-sm h-8 px-2.5 rounded-lg",
+								category === value
+									? "bg-foreground text-background hover:bg-foreground hover:text-background dark:hover:bg-foreground dark:hover:text-background"
+									: "text-muted-foreground hover:text-foreground",
+							)}
+						>
+							<span>{value}</span>
+							<span className="font-mono text-xs md:text-sm opacity-55">
+								{categoryCounts[value]}
+							</span>
+						</Button>
+					))}
+				</div>
+			</div>
+
+			<Separator />
+
+			{/* Tags */}
 			<div>
 				<SectionLabel>{t("filterTopic")}</SectionLabel>
 				<div className="flex flex-col gap-0.5">
@@ -82,7 +151,7 @@ export default function BlogFilter({
 						</span>
 					</Button>
 
-					{allTags.map((t) => (
+					{visibleTags.map((t) => (
 						<Button
 							key={t}
 							variant="ghost"
@@ -101,6 +170,19 @@ export default function BlogFilter({
 							</span>
 						</Button>
 					))}
+
+					{allTags.length > TAG_COLLAPSED_LIMIT && (
+						<Button
+							variant="ghost"
+							size="sm"
+							onClick={() => setShowAllTags((prev) => !prev)}
+							className="w-full justify-start font-mono text-xs h-8 px-2.5 rounded-lg text-muted-foreground hover:text-foreground"
+						>
+							{showAllTags
+								? t("filterShowLessTags")
+								: t("filterShowMoreTags", { count: hiddenTagCount })}
+						</Button>
+					)}
 				</div>
 			</div>
 
