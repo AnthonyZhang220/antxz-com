@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { urlFor } from "@/sanity/lib/image";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +16,7 @@ export default function Blogs({
 	posts: BlogPost[];
 	speed?: number;
 }) {
+	const t = useTranslations("blog");
 	const containerRef = useRef<HTMLDivElement | null>(null);
 	const rafRef = useRef<number | null>(null);
 	const [isHover, setIsHover] = useState(false);
@@ -107,7 +109,7 @@ export default function Blogs({
 
 										<Separator className="my-3 bg-zinc-300/55 dark:bg-zinc-700/55" />
 
-										<div className="flex-1 overflow-hidden bg-zinc-200 aspect-video relative">
+										<div className="relative w-full overflow-hidden bg-zinc-200 aspect-video min-h-40">
 											{coverSrc ? (
 												<Image
 													src={coverSrc}
@@ -118,7 +120,7 @@ export default function Blogs({
 												/>
 											) : (
 												<div className="flex h-full w-full items-center justify-center bg-zinc-200 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
-													<span className="text-sm">No cover image</span>
+														<span className="text-sm">{t("carouselNoCoverImage")}</span>
 												</div>
 											)}
 										</div>
@@ -150,10 +152,10 @@ export default function Blogs({
 							>
 								<div>
 									<p className="text-xl font-semibold text-zinc-700 dark:text-zinc-300">
-										See More
+												{t("carouselSeeMore")}
 									</p>
 									<p className="mt-2 text-sm text-zinc-500 dark:text-zinc-600">
-										Explore all posts
+												{t("carouselExploreAll")}
 									</p>
 								</div>
 							</Link>

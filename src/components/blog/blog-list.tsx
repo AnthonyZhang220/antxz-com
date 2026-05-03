@@ -11,6 +11,8 @@ import {
 	Sheet,
 	SheetClose,
 	SheetContent,
+	SheetDescription,
+	SheetTitle,
 	SheetTrigger,
 } from "@/components/ui/sheet";
 import {
@@ -360,6 +362,8 @@ export default function BlogListPage({
 								</Button>
 							</SheetTrigger>
 							<SheetContent side="top" className="h-screen w-screen max-w-none p-0 overflow-y-auto">
+								<SheetTitle className="sr-only">{t("filterLabel")}</SheetTitle>
+								<SheetDescription className="sr-only">{t("filterLabel")}</SheetDescription>
 								<div className="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-background/95 px-4 py-4 backdrop-blur supports-backdrop-filter:bg-background/75">
 									<p className="font-mono text-xs uppercase tracking-[0.14em] text-foreground/90">
 										{t("filterLabel")}
