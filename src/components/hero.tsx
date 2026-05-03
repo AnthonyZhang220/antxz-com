@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { useTranslations, useLocale } from "next-intl";
 import { useWaterRipple } from "@/hooks";
+import { Button } from "./ui/button";
 
 // ==================== Hero Component ====================
 export default function Hero() {
@@ -90,28 +91,46 @@ export default function Hero() {
 			/>
 			<div className="pointer-events-none absolute bottom-8 right-8 -z-10 h-56 w-56 rounded-full bg-indigo-200/10 blur-3xl dark:bg-indigo-600/12" />
 
-			<div className="relative z-10 mx-auto grid w-full max-w-6xl items-center gap-8 px-4 py-12 sm:gap-10 sm:px-8 sm:py-16 md:gap-11 md:px-10 md:py-14 lg:grid-cols-[1fr_320px] lg:gap-12 lg:px-8 lg:py-16">
-
+			<div className="relative z-10 mx-auto grid w-full max-w-6xl items-center gap-8 px-4 py-12 sm:gap-10 sm:px-8 sm:py-16 md:gap-9 md:px-8 md:py-14 lg:grid-cols-[minmax(0,1fr)_minmax(260px,300px)] lg:gap-8 lg:px-6 lg:py-16 xl:grid-cols-[1fr_320px] xl:gap-12 xl:px-8">
 				{/* Left column — motto + ghost buttons (blur only on scroll, position locked) */}
-				<div ref={textRef} className="flex w-full flex-col items-start will-change-[filter] lg:w-auto" style={{ textRendering: 'geometricPrecision' }}>
-
+				<div
+					ref={textRef}
+					className="flex w-full flex-col items-center will-change-[filter] lg:items-start lg:w-auto"
+					style={{ textRendering: "geometricPrecision" }}
+				>
 					{isZh ? (
 						/* ── Chinese motto ── */
-						<div className="motto-stage mb-7 flex flex-col items-start md:mb-8">
+						<div className="motto-stage mb-7 flex flex-col items-center md:mb-8 lg:items-start">
 							{/* Line 1: "常应"(bold) + "常静"(thin) + "，"(low opacity) */}
-							<div className="mb-4 flex flex-col items-start">
-								<p className="font-mono text-4xl leading-none text-zinc-900 sm:text-5xl md:text-6xl lg:text-8xl dark:text-white" style={{ textRendering: 'geometricPrecision' }}>
-									<span className="font-black inline-block pb-1" style={{ boxShadow: '0 3px 0 -2px rgb(14 165 233)', animation: 'breathing-shadow 3s ease-in-out infinite' }}>{zhBold}</span>
+							<div className="mb-4 flex flex-col items-center lg:items-start">
+								<p
+									className="font-mono text-5xl leading-none text-zinc-900 sm:text-6xl md:text-6xl lg:text-8xl dark:text-white"
+									style={{ textRendering: "geometricPrecision" }}
+								>
+									<span
+										className="font-black inline-block pb-1"
+										style={{
+											boxShadow: "0 3px 0 -2px rgb(14 165 233)",
+											animation: "breathing-shadow 3s ease-in-out infinite",
+										}}
+									>
+										{zhBold}
+									</span>
 									<span className="font-thin">{zhThin}</span>
-									<span className="font-thin" style={{ opacity: 0.45 }}>，</span>
+									<span className="font-thin" style={{ opacity: 0.45 }}>
+										，
+									</span>
 								</p>
 							</div>
 
 							{/* Line 2: "常清静矣。" thin + slight indent */}
 							<div className="ml-[2ch]">
 								<p
-									className="motto-line font-mono text-4xl font-thin leading-none text-zinc-900 sm:text-5xl md:text-6xl lg:text-8xl dark:text-white"
-									style={{ animationDelay: "240ms", textRendering: 'geometricPrecision' }}
+									className="motto-line font-mono text-5xl font-thin leading-none text-zinc-900 sm:text-6xl md:text-6xl lg:text-8xl dark:text-white"
+									style={{
+										animationDelay: "240ms",
+										textRendering: "geometricPrecision",
+									}}
 								>
 									{zhLine2Body}
 									<span style={{ opacity: 0.45 }}>。</span>
@@ -120,11 +139,17 @@ export default function Hero() {
 						</div>
 					) : (
 						/* ── English motto ── staggered indent + opacity cascade */
-						<div className="motto-stage mb-7 flex w-full max-w-full flex-col items-start sm:w-auto md:mb-8" style={{ textRendering: 'geometricPrecision' }}>
+						<div
+							className="motto-stage mb-7 flex w-full max-w-full flex-col items-center sm:w-auto md:mb-8 lg:items-start"
+							style={{ textRendering: "geometricPrecision" }}
+						>
 							{/* Line 1 — 100% opacity, no indent */}
 							<p
-								className="motto-line whitespace-nowrap font-mono text-xl font-semibold leading-snug tracking-[-0.015em] text-zinc-900 sm:text-2xl md:text-[2.15rem] md:tracking-[-0.01em] lg:text-5xl dark:text-white"
-								style={{ animationDelay: "0ms", textRendering: 'geometricPrecision' }}
+								className="motto-line whitespace-nowrap font-mono text-[1.55rem] font-semibold leading-snug tracking-[-0.015em] text-zinc-900 sm:text-[2.1rem] md:text-[2.2rem] md:tracking-[-0.01em] lg:text-[2.8rem] xl:text-5xl dark:text-white"
+								style={{
+									animationDelay: "0ms",
+									textRendering: "geometricPrecision",
+								}}
 							>
 								{enL1Pre}
 								<span className="relative inline-block">
@@ -136,16 +161,22 @@ export default function Hero() {
 
 							{/* Line 2 — 85% opacity, indent 2ch */}
 							<p
-								className="motto-line ml-[0.8ch] whitespace-nowrap font-mono text-xl font-light leading-snug tracking-[-0.015em] text-zinc-900/85 sm:ml-[1.6ch] sm:text-2xl md:ml-[1.8ch] md:text-[2.15rem] md:tracking-[-0.01em] lg:ml-[2ch] lg:text-5xl dark:text-white/85"
-								style={{ animationDelay: "180ms", textRendering: 'geometricPrecision' }}
+								className="motto-line ml-[0.8ch] whitespace-nowrap font-mono text-[1.5rem] font-light leading-snug tracking-[-0.015em] text-zinc-900/85 sm:ml-[1.6ch] sm:text-[2rem] md:ml-[1.2ch] md:text-[2.1rem] md:tracking-[-0.01em] lg:ml-[2ch] lg:text-[2.7rem] xl:text-5xl dark:text-white/85"
+								style={{
+									animationDelay: "180ms",
+									textRendering: "geometricPrecision",
+								}}
 							>
 								{enLine2}
 							</p>
 
 							{/* Line 3 — 70% opacity, indent 4ch */}
 							<p
-								className="motto-line ml-[1.4ch] whitespace-nowrap font-mono text-xl font-light leading-snug tracking-[-0.015em] text-zinc-900/70 sm:ml-[2.8ch] sm:text-2xl md:ml-[3.2ch] md:text-[2.15rem] md:tracking-[-0.01em] lg:ml-[4ch] lg:text-5xl dark:text-white/70"
-								style={{ animationDelay: "360ms", textRendering: 'geometricPrecision' }}
+								className="motto-line ml-[1.4ch] whitespace-nowrap font-mono text-[1.45rem] font-light leading-snug tracking-[-0.015em] text-zinc-900/70 sm:ml-[2.8ch] sm:text-[1.9rem] md:ml-[2.2ch] md:text-[2rem] md:tracking-[-0.01em] lg:ml-[4ch] lg:text-[2.6rem] xl:text-5xl dark:text-white/70"
+								style={{
+									animationDelay: "360ms",
+									textRendering: "geometricPrecision",
+								}}
 							>
 								{enLine3}
 							</p>
@@ -153,45 +184,40 @@ export default function Hero() {
 					)}
 
 					{/* Ghost buttons — transparent fill, thin border */}
-					<div className="flex flex-wrap items-center gap-3 md:gap-3.5">
-						<Link
-							href="/about/me"
-							className="rounded-full border border-zinc-700/35 px-5 py-2 text-sm font-medium text-zinc-600 backdrop-blur-sm transition hover:-translate-y-0.5 hover:border-zinc-700/60 dark:border-white/20 dark:text-zinc-400 dark:hover:border-white/40 dark:hover:text-zinc-200"
-						>
-							{t("aboutMeButton")}
-						</Link>
-						<Link
-							href="/blog"
-							className="rounded-full border border-zinc-700/35 px-5 py-2 text-sm font-medium text-zinc-600 backdrop-blur-sm transition hover:-translate-y-0.5 hover:border-zinc-700/60 dark:border-white/20 dark:text-zinc-400 dark:hover:border-white/40 dark:hover:text-zinc-200"
-						>
-							{t("blogButton")}
-						</Link>
+					<div className="flex flex-wrap items-center justify-center gap-3 lg:justify-start lg:gap-3.5">
+						<Button variant="default" asChild>
+							<Link href="/blog">{t("blogButton")}</Link>
+						</Button>
+						<Button variant="outline" asChild>
+							<Link href="/about/me">{t("aboutMeButton")}</Link>
+						</Button>
 					</div>
 				</div>
 
 				{/* Right — Contact card */}
-				<div className="relative w-full max-w-md rounded-2xl border border-zinc-300/80 bg-white/85 p-5 shadow-sm backdrop-blur-sm md:max-w-lg md:p-6 dark:border-zinc-700 dark:bg-zinc-900/80 lg:mt-2 lg:max-w-none lg:p-5">
+				<div className="relative mx-auto w-full max-w-88 rounded-xl border border-zinc-300/80 bg-white/85 p-4 shadow-sm backdrop-blur-sm sm:max-w-md sm:p-5 md:max-w-lg md:rounded-2xl md:p-6 dark:border-zinc-700 dark:bg-zinc-900/80 lg:mt-2 lg:mx-0 lg:max-w-none lg:p-5">
 					<div className="pointer-events-none absolute -top-8 -right-8 h-24 w-24 rounded-full bg-sky-200/40 blur-2xl dark:bg-sky-500/20" />
-					<p className="text-xs font-semibold tracking-[0.16em] text-zinc-500 dark:text-zinc-400">
+					<p className="text-[11px] font-semibold tracking-[0.14em] text-zinc-500 dark:text-zinc-400 sm:text-xs sm:tracking-[0.16em]">
 						{t("contactLabel")}
 					</p>
-					<h3 className="mt-2 text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+					<h3 className="mt-2 text-base font-semibold text-zinc-900 sm:text-lg dark:text-zinc-100">
 						{t("contactTitle")}
 					</h3>
-					<p className="mt-1 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
+					<p className="mt-1 text-[13px] leading-5 text-zinc-600 sm:text-sm sm:leading-6 dark:text-zinc-300">
 						{t("contactBody")}
 					</p>
-					<a
-						href="mailto:hi@antxz.com"
-						className="mt-4 inline-flex items-center rounded-lg border border-zinc-300 bg-zinc-50 px-4 py-2.5 text-sm font-medium text-zinc-800 transition hover:-translate-y-0.5 hover:bg-zinc-100 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700"
+					<Button
+						variant="outline"
+						asChild
+						size="default"
+						className="mt-4 h-10 border-zinc-300 bg-white/90 px-3.5 text-sm font-semibold text-zinc-900 shadow-sm hover:bg-white sm:h-11 sm:px-4 sm:text-base dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700"
 					>
-						hi@antxz.com
-					</a>
-					<p className="mt-3 text-xs text-zinc-500 dark:text-zinc-400">
+						<Link href="mailto:hi@antxz.com">hi@antxz.com</Link>
+					</Button>
+					<p className="mt-3 text-[11px] text-zinc-500 sm:text-xs dark:text-zinc-400">
 						{t("contactReplyEta")}
 					</p>
 				</div>
-
 			</div>
 		</section>
 	);
