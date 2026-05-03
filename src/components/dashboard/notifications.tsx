@@ -8,6 +8,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { DashboardPageSkeleton } from "@/components/dashboard/dashboard-page-skeleton";
+import { ErrorState } from "@/components/shared/error-state";
 import { handleError, handleSuccess } from "@/lib/error-utils";
 
 import {
@@ -95,6 +97,7 @@ export default function DashboardNotifications() {
 	const [notifications, setNotifications] = useState<DashboardNotification[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [isMutating, setIsMutating] = useState(false);
+	const [loadError, setLoadError] = useState<string | null>(null);
 	const [activeFilter, setActiveFilter] = useState<FilterKey>("all");
 
 	const unreadCount = useMemo(
@@ -114,14 +117,19 @@ export default function DashboardNotifications() {
 		return notifications.filter((item) => item.type === activeFilter);
 	}, [activeFilter, notifications]);
 
+	const loadErrorMessage = t("messages.loadError");
+	const markReadErrorMessage = t("messages.markReadError");
+	const markAllReadErrorMessage = t("messages.markAllReadError");
+
 	const loadNotifications = async (withLoading: boolean) => {
 		if (withLoading) {
 			setIsLoading(true);
 		}
+		setLoadError(null);
 
 		const result = await getNotifications();
 		if (!result.success) {
-			handleError(new Error(result.error || "Failed to load notifications"), t("messages.loadError"));
+			setLoadError(result.error || loadErrorMessage);
 			setIsLoading(false);
 			return;
 		}
@@ -134,13 +142,14 @@ export default function DashboardNotifications() {
 		let isMounted = true;
 
 		const load = async () => {
+			setLoadError(null);
 			const result = await getNotifications();
 			if (!isMounted) {
 				return;
 			}
 
 			if (!result.success) {
-				handleError(new Error(result.error || "Failed to load notifications"), t("messages.loadError"));
+				setLoadError(result.error || loadErrorMessage);
 				setIsLoading(false);
 				return;
 			}
@@ -154,14 +163,14 @@ export default function DashboardNotifications() {
 		return () => {
 			isMounted = false;
 		};
-	}, [t]);
+	}, [loadErrorMessage]);
 
 	const onMarkRead = async (id: string) => {
 		setIsMutating(true);
 
 		const result = await markNotificationAsRead(id);
 		if (!result.success) {
-			handleError(new Error(result.error || "Failed to mark notification as read"), t("messages.markReadError"));
+			handleError(new Error(result.error || markReadErrorMessage), markReadErrorMessage);
 			setIsMutating(false);
 			return;
 		}
@@ -186,7 +195,7 @@ export default function DashboardNotifications() {
 
 		const result = await markAllNotificationsAsRead();
 		if (!result.success) {
-			handleError(new Error(result.error || "Failed to mark all notifications as read"), t("messages.markAllReadError"));
+			handleError(new Error(result.error || markAllReadErrorMessage), markAllReadErrorMessage);
 			setIsMutating(false);
 			return;
 		}
@@ -204,9 +213,18 @@ export default function DashboardNotifications() {
 	};
 
 	if (isLoading) {
+		return <DashboardPageSkeleton rows={5} />;
+	}
+
+	if (loadError) {
 		return (
-			<div className="p-4 lg:p-6">
-				<div className="h-96 animate-pulse rounded-lg bg-muted" />
+			<div className="space-y-6 p-4 lg:p-6">
+				<ErrorState
+					title={t("title")}
+					description={loadError}
+					onRetry={() => void loadNotifications(true)}
+					retryLabel={t("actions.refresh")}
+				/>
 			</div>
 		);
 	}

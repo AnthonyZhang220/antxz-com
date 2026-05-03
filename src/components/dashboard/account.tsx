@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
@@ -15,7 +15,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { handleError, handleSuccess } from "@/lib/error-utils";
+import { DashboardPageSkeleton } from "@/components/dashboard/dashboard-page-skeleton";
+import { ErrorState } from "@/components/shared/error-state";
+import {
+	finishLoadingError,
+	finishLoadingSuccess,
+	startLoading,
+} from "@/lib/error-utils";
 
 import {
 	getAccountProfile,
@@ -50,28 +56,37 @@ function formatDate(value: string | null) {
 
 export default function DashboardAccount() {
 	const t = useTranslations("dashboard.account");
+	const loadErrorMessage = t("messages.loadError");
 	const [form, setForm] = useState<AccountProfile>(emptyForm);
 	const [initialForm, setInitialForm] = useState<AccountProfile>(emptyForm);
 	const [isLoading, setIsLoading] = useState(true);
 	const [isSaving, setIsSaving] = useState(false);
+	const [loadError, setLoadError] = useState<string | null>(null);
+
+	const loadAccount = useCallback(async () => {
+		setIsLoading(true);
+		setLoadError(null);
+		const result = await getAccountProfile();
+		if (!result.success) {
+			setLoadError(result.error || loadErrorMessage);
+			setIsLoading(false);
+			return;
+		}
+
+		if (!result.data) {
+			setLoadError(loadErrorMessage);
+			setIsLoading(false);
+			return;
+		}
+
+		setForm(result.data);
+		setInitialForm(result.data);
+		setIsLoading(false);
+	}, [loadErrorMessage]);
 
 	useEffect(() => {
-		const load = async () => {
-			setIsLoading(true);
-			const result = await getAccountProfile();
-			if (!result.success || !result.data) {
-				handleError(new Error(result.error || "Failed to load account"));
-				setIsLoading(false);
-				return;
-			}
-
-			setForm(result.data);
-			setInitialForm(result.data);
-			setIsLoading(false);
-		};
-
-		void load();
-	}, []);
+		void loadAccount();
+	}, [loadAccount]);
 
 	const hasChanges = useMemo(() => {
 		return (
@@ -95,6 +110,7 @@ export default function DashboardAccount() {
 	const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		setIsSaving(true);
+		const loadingToastId = startLoading(t("actions.saving"));
 
 		try {
 			const result = await saveAccountProfile({
@@ -104,25 +120,41 @@ export default function DashboardAccount() {
 				website: form.website,
 			});
 
-			if (!result.success || !result.data) {
-				handleError(new Error(result.error || t("messages.saveError")));
+			if (!result.success) {
+				finishLoadingError(loadingToastId, result.error || t("messages.saveError"));
+				return;
+			}
+
+			if (!result.data) {
+				finishLoadingError(loadingToastId, t("messages.saveError"));
 				return;
 			}
 
 			setForm(result.data);
 			setInitialForm(result.data);
-			handleSuccess(t("messages.saved"));
+			finishLoadingSuccess(loadingToastId, t("messages.saved"));
 		} catch (error) {
-			handleError(error, t("messages.saveError"));
+			const message =
+				error instanceof Error && error.message ? error.message : t("messages.saveError");
+			finishLoadingError(loadingToastId, message);
 		} finally {
 			setIsSaving(false);
 		}
 	};
 
 	if (isLoading) {
+		return <DashboardPageSkeleton rows={4} />;
+	}
+
+	if (loadError) {
 		return (
-			<div className="p-4 lg:p-6">
-				<div className="h-112 animate-pulse rounded-lg bg-muted" />
+			<div className="space-y-6 p-4 lg:p-6">
+				<ErrorState
+					title={t("title")}
+					description={loadError}
+					onRetry={() => void loadAccount()}
+					retryLabel={t("actions.retry")}
+				/>
 			</div>
 		);
 	}

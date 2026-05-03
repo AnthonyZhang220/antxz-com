@@ -25,8 +25,18 @@ This project follows App Router, but keeps feature logic out of route folders wh
 - Use explicit names instead of generic `actions.ts` when a folder contains multiple domains:
   - Prefer `settings-actions.ts`, `account-actions.ts`.
 
+## Error and Loading Conventions
+
+- Global unrecoverable errors: use `src/app/global-error.tsx`.
+- Route/domain-level errors: add `error.tsx` under that route segment (example: dashboard).
+- First-load failures inside client widgets: render inline `ErrorState` in the same card/page area with retry.
+- User-triggered action failures/successes (save/delete/like): use toast helpers in `src/lib/error-utils.ts`.
+- Route transition loading: add `loading.tsx` per segment and prefer skeletons over full-screen spinners.
+- Keep API/Server Action responses in a shared `ActionResult<T>` shape from `src/lib/action-result.ts`.
+
 ## Why
 
 - Keeps `app/` focused on routing concerns.
 - Makes feature code discoverable and reusable.
 - Reduces coupling between route paths and business logic.
+- Gives consistent UX for full-screen errors, inline errors, toasts, and loading states.

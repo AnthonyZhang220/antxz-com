@@ -1,8 +1,8 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useCallback, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Bell, Globe, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 
@@ -25,14 +25,18 @@ import {
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Toggle } from "@/components/ui/toggle";
-import { handleError, handleSuccess } from "@/lib/error-utils";
+import { DashboardPageSkeleton } from "@/components/dashboard/dashboard-page-skeleton";
+import { ErrorState } from "@/components/shared/error-state";
 import {
-	getUserSettings,
-	saveUserSettings,
-	type UserSettings,
-} from "./settings-actions";
+	finishLoadingError,
+	finishLoadingSuccess,
+	startLoading,
+} from "@/lib/error-utils";
+import { getUserSettings, saveUserSettings } from "./settings-actions";
+import type { UserSettings } from "@/lib/user-preferences";
 
 export default function DashboardSettings() {
+	const t = useTranslations("dashboard.settings");
 	const locale = useLocale();
 	const pathname = usePathname();
 	const router = useRouter();
@@ -47,26 +51,42 @@ export default function DashboardSettings() {
 	const [isLoading, setIsLoading] = useState(true);
 	const [isSaving, setIsSaving] = useState(false);
 	const [hasChanges, setHasChanges] = useState(false);
+	const loadErrorMessage = t("messages.loadError");
+	const saveErrorMessage = t("messages.error");
+	const saveSuccessMessage = t("messages.success");
+	const [loadError, setLoadError] = useState<string | null>(null);
+
+	const loadSettings = useCallback(async () => {
+		setIsLoading(true);
+		setLoadError(null);
+
+		const result = await getUserSettings();
+		if (!result.success) {
+			setLoadError(result.error || loadErrorMessage);
+			setIsLoading(false);
+			return;
+		}
+
+		setSettings((result.data as UserSettings) || {
+			locale: "en",
+			region: "global",
+			theme: "system",
+			notifications_enabled: true,
+		});
+		setIsLoading(false);
+	}, [loadErrorMessage]);
 
 	useEffect(() => {
-		const loadSettings = async () => {
-			const result = await getUserSettings();
-			if (result.success) {
-				setSettings(result.data as UserSettings);
-			}
-			setIsLoading(false);
-		};
-
-		loadSettings();
-	}, []);
+		void loadSettings();
+	}, [loadSettings]);
 
 	const handleSettingChange = (key: keyof UserSettings, value: unknown) => {
-		setSettings((prev) => ({ ...prev, [key]: value }));
+		setSettings((prev: Partial<UserSettings>) => ({ ...prev, [key]: value }));
 		setHasChanges(true);
 	};
 
 	const handleToggleNotifications = () => {
-		setSettings((prev) => ({
+		setSettings((prev: Partial<UserSettings>) => ({
 			...prev,
 			notifications_enabled: !prev.notifications_enabled,
 		}));
@@ -76,12 +96,13 @@ export default function DashboardSettings() {
 	const onSave = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		setIsSaving(true);
+		const loadingToastId = startLoading(t("buttons.saving"));
 
 		try {
 			const result = await saveUserSettings(settings);
 
 			if (!result.success) {
-				handleError(new Error(result.error || "Failed to save"));
+				finishLoadingError(loadingToastId, result.error || saveErrorMessage);
 				return;
 			}
 
@@ -89,7 +110,7 @@ export default function DashboardSettings() {
 				setTheme(settings.theme);
 			}
 
-			handleSuccess("Settings saved successfully!");
+			finishLoadingSuccess(loadingToastId, saveSuccessMessage);
 			setHasChanges(false);
 
 			if (settings.locale && settings.locale !== locale) {
@@ -102,16 +123,27 @@ export default function DashboardSettings() {
 
 			router.refresh();
 		} catch (error) {
-			handleError(error);
+			const message =
+				error instanceof Error && error.message ? error.message : saveErrorMessage;
+			finishLoadingError(loadingToastId, message);
 		} finally {
 			setIsSaving(false);
 		}
 	};
 
 	if (isLoading) {
+		return <DashboardPageSkeleton rows={4} />;
+	}
+
+	if (loadError) {
 		return (
-			<div className="p-4 lg:p-6">
-				<div className="h-96 animate-pulse rounded-lg bg-muted" />
+			<div className="space-y-6 p-4 lg:p-6">
+				<ErrorState
+					title={t("title")}
+					description={loadError}
+					onRetry={() => void loadSettings()}
+					retryLabel={t("buttons.retry")}
+				/>
 			</div>
 		);
 	}
