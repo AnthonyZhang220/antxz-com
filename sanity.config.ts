@@ -13,6 +13,7 @@ import { structureTool } from "sanity/structure";
 import { apiVersion, dataset, projectId } from "./src/sanity/env";
 import { schema } from "./src/sanity/schemaTypes";
 import { structure } from "./src/sanity/structure";
+import { createPublishWithReadingTimeAction } from "./src/sanity/lib/publish-with-reading-time-action";
 
 export default defineConfig({
 	basePath: "/studio",
@@ -21,6 +22,17 @@ export default defineConfig({
 	// Add and edit the content schema in the './sanity/schemaTypes' folder
 	schema: {
 		types: schema.types,
+	},
+	document: {
+		actions: (prev, context) => {
+			if (context.schemaType !== "post") return prev;
+
+			return prev.map((originalAction) =>
+				originalAction.action === "publish"
+					? createPublishWithReadingTimeAction(originalAction)
+					: originalAction,
+			);
+		},
 	},
 	plugins: [
 		structureTool({ structure }),

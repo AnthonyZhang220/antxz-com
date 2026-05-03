@@ -32,6 +32,13 @@ export const post = defineType({
 			description: "Short description shown in blog list",
 		}),
 		defineField({
+			name: "readingTime",
+			title: "Reading Time (minutes)",
+			type: "number",
+			description: "Estimated read time in minutes",
+			validation: (Rule) => Rule.integer().min(1),
+		}),
+		defineField({
 			name: "coverImage",
 			title: "Cover Image",
 			type: "image",
@@ -39,9 +46,11 @@ export const post = defineType({
 		}),
 		defineField({
 			name: "category",
-			title: "Category",
+			title: "Content Category",
 			type: "reference",
 			to: [{ type: "category" }],
+			description:
+				"Top-level classification for this post, such as Tech, Life, Career, or Notes.",
 		}),
 		defineField({
 			name: "tags",
@@ -49,6 +58,8 @@ export const post = defineType({
 			type: "array",
 			of: [{ type: "string" }],
 			options: { layout: "tags" },
+			description:
+				"Specific topics covered in the post, such as React, Frontend, Performance, Travel, or Shanghai.",
 		}),
 		defineField({
 			name: "body",
@@ -97,12 +108,18 @@ export const post = defineType({
 			title: "title",
 			media: "coverImage",
 			date: "publishedAt",
+			categoryTitle: "category.title",
 		},
-		prepare({ title, media, date }) {
+		prepare({ title, media, date, categoryTitle }) {
+			const subtitleParts = [
+				categoryTitle ? `Category: ${categoryTitle}` : null,
+				date ? new Date(date).toLocaleDateString() : "No date",
+			].filter(Boolean);
+
 			return {
 				title,
 				media,
-				subtitle: date ? new Date(date).toLocaleDateString() : "No date",
+				subtitle: subtitleParts.join(" · "),
 			};
 		},
 	},
