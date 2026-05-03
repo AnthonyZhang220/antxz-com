@@ -1,13 +1,7 @@
 "use client";
 
-import { Toaster } from "sonner";
+import { Toaster } from "@/components/ui/sonner";
 
 export function ToasterProvider() {
-  return (
-    <Toaster
-      position="top-right"
-      richColors
-      closeButton
-    />
-  );
+	return <Toaster position="top-right" richColors />;
 }

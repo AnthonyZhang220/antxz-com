@@ -7,6 +7,8 @@ import { useAuthNavigation, useAuthUser } from "@/hooks";
 import {
 	Sheet,
 	SheetContent,
+	SheetDescription,
+	SheetTitle,
 	SheetTrigger,
 	SheetClose,
 } from "@/components/ui/sheet";
@@ -135,6 +137,8 @@ export default function Navbar({ initialUser }: NavbarProps) {
 					side="top"
 					className="h-screen w-screen max-w-none p-0 flex flex-col"
 				>
+					<SheetTitle className="sr-only">{t("sheetTitle")}</SheetTitle>
+					<SheetDescription className="sr-only">{t("sheetTitle")}</SheetDescription>
 					<div className="absolute right-3 top-2.5 z-20 flex items-center gap-1.5 sm:right-6 sm:top-3 sm:gap-2">
 						{user ? (
 							renderUserMenu("end")

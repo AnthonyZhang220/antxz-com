@@ -1,4 +1,8 @@
 {
+    "metadata": {
+        "title": "小花的世界 - ANTXZ | 混沌观测站",
+        "description": "此处记录着对熵增世界的微小干预，与一场永不谢幕的思想实验。"
+    },
     "navbar": {
         "home": {
             "title": "回到起点",
@@ -24,6 +28,7 @@
             "title": "留下你的痕迹",
             "subtitle": "访客互动"
         },
+        "sheetTitle": "网站导航",
         "userMenu": {
             "open": "打开用户菜单",
             "account": "个人资料",
@@ -69,7 +74,7 @@
             },
             "sections": {
                 "me": {
-                    "title": "谁是张小花？",
+                    "title": "我是谁？",
                     "content": "我是一名前端倾向的全栈工程师，约三年开发经验。主要使用 React、TypeScript、C# 以及现代 Web 技术栈，持续专注于交互体验、性能和可维护性。"
                 },
                 "background": {
@@ -101,6 +106,17 @@
             "subtitle": "我的专业经验与技术能力概述。",
             "downloadEN": "下载英文简历",
             "downloadZH": "下载中文简历",
+            "tabs": {
+                "resume": "简历",
+                "profile": "关于我"
+            },
+            "pdfPreviewTitle": "简历预览",
+            "pdfPreviewHint": "可直接在页面查看简历，也可下载 PDF。",
+            "viewResume": "查看简历",
+            "closeViewer": "关闭预览",
+            "openInNewTab": "新标签页打开",
+            "contactTitle": "联系方式",
+            "contactDescription": "欢迎通过以下方式联系我。",
             "sections": {
                 "summary": "个人简介",
                 "experience": "工作经历",
@@ -282,14 +298,20 @@
         "resultTitle": "你的性格类型是"
     },
     "footer": {
-        "name": "张小花",
-        "tagline": "在互联网上构建一些东西",
+        "name": "小花的世界",
+        "tagline": "在互联网上写一些不痛不痒的东西",
         "blog": "博客",
         "projects": "项目",
         "mbti": "MBTI",
         "about": "关于",
         "rights": "保留所有权利。",
         "builtWith": "构建于",
+        "sections": {
+            "navigate": "页面导航",
+            "preferencesContact": "偏好设置&联系方式",
+            "preferences": "偏好设置",
+            "contact": "联系方式"
+        },
         "nav": {
             "youAreIn": "你当前所在",
             "back": "返回上级",
@@ -302,7 +324,9 @@
             "dashboard": "控制台",
             "auth": "账户",
             "nextjs": "Next.js",
-            "protected": "受保护页面"
+            "protected": "受保护页面",
+            "me": "我",
+            "cv": "简历"
         }
     },
     "notFound": {
@@ -315,6 +339,9 @@
         "writingCount": "文章 · 共 {count} 篇",
         "readingTime": "{minutes} 分钟阅读",
         "readingTimeShort": "{minutes} 分钟",
+        "carouselSeeMore": "查看更多",
+        "carouselExploreAll": "浏览全部文章",
+        "carouselNoCoverImage": "暂无封面图",
         "allPosts": "全部文章",
         "noResults": "没有符合条件的文章。",
         "noContentYet": "暂时还没有内容。",

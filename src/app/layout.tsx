@@ -2,8 +2,12 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { Geist, Geist_Mono, Montserrat } from "next/font/google";
 import { ThemeProvider } from "next-themes";
-
+import NextTopLoader from "nextjs-toploader";
+import { ToasterProvider } from "@/components/providers/toaster-provider";
+import { SystemEasterEgg } from "@/components/shared/system-easter-egg";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { isAppTheme } from "@/lib/user-preferences";
+
 import "./globals.css";
 
 const geistSans = Geist({
@@ -35,17 +39,27 @@ export default async function RootLayout({
 }>) {
 	const cookieStore = await cookies();
 	const preferredTheme = cookieStore.get("preferred_theme")?.value;
-	const defaultTheme = isAppTheme(preferredTheme)
-		? preferredTheme
-		: "system";
+	const defaultTheme = isAppTheme(preferredTheme) ? preferredTheme : "system";
 
 	return (
 		<html suppressHydrationWarning>
 			<body
 				className={`${geistSans.variable} ${geistMono.variable} ${montserrat.variable} antialiased`}
 			>
-				<ThemeProvider attribute="class" defaultTheme={defaultTheme} enableSystem>
-					{children}
+				<SystemEasterEgg />
+				<ThemeProvider
+					attribute="class"
+					defaultTheme={defaultTheme}
+					enableSystem
+				>
+					<NextTopLoader
+						color="linear-gradient(to right, #3b82f6, #a855f7)"
+						height={2}
+						showSpinner={false}
+						shadow={false}
+					/>
+					<TooltipProvider>{children}</TooltipProvider>
+					<ToasterProvider />
 				</ThemeProvider>
 			</body>
 		</html>

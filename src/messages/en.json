@@ -1,4 +1,8 @@
 {
+    "metadata": {
+        "title": "ANTXZ | Personal Platform",
+        "description": "Tracing the trajectory of thought through the chaos of experience."
+    },
     "navbar": {
         "home": {
             "title": "Back to the beginning",
@@ -24,6 +28,7 @@
             "title": "Leave your mark",
             "subtitle": "Interaction"
         },
+        "sheetTitle": "Site navigation",
         "userMenu": {
             "open": "Open user menu",
             "account": "Profile",
@@ -101,6 +106,17 @@
             "subtitle": "A brief overview of my professional experience and skills.",
             "downloadEN": "Download EN Resume",
             "downloadZH": "Download ZH Resume",
+            "tabs": {
+                "resume": "Resume",
+                "profile": "Profile"
+            },
+            "pdfPreviewTitle": "Resume Preview",
+            "pdfPreviewHint": "View the resume directly on the page, or download the PDF.",
+            "viewResume": "View Resume",
+            "closeViewer": "Close viewer",
+            "openInNewTab": "Open in new tab",
+            "contactTitle": "Contact",
+            "contactDescription": "Feel free to reach out via the links below.",
             "sections": {
                 "summary": "Summary",
                 "experience": "Experience",
@@ -290,6 +306,12 @@
         "about": "About",
         "rights": "All rights reserved.",
         "builtWith": "Built with",
+        "sections": {
+            "navigate": "NAVIGATE",
+            "preferencesContact": "PREFERENCES & CONTACT",
+            "preferences": "PREFERENCES",
+            "contact": "CONTACT"
+        },
         "nav": {
             "youAreIn": "You're in",
             "back": "Back",
@@ -302,7 +324,9 @@
             "dashboard": "Dashboard",
             "auth": "Auth",
             "nextjs": "Next.js",
-            "protected": "Protected"
+            "protected": "Protected",
+            "me": "Me",
+            "cv": "CV"
         }
     },
     "notFound": {
@@ -315,6 +339,9 @@
         "writingCount": "Writing · {count} articles",
         "readingTime": "{minutes} min read",
         "readingTimeShort": "{minutes} min",
+        "carouselSeeMore": "See More",
+        "carouselExploreAll": "Explore all posts",
+        "carouselNoCoverImage": "No cover image",
         "allPosts": "All posts",
         "noResults": "No articles match your filters.",
         "noContentYet": "No content yet.",

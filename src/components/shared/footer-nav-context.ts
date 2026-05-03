@@ -8,6 +8,8 @@ export type FooterNavLabels = {
 	auth: string;
 	nextjs: string;
 	protected: string;
+	me: string;
+	cv: string;
 };
 
 type FooterNavTranslationKey =
@@ -19,7 +21,9 @@ type FooterNavTranslationKey =
 	| "nav.dashboard"
 	| "nav.auth"
 	| "nav.nextjs"
-	| "nav.protected";
+	| "nav.protected"
+	| "nav.me"
+	| "nav.cv";
 
 type FooterTranslator = (key: FooterNavTranslationKey) => string;
 
@@ -42,6 +46,8 @@ export function getFooterNavLabels(t: FooterTranslator): FooterNavLabels {
 		auth: t("nav.auth"),
 		nextjs: t("nav.nextjs"),
 		protected: t("nav.protected"),
+		me: t("nav.me"),
+		cv: t("nav.cv"),
 	};
 }
 
@@ -64,6 +70,8 @@ export function buildFooterNavContext(
 		auth: labels.auth,
 		nextjs: labels.nextjs,
 		protected: labels.protected,
+		me: labels.me,
+		cv: labels.cv,
 	};
 
     // 构建面包屑导航的路径和标签

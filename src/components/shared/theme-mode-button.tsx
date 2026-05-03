@@ -1,6 +1,6 @@
 "use client";
 
-import { startTransition } from "react";
+import { startTransition, useSyncExternalStore } from "react";
 import { Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
@@ -16,9 +16,20 @@ import {
 import { setCookie } from "@/lib/cookies";
 import { saveThemePreference } from "@/lib/actions/user-preferences";
 
+const subscribe = () => () => undefined;
+const getServerMountedSnapshot = () => false;
+
 export default function ThemeModeButton() {
 	const t = useTranslations("themeMode");
 	const { theme, setTheme, systemTheme } = useTheme();
+	const mounted = useSyncExternalStore(
+		subscribe,
+		() => true,
+		getServerMountedSnapshot,
+	);
+
+	const resolvedTheme = mounted ? (theme ?? "system") : "system";
+	const resolvedSystemTheme = mounted ? (systemTheme ?? "light") : "light";
 
 	const handleTheme = (value: string) => {
 		setCookie("preferred_theme", value); // 保存一年
@@ -30,16 +41,16 @@ export default function ThemeModeButton() {
 
 	// 获取当前显示的图标和文本
 	const getDisplayContent = () => {
-		if (theme === "system") {
+		if (resolvedTheme === "system") {
 			const icon =
-				systemTheme === "light" ? (
+				resolvedSystemTheme === "light" ? (
 					<Sun className="h-4 w-4" />
 				) : (
 					<Moon className="h-4 w-4" />
 				);
 			return { icon, text: t("system") };
 		}
-		if (theme === "light") {
+		if (resolvedTheme === "light") {
 			return { icon: <Sun className="h-4 w-4" />, text: t("light") };
 		}
 		return { icon: <Moon className="h-4 w-4" />, text: t("dark") };
@@ -58,7 +69,7 @@ export default function ThemeModeButton() {
 			<DropdownMenuContent className="min-w-36">
 				<DropdownMenuGroup>
 					<DropdownMenuRadioGroup
-						value={theme || "system"}
+						value={resolvedTheme}
 						onValueChange={handleTheme}
 					>
 						<DropdownMenuRadioItem value="light">
@@ -70,7 +81,7 @@ export default function ThemeModeButton() {
 							{t("dark")}
 						</DropdownMenuRadioItem>
 						<DropdownMenuRadioItem value="system">
-							{systemTheme === "light" ? <Sun /> : <Moon />}
+							{resolvedSystemTheme === "light" ? <Sun /> : <Moon />}
 							{t("system")}
 						</DropdownMenuRadioItem>
 					</DropdownMenuRadioGroup>

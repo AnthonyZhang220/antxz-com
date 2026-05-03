@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,12 +22,19 @@ import {
 } from "@/components/ui/select";
 import { getCookie } from "@/lib/cookies";
 import { savePreferences } from "@/components/preferences/actions";
-import { handleError, handleSuccess } from "@/lib/error-utils";
+import {
+	finishLoadingError,
+	finishLoadingSuccess,
+	startLoading,
+} from "@/lib/error-utils";
 
 export default function PreferencesForm() {
 	const t = useTranslations("preferences");
 	const router = useRouter();
 	const params = useParams<{ locale?: string }>();
+	const searchParams = useSearchParams();
+	const saveErrorMessage = t("messages.error");
+	const saveSuccessMessage = t("messages.success");
 	// Language 从 URL params 获取（正确方式）
 	const currentLocale = params?.locale ?? "en";
 
@@ -41,24 +48,37 @@ export default function PreferencesForm() {
 	});
 	const [isLoading, setIsLoading] = useState(false);
 
+	function getRedirectPath(nextLocale: string) {
+		const redirectParam = searchParams.get("redirect");
+
+		if (!redirectParam || !redirectParam.startsWith("/") || redirectParam.startsWith("//")) {
+			return `/${nextLocale}`;
+		}
+
+		return redirectParam.replace(/^\/(en|zh)(?=\/|$)/, `/${nextLocale}`);
+	}
+
 	async function onSave(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault();
 		setIsLoading(true);
+		const loadingToastId = startLoading(t("messages.saving"));
 
 		try {
 			const result = await savePreferences(locale, region);
 
 			if (!result.success) {
-				handleError(new Error(result.error || "Failed to save"));
+				finishLoadingError(loadingToastId, result.error || saveErrorMessage);
 				return;
 			}
 
-			handleSuccess("Preferences saved!");
+			finishLoadingSuccess(loadingToastId, saveSuccessMessage);
 			// 延迟重定向，让用户看到成功提示
 			await new Promise((resolve) => setTimeout(resolve, 500));
-			router.push(`/${locale}`);
+			router.push(getRedirectPath(locale));
 		} catch (error) {
-			handleError(error);
+			const message =
+				error instanceof Error && error.message ? error.message : saveErrorMessage;
+			finishLoadingError(loadingToastId, message);
 		} finally {
 			setIsLoading(false);
 		}
@@ -120,7 +140,7 @@ export default function PreferencesForm() {
 					</CardContent>
 					<CardFooter className="justify-end">
 						<Button type="submit" disabled={isLoading}>
-							{isLoading ? "Saving..." : t("saveButton")}
+							{isLoading ? t("messages.saving") : t("saveButton")}
 						</Button>
 					</CardFooter>
 				</form>
