@@ -3,6 +3,13 @@
         "title": "小花的世界 - ANTXZ | 混沌观测站",
         "description": "此处记录着对熵增世界的微小干预，与一场永不谢幕的思想实验。"
     },
+    "wip": {
+        "description": "该页面正在建设中，敬请期待！",
+        "badge": "施工中"
+    },
+    "nextjs": {
+        "title": "Next.js"
+    },
     "navbar": {
         "home": {
             "title": "回到起点",
@@ -50,8 +57,16 @@
         "contactTitle": "欢迎联系我",
         "contactBody": "如果你想聊合作、项目，或者只是打个招呼，我都会认真回复。",
         "contactReplyEta": "通常会在 24 小时内回复。",
+        "archiveLabel": "归档",
+        "oldWebsiteButton": "访问旧网站",
         "introTitle": "关于我",
-        "introBody": "我是一个全栈开发者，专注于使用 Next.js、TypeScript 和 Tailwind CSS 构建 Web 应用。在业余时间，我喜欢摄影、写博客和探索新技术。"
+        "introTitleLine1": "构建",
+        "introTitleLine2": "互联网。",
+        "introBody": "我是一个全栈开发者，专注于使用 Next.js、TypeScript 和 Tailwind CSS 构建 Web 应用。在业余时间，我喜欢摄影、写博客和探索新技术。",
+        "introRole": "全栈开发者",
+        "introLocation": "纽约",
+        "introStack": "Next.js · TypeScript · React · Tailwind",
+        "introCta": "了解更多"
     },
     "about": {
         "me": {
@@ -294,6 +309,7 @@
         "openStudio": "打开 Studio"
     },
     "mbti": {
+        "title": "MBTI",
         "startButton": "开始测试",
         "resultTitle": "你的性格类型是"
     },
@@ -371,6 +387,27 @@
         "commentsLike": "点赞",
         "commentsUnlike": "已点赞",
         "commentsLikeCount": "{count} 个赞",
+            "commentsReply": "回复",
+            "commentsCancel": "取消",
+            "commentsReplyTo": "回复 {name}",
+            "commentsReplyPlaceholder": "写下你的回复...",
+            "commentsDelete": "删除",
+            "commentsDeleting": "删除中...",
+            "commentsDeleteConfirm": "确认删除这条评论吗？此操作无法撤销。",
+            "commentsDeleteForbidden": "你只能删除自己的评论。",
+            "commentsDeleteError": "删除评论失败。",
+        "commentsErrorBlocked": "您的账户无法发表评论。",
+        "commentsErrorSpam": "您的评论违反了我们的指南。",
+        "commentsErrorQuarantine": "您的评论需要审核后才能发布。",
+        "commentsErrorTooShort": "您的评论太短了（最少 3 个字符）。",
+        "commentsErrorTooLong": "您的评论太长了（最多 1800 个字符）。",
+        "commentsErrorEmojiOnly": "评论不能只包含 Emoji。",
+        "commentsErrorTooManyLinks": "您的评论包含过多链接（最多 1 个）。",
+        "commentsErrorBlacklistTerms": "您的评论包含禁用词汇。",
+        "commentsErrorRepeatedCharacters": "您的评论包含过多重复字符。",
+        "commentsErrorRepeatedSentences": "您的评论包含重复的句子。",
+        "commentsErrorHighFrequency": "您发表评论太频繁了，请稍后再试。",
+        "commentsErrorDuplicateRecent": "您最近发表过类似的评论。",
         "commentsCountShort": "{count} 条评论",
         "articleLike": "点赞文章",
         "articleUnlike": "已点赞",
@@ -383,6 +420,12 @@
         "sourceDevto": "Dev.to",
         "sourceMedium": "Medium",
         "sourceExternal": "外部来源",
+        "tocTitle": "本页目录",
+        "linkPreviewTitle": "链接预览",
+        "linkPreviewHost": "域名：{host}",
+        "linkPreviewPath": "路径：{path}",
+        "linkPreviewOpen": "打开链接",
+        "linkPreviewUnknown": "未知",
         "clearFilters": "清除所有筛选",
         "filterLabel": "筛选",
         "filterAll": "全部",
@@ -511,12 +554,7 @@
         "languageLabel": "语言",
         "regionLabel": "地区",
         "saveButton": "保存",
-        "cancelButton": "取消",
-        "messages": {
-            "saving": "保存中...",
-            "success": "偏好设置已保存！",
-            "error": "保存偏好设置失败，请重试。"
-        }
+        "cancelButton": "取消"
     },
     "dashboard": {
         "navigation": {
@@ -525,55 +563,50 @@
             "notifications": "通知",
             "settings": "设置",
             "help": "获取帮助",
-            "search": "搜索",
+            "search": "AI 搜索",
             "account": "账户",
             "brand": "AntXZ.com"
         },
         "overview": {
             "title": "概览",
             "cards": {
-                "totalRevenue": {
-                    "label": "总收入",
-                    "value": "¥1,250.00",
-                    "trend": "+12.5%",
-                    "trendingUp": "本月上升中",
-                    "description": "过去 6 个月的访客数"
+                "totalComments": {
+                    "label": "发表评论",
+                    "description": "你在所有文章中发表的评论数"
                 },
-                "newCustomers": {
-                    "label": "新客户",
-                    "value": "1,234",
-                    "trend": "-20%",
-                    "trendingDown": "本期下降 20%",
-                    "description": "获客需要关注"
+                "likesReceived": {
+                    "label": "获赞数",
+                    "description": "你的评论获得的总点赞数"
                 },
-                "activeAccounts": {
-                    "label": "活跃账户",
-                    "value": "45,678",
-                    "trend": "+12.5%",
-                    "trendingUp": "用户留存强劲",
-                    "description": "参与度超过目标"
+                "unreadNotifications": {
+                    "label": "未读通知",
+                    "description": "等待你查看的回复和点赞通知"
                 },
-                "growthRate": {
-                    "label": "增长率",
-                    "value": "4.5%",
-                    "trend": "+4.5%",
-                    "trendingUp": "性能稳步增长",
-                    "description": "符合增长预期"
+                "totalNotifications": {
+                    "label": "总通知数",
+                    "description": "收到的所有回复和点赞通知"
                 }
             }
         },
         "comments": {
             "title": "评论",
             "description": "在此管理和查看你最新的博客评论。",
+            "myCommentsTitle": "我的评论",
+            "myCommentsDescription": "你在所有文章中发表的评论。",
+            "myCommentsEmpty": "你还没有发表过任何评论。",
+            "myCommentsLoadError": "加载评论失败。",
+            "articleLabel": "文章",
+            "replyLabel": "回复",
+            "likeCount": "{count} 个赞",
             "safeguardsTitle": "评论安全",
             "safeguardsDescription": "处理被隔离、标记为垃圾或屏蔽的评论。",
+            "adminForbidden": "仅 COMMENT_ADMIN_EMAILS 中配置的邮箱可访问管理员功能。",
+            "adminQueueEmpty": "当前没有被隔离或标记为垃圾的评论。",
             "actions": {
-                "retry": "重试"
-            },
-            "messages": {
-                "loadError": "评论审核队列加载失败",
-                "updateError": "更新评论审核状态失败",
-                "updateSuccess": "评论审核状态已更新"
+                "retry": "重试",
+                "publish": "发布",
+                "blockUser": "屏蔽用户",
+                "delete": "删除"
             }
         },
         "notifications": {
@@ -598,6 +631,24 @@
             "meta": {
                 "from": "来自 {name}"
             },
+            "content": {
+                "replyTitle": "你的文章有了新回复",
+                "replyMessage": "{actor} 在 {article} 下回复了你。",
+                "replyMessageRich": "<actor>{actorName}</actor> 在 <article>{articleTitle}</article> 下回复了你。",
+                "likeTitle": "有人赞了你的评论",
+                "likeMessage": "{actor} 在 {article} 中赞了你的评论。",
+                "likeMessageRich": "<actor>{actorName}</actor> 在 <article>{articleTitle}</article> 中赞了你的评论。",
+                "systemTitle": "系统通知",
+                "systemMessage": "你收到了一条新通知。"
+            },
+            "hover": {
+                "userFallback": "用户",
+                "userBioEmpty": "这个用户还没有填写简介。",
+                "userWebsite": "个人网站",
+                "articleLabel": "文章",
+                "articleMissing": "暂时无法显示文章预览",
+                "commentPreview": "回复预览"
+            },
             "actions": {
                 "refresh": "刷新",
                 "view": "查看",
@@ -606,21 +657,29 @@
                 "markRead": "标记已读",
                 "markAllRead": "全部已读"
             },
+            "live": {
+                "toastTitle": "新通知",
+                "toastDescription": "打开通知页查看最新互动。"
+            },
             "empty": {
                 "title": "暂时没有通知",
                 "description": "有人回复或点赞你的内容时，会在这里显示。"
-            },
-            "messages": {
-                "loadError": "通知加载失败。",
-                "markReadError": "更新通知失败。",
-                "markAllReadError": "全部标记已读失败。",
-                "markAllReadSuccess": "已全部标记为已读。"
             }
         },
         "search": {
-            "title": "搜索",
-            "description": "搜索你的控制台内容和活动。",
-            "placeholder": "搜索..."
+            "title": "AI 搜索",
+            "description": "向 AI 提问关于我的项目、博客文章或技术经验的任何问题。",
+            "placeholder": "输入你的问题...",
+            "inputLabel": "消息",
+            "sendButton": "发送",
+            "clearButton": "清空对话",
+            "emptyTitle": "你想了解什么？",
+            "emptyDescription": "可以询问关于项目、技术栈、博客文章或任何其他内容。",
+            "thinking": "思考中...",
+            "errorMessage": "出错了，请重试。",
+            "you": "你",
+            "assistant": "助手",
+            "wipBanner": "此功能正在开发中，回复内容暂时为模拟数据。"
         },
         "account": {
             "title": "账户",
@@ -647,11 +706,6 @@
                 "save": "保存修改",
                 "saving": "保存中...",
                 "retry": "重试"
-            },
-            "messages": {
-                "saved": "账户资料已更新",
-                "saveError": "保存账户资料失败",
-                "loadError": "账户信息加载失败"
             }
         },
         "help": {
@@ -741,12 +795,6 @@
                 "saving": "保存中...",
                 "cancel": "取消",
                 "retry": "重试"
-            },
-            "messages": {
-                "success": "设置保存成功！",
-                "error": "保存设置失败。请重试。",
-                "noChanges": "没有要保存的更改",
-                "loadError": "设置加载失败"
             }
         }
     },
@@ -765,6 +813,68 @@
             "tryAgain": "重试",
             "goHome": "返回首页",
             "errorId": "错误 ID: {id}"
+        }
+    },
+    "toast": {
+        "auth": {
+            "login": {
+                "loading": "正在登录...",
+                "success": "登录成功！",
+                "error": "登录失败，请重试。",
+                "oauthLoading": "正在连接..."
+            },
+            "signup": {
+                "loading": "正在创建账户...",
+                "success": "账户已创建！请查看邮箱确认。",
+                "error": "注册失败，请重试。",
+                "passwordMismatch": "密码不一致。",
+                "oauthLoading": "正在连接..."
+            },
+            "forgotPassword": {
+                "loading": "正在发送重置邮件...",
+                "success": "重置密码邮件已发送！",
+                "error": "发送邮件失败，请重试。"
+            },
+            "updatePassword": {
+                "loading": "正在更新密码...",
+                "success": "密码更新成功！",
+                "error": "更新密码失败，请重试。",
+                "samePasswordError": "新密码不能与当前密码相同。"
+            },
+            "logout": {
+                "loading": "正在退出登录...",
+                "success": "已退出登录。",
+                "error": "退出登录失败，请重试。"
+            }
+        },
+        "preferences": {
+            "saving": "保存中...",
+            "success": "偏好设置已保存！",
+            "error": "保存偏好设置失败，请重试。"
+        },
+        "dashboard": {
+            "comments": {
+                "loadError": "评论审核队列加载失败",
+                "updateError": "更新评论审核状态失败",
+                "updateSuccess": "评论审核状态已更新"
+            },
+            "notifications": {
+                "loadError": "通知加载失败。",
+                "markReadError": "更新通知失败。",
+                "markAllReadError": "全部标记已读失败。",
+                "markAllReadSuccess": "已全部标记为已读。"
+            },
+            "account": {
+                "saved": "账户资料已更新",
+                "saveError": "保存账户资料失败",
+                "loadError": "账户信息加载失败"
+            },
+            "settings": {
+                "success": "设置保存成功！",
+                "error": "保存设置失败。请重试。",
+                "noChanges": "没有要保存的更改",
+                "loadError": "设置加载失败"
+            }
         }
     }
 }

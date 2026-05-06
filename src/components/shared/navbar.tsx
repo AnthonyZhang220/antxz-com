@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useTranslations } from "next-intl";
+import { useEffect, useMemo, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { navigationConfig } from "@/config/navigation";
 import { useAuthNavigation, useAuthUser } from "@/hooks";
+import { createClient } from "@/lib/supabase/client";
 import {
 	Sheet,
 	SheetContent,
@@ -22,6 +24,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {
 	CircleUserRound,
+	Bell,
 	LayoutDashboard,
 	LogOut,
 	Menu,
@@ -31,6 +34,7 @@ import {
 import type { User } from "@supabase/supabase-js";
 import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Badge } from "../ui/badge";
 
 type NavbarProps = {
 	initialUser?: User | null;
@@ -46,28 +50,71 @@ export default function Navbar({ initialUser }: NavbarProps) {
 	const { user, displayName, initials, signOut } = useAuthUser(initialUser);
 	const { authHref, accountHref, dashboardHref, handleLogout } =
 		useAuthNavigation(signOut);
+	const locale = useLocale();
+	const notificationsHref = `/${locale}/dashboard/notifications`;
 	const avatarUrl = user?.user_metadata?.avatar_url as string | undefined;
+	const supabase = useMemo(() => createClient(), []);
+	const [unreadCount, setUnreadCount] = useState(0);
+
+	useEffect(() => {
+		if (!user?.id) {
+			return;
+		}
+
+		let disposed = false;
+
+		const loadUnreadCount = async () => {
+			const { count, error } = await supabase
+				.from("notifications")
+				.select("id", { count: "exact", head: true })
+				.eq("user_id", user.id)
+				.eq("is_read", false);
+
+			if (!disposed && !error) {
+				setUnreadCount(count ?? 0);
+			}
+		};
+
+		void loadUnreadCount();
+
+		const channel = supabase
+			.channel(`navbar-notifications-${user.id}`)
+			.on(
+				"postgres_changes",
+				{
+					event: "*",
+					schema: "public",
+					table: "notifications",
+					filter: `user_id=eq.${user.id}`,
+				},
+				() => {
+					void loadUnreadCount();
+				},
+			)
+			.subscribe();
+
+		return () => {
+			disposed = true;
+			void supabase.removeChannel(channel);
+		};
+	}, [supabase, user?.id]);
 
 	const renderUserMenu = (align: "start" | "end" = "end") => (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
-				{
-					/* 如果用户有头像，显示头像；否则显示默认图标和名字 */
-					avatarUrl ? (
-						<Avatar className="h-8 w-8 rounded-lg grayscale">
-							<AvatarImage src={avatarUrl} alt={displayName} />
-							<AvatarFallback className="rounded-lg bg-zinc-200 dark:bg-zinc-800" />
-						</Avatar>
-					) : (
-						<button
-							type="button"
-							className="flex h-9 w-9 items-center justify-center rounded-full border border-border/80 bg-zinc-200 text-xs font-semibold text-zinc-700 transition-colors hover:bg-zinc-300 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700 sm:h-10 sm:w-10"
-							aria-label={um("open")}
-						>
+				<div className="relative">
+					<Avatar className="h-8 w-8 ring-2">
+						<AvatarImage src={avatarUrl} alt={displayName} />
+						<AvatarFallback className="bg-zinc-200 dark:bg-zinc-800">
 							{initials}
-						</button>
-					)
-				}
+						</AvatarFallback>
+					</Avatar>
+					{unreadCount > 0 && (
+						<Badge variant="destructive" className="absolute -right-2 top-4">
+							{unreadCount > 99 ? "99+" : unreadCount}
+						</Badge>
+					)}
+				</div>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align={align} className="w-44">
 				<DropdownMenuLabel className="flex items-center gap-2">
@@ -85,6 +132,17 @@ export default function Navbar({ initialUser }: NavbarProps) {
 					<Link href={dashboardHref} className="cursor-pointer">
 						<LayoutDashboard className="h-4 w-4" />
 						{um("dashboard")}
+					</Link>
+				</DropdownMenuItem>
+				<DropdownMenuItem asChild>
+					<Link href={notificationsHref} className="cursor-pointer">
+						<Bell className="h-4 w-4" />
+						<span className="flex-1">{um("notifications")}</span>
+						{unreadCount > 0 && (
+							<Badge variant="destructive">
+								{unreadCount > 99 ? "99+" : unreadCount}
+							</Badge>
+						)}
 					</Link>
 				</DropdownMenuItem>
 				<DropdownMenuSeparator />
@@ -138,7 +196,9 @@ export default function Navbar({ initialUser }: NavbarProps) {
 					className="h-screen w-screen max-w-none p-0 flex flex-col"
 				>
 					<SheetTitle className="sr-only">{t("sheetTitle")}</SheetTitle>
-					<SheetDescription className="sr-only">{t("sheetTitle")}</SheetDescription>
+					<SheetDescription className="sr-only">
+						{t("sheetTitle")}
+					</SheetDescription>
 					<div className="absolute right-3 top-2.5 z-20 flex items-center gap-1.5 sm:right-6 sm:top-3 sm:gap-2">
 						{user ? (
 							renderUserMenu("end")

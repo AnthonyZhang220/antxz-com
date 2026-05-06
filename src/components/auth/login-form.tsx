@@ -5,8 +5,9 @@ import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
+import { startLoading, finishLoadingSuccess, finishLoadingError } from "@/lib/errors/error-utils";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/shared/utils";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,7 +18,7 @@ import {
 	FieldLabel,
 	FieldSeparator,
 } from "@/components/ui/field";
-import { getCookie } from "@/lib/cookies";
+import { getCookie } from "@/lib/shared/cookies";
 import { Provider } from "@supabase/supabase-js";
 
 export function LoginForm({
@@ -26,9 +27,9 @@ export function LoginForm({
 }: React.ComponentProps<"form">) {
 	const t = useTranslations("auth.loginForm");
 	const l = useTranslations("auth.socialButton");
+	const tm = useTranslations("toast.auth.login");
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
-	const [error, setError] = useState<string | null>(null);
 	const [isEmailLoading, setIsEmailLoading] = useState(false);
 	const [oauthProvider, setOauthProvider] = useState<Provider | null>(null);
 	const isOAuthLoading = oauthProvider !== null;
@@ -41,7 +42,7 @@ export function LoginForm({
 	const handleEmailLogin = async (e: React.FormEvent) => {
 		e.preventDefault();
 		setIsEmailLoading(true);
-		setError(null);
+		const toastId = startLoading(tm("loading"));
 
 		try {
 			const { error } = await supabase.auth.signInWithPassword({
@@ -49,9 +50,10 @@ export function LoginForm({
 				password,
 			});
 			if (error) throw error;
+			finishLoadingSuccess(toastId, tm("success"));
 			router.push(`/${locale}/dashboard`);
 		} catch (error: unknown) {
-			setError(error instanceof Error ? error.message : "An error occurred");
+			finishLoadingError(toastId, error instanceof Error ? error.message : tm("error"));
 		} finally {
 			setIsEmailLoading(false);
 		}
@@ -63,7 +65,7 @@ export function LoginForm({
 		}
 
 		setOauthProvider(provider);
-		setError(null);
+		const toastId = startLoading(tm("oauthLoading"));
 
 		try {
 			const callbackUrl = new URL(
@@ -86,7 +88,7 @@ export function LoginForm({
 
 			throw new Error("Missing OAuth redirect URL");
 		} catch (error: unknown) {
-			setError(error instanceof Error ? error.message : "An error occurred");
+			finishLoadingError(toastId, error instanceof Error ? error.message : tm("error"));
 		} finally {
 			setOauthProvider(null);
 		}
@@ -135,7 +137,6 @@ export function LoginForm({
 					/>
 				</Field>
 				<Field>
-					{error && <p className="text-sm text-red-500">{error}</p>}
 					<Button type="submit" className="w-full" disabled={isLoading}>
 						{isEmailLoading ? t("loading") : t("button")}
 					</Button>

@@ -13,7 +13,7 @@ import {
 	DropdownMenuRadioItem,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { setCookie } from "@/lib/cookies";
+import { setCookie } from "@/lib/shared/cookies";
 import { saveThemePreference } from "@/lib/actions/user-preferences";
 
 const subscribe = () => () => undefined;

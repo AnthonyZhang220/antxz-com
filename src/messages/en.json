@@ -3,6 +3,13 @@
         "title": "ANTXZ | Personal Platform",
         "description": "Tracing the trajectory of thought through the chaos of experience."
     },
+    "wip": {
+        "description": "This page is currently under construction. Check back soon!",
+        "badge": "Under Construction"
+    },
+    "nextjs": {
+        "title": "Next.js"
+    },
     "navbar": {
         "home": {
             "title": "Back to the beginning",
@@ -50,8 +57,16 @@
         "contactTitle": "Let's connect",
         "contactBody": "If you want to discuss collaboration, projects, or just say hi, I'd love to hear from you.",
         "contactReplyEta": "Typically replies within 24 hours.",
+        "archiveLabel": "ARCHIVE",
+        "oldWebsiteButton": "Visit Old Website",
         "introTitle": "About Me",
-        "introBody": "I'm a full-stack developer specializing in building web applications with Next.js, TypeScript, and Tailwind CSS. In my spare time, I enjoy photography, blogging, and exploring new technologies."
+        "introTitleLine1": "Building",
+        "introTitleLine2": "the web.",
+        "introBody": "I'm a full-stack developer specializing in building web applications with Next.js, TypeScript, and Tailwind CSS. In my spare time, I enjoy photography, blogging, and exploring new technologies.",
+        "introRole": "Full-stack Developer",
+        "introLocation": "New York City",
+        "introStack": "Next.js · TypeScript · React · Tailwind",
+        "introCta": "More about me"
     },
     "about": {
         "me": {
@@ -294,6 +309,7 @@
         "openStudio": "Open Studio"
     },
     "mbti": {
+        "title": "MBTI",
         "startButton": "Start Test",
         "resultTitle": "Your personality type is"
     },
@@ -371,6 +387,27 @@
         "commentsLike": "Like",
         "commentsUnlike": "Liked",
         "commentsLikeCount": "{count} likes",
+            "commentsReply": "Reply",
+            "commentsCancel": "Cancel",
+            "commentsReplyTo": "Replying to {name}",
+            "commentsReplyPlaceholder": "Write a reply...",
+            "commentsDelete": "Delete",
+            "commentsDeleting": "Deleting...",
+            "commentsDeleteConfirm": "Delete this comment? This action cannot be undone.",
+            "commentsDeleteForbidden": "You can only delete your own comments.",
+            "commentsDeleteError": "Failed to delete comment.",
+        "commentsErrorBlocked": "Your account is unable to post comments.",
+        "commentsErrorSpam": "Your comment violates our guidelines.",
+        "commentsErrorQuarantine": "Your comment needs review before posting.",
+        "commentsErrorTooShort": "Your comment is too short (minimum 3 characters).",
+        "commentsErrorTooLong": "Your comment is too long (maximum 1800 characters).",
+        "commentsErrorEmojiOnly": "Your comment cannot be emoji only.",
+        "commentsErrorTooManyLinks": "Your comment contains too many links (maximum 1).",
+        "commentsErrorBlacklistTerms": "Your comment contains prohibited terms.",
+        "commentsErrorRepeatedCharacters": "Your comment contains too many repeated characters.",
+        "commentsErrorRepeatedSentences": "Your comment contains repeated sentences.",
+        "commentsErrorHighFrequency": "You're posting too frequently. Please wait a moment.",
+        "commentsErrorDuplicateRecent": "You recently posted a similar comment.",
         "commentsCountShort": "{count} comments",
         "articleLike": "Like post",
         "articleUnlike": "Liked",
@@ -383,6 +420,12 @@
         "sourceDevto": "Dev.to",
         "sourceMedium": "Medium",
         "sourceExternal": "External",
+        "tocTitle": "On this page",
+        "linkPreviewTitle": "Link preview",
+        "linkPreviewHost": "Host: {host}",
+        "linkPreviewPath": "Path: {path}",
+        "linkPreviewOpen": "Open link",
+        "linkPreviewUnknown": "Unknown",
         "clearFilters": "Clear all filters",
         "filterLabel": "Filters",
         "filterAll": "All",
@@ -511,12 +554,7 @@
         "languageLabel": "Language",
         "regionLabel": "Region",
         "saveButton": "Save",
-        "cancelButton": "Cancel",
-        "messages": {
-            "saving": "Saving...",
-            "success": "Preferences saved!",
-            "error": "Failed to save preferences. Please try again."
-        }
+        "cancelButton": "Cancel"
     },
     "dashboard": {
         "navigation": {
@@ -525,55 +563,50 @@
             "notifications": "Notifications",
             "settings": "Settings",
             "help": "Get Help",
-            "search": "Search",
+            "search": "AI Search",
             "account": "Account",
             "brand": "AntXZ.com"
         },
         "overview": {
             "title": "Overview",
             "cards": {
-                "totalRevenue": {
-                    "label": "Total Revenue",
-                    "value": "$1,250.00",
-                    "trend": "+12.5%",
-                    "trendingUp": "Trending up this month",
-                    "description": "Visitors for the last 6 months"
+                "totalComments": {
+                    "label": "Total Comments",
+                    "description": "Comments you've posted across all articles"
                 },
-                "newCustomers": {
-                    "label": "New Customers",
-                    "value": "1,234",
-                    "trend": "-20%",
-                    "trendingDown": "Down 20% this period",
-                    "description": "Acquisition needs attention"
+                "likesReceived": {
+                    "label": "Likes Received",
+                    "description": "Total likes on all your comments"
                 },
-                "activeAccounts": {
-                    "label": "Active Accounts",
-                    "value": "45,678",
-                    "trend": "+12.5%",
-                    "trendingUp": "Strong user retention",
-                    "description": "Engagement exceed targets"
+                "unreadNotifications": {
+                    "label": "Unread Notifications",
+                    "description": "Replies and likes waiting for your attention"
                 },
-                "growthRate": {
-                    "label": "Growth Rate",
-                    "value": "4.5%",
-                    "trend": "+4.5%",
-                    "trendingUp": "Steady performance increase",
-                    "description": "Meets growth projections"
+                "totalNotifications": {
+                    "label": "Total Notifications",
+                    "description": "All reply and like notifications received"
                 }
             }
         },
         "comments": {
             "title": "Comments",
             "description": "Manage and review your latest blog comments here.",
+            "myCommentsTitle": "My Comments",
+            "myCommentsDescription": "All comments you have posted across articles.",
+            "myCommentsEmpty": "You haven't posted any comments yet.",
+            "myCommentsLoadError": "Failed to load your comments.",
+            "articleLabel": "Article",
+            "replyLabel": "Reply",
+            "likeCount": "{count} likes",
             "safeguardsTitle": "Comment Safeguards",
             "safeguardsDescription": "Handle quarantined, spam, or blocked comments.",
+            "adminForbidden": "Admin access is limited to emails listed in COMMENT_ADMIN_EMAILS.",
+            "adminQueueEmpty": "No quarantined or spam comments right now.",
             "actions": {
-                "retry": "Try again"
-            },
-            "messages": {
-                "loadError": "Failed to load comment moderation queue",
-                "updateError": "Failed to update comment moderation state",
-                "updateSuccess": "Comment moderation updated"
+                "retry": "Try again",
+                "publish": "Publish",
+                "blockUser": "Block user",
+                "delete": "Delete"
             }
         },
         "notifications": {
@@ -598,6 +631,24 @@
             "meta": {
                 "from": "From {name}"
             },
+            "content": {
+                "replyTitle": "New reply on your post",
+                "replyMessage": "{actor} replied on {article}.",
+                "replyMessageRich": "<actor>{actorName}</actor> replied on <article>{articleTitle}</article>.",
+                "likeTitle": "Someone liked your comment",
+                "likeMessage": "{actor} liked your comment on {article}.",
+                "likeMessageRich": "<actor>{actorName}</actor> liked your comment on <article>{articleTitle}</article>.",
+                "systemTitle": "System notification",
+                "systemMessage": "You have a new notification."
+            },
+            "hover": {
+                "userFallback": "User",
+                "userBioEmpty": "No bio yet.",
+                "userWebsite": "Website",
+                "articleLabel": "Article",
+                "articleMissing": "Article preview unavailable",
+                "commentPreview": "Reply preview"
+            },
             "actions": {
                 "refresh": "Refresh",
                 "view": "View",
@@ -606,21 +657,29 @@
                 "markRead": "Mark as read",
                 "markAllRead": "Mark all read"
             },
+            "live": {
+                "toastTitle": "New notification",
+                "toastDescription": "Open your notifications to review the latest activity."
+            },
             "empty": {
                 "title": "No notifications yet",
                 "description": "When someone replies to or likes your content, it will show up here."
-            },
-            "messages": {
-                "loadError": "Failed to load notifications.",
-                "markReadError": "Failed to update this notification.",
-                "markAllReadError": "Failed to mark all notifications as read.",
-                "markAllReadSuccess": "All notifications marked as read."
             }
         },
         "search": {
-            "title": "Search",
-            "description": "Search across your dashboard content and activity.",
-            "placeholder": "Search..."
+            "title": "AI Search",
+            "description": "Ask anything about my projects, blog posts, or experience.",
+            "placeholder": "Ask me anything...",
+            "inputLabel": "Message",
+            "sendButton": "Send",
+            "clearButton": "Clear chat",
+            "emptyTitle": "What would you like to know?",
+            "emptyDescription": "Ask about my projects, tech stack, blog posts, or anything else.",
+            "thinking": "Thinking...",
+            "errorMessage": "Something went wrong. Please try again.",
+            "you": "You",
+            "assistant": "Assistant",
+            "wipBanner": "This feature is currently under development. Responses are not real yet."
         },
         "account": {
             "title": "Account",
@@ -647,11 +706,6 @@
                 "save": "Save changes",
                 "saving": "Saving...",
                 "retry": "Try again"
-            },
-            "messages": {
-                "saved": "Account profile updated",
-                "saveError": "Failed to save account profile",
-                "loadError": "Failed to load account information"
             }
         },
         "help": {
@@ -741,12 +795,6 @@
                 "saving": "Saving...",
                 "cancel": "Cancel",
                 "retry": "Try again"
-            },
-            "messages": {
-                "success": "Settings saved successfully!",
-                "error": "Failed to save settings. Please try again.",
-                "noChanges": "No changes to save",
-                "loadError": "Failed to load settings"
             }
         }
     },
@@ -765,6 +813,68 @@
             "tryAgain": "Try again",
             "goHome": "Go to home",
             "errorId": "Error ID: {id}"
+        }
+    },
+    "toast": {
+        "auth": {
+            "login": {
+                "loading": "Logging in...",
+                "success": "Logged in successfully!",
+                "error": "Login failed. Please try again.",
+                "oauthLoading": "Connecting..."
+            },
+            "signup": {
+                "loading": "Creating your account...",
+                "success": "Account created! Check your email to confirm.",
+                "error": "Sign up failed. Please try again.",
+                "passwordMismatch": "Passwords do not match.",
+                "oauthLoading": "Connecting..."
+            },
+            "forgotPassword": {
+                "loading": "Sending reset email...",
+                "success": "Password reset email sent!",
+                "error": "Failed to send email. Please try again."
+            },
+            "updatePassword": {
+                "loading": "Updating password...",
+                "success": "Password updated successfully!",
+                "error": "Failed to update password. Please try again.",
+                "samePasswordError": "New password must be different from your current password."
+            },
+            "logout": {
+                "loading": "Logging out...",
+                "success": "Logged out successfully.",
+                "error": "Failed to log out. Please try again."
+            }
+        },
+        "preferences": {
+            "saving": "Saving...",
+            "success": "Preferences saved!",
+            "error": "Failed to save preferences. Please try again."
+        },
+        "dashboard": {
+            "comments": {
+                "loadError": "Failed to load comment moderation queue",
+                "updateError": "Failed to update comment moderation state",
+                "updateSuccess": "Comment moderation updated"
+            },
+            "notifications": {
+                "loadError": "Failed to load notifications.",
+                "markReadError": "Failed to update this notification.",
+                "markAllReadError": "Failed to mark all notifications as read.",
+                "markAllReadSuccess": "All notifications marked as read."
+            },
+            "account": {
+                "saved": "Account profile updated",
+                "saveError": "Failed to save account profile",
+                "loadError": "Failed to load account information"
+            },
+            "settings": {
+                "success": "Settings saved successfully!",
+                "error": "Failed to save settings. Please try again.",
+                "noChanges": "No changes to save",
+                "loadError": "Failed to load settings"
+            }
         }
     }
 }

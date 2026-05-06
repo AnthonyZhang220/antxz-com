@@ -3,8 +3,9 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
+import { startLoading, finishLoadingSuccess, finishLoadingError } from "@/lib/errors/error-utils";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/shared/utils";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,8 +23,8 @@ export function UpdatePasswordForm({
 	...props
 }: React.ComponentPropsWithoutRef<"div">) {
 	const t = useTranslations("auth.updatePasswordForm");
+	const tm = useTranslations("toast.auth.updatePassword");
 	const [password, setPassword] = useState("");
-	const [error, setError] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
 	const router = useRouter();
 	const locale = useLocale();
@@ -32,14 +33,17 @@ export function UpdatePasswordForm({
 		e.preventDefault();
 		const supabase = createClient();
 		setIsLoading(true);
-		setError(null);
+		const toastId = startLoading(tm("loading"));
 
 		try {
 			const { error } = await supabase.auth.updateUser({ password });
 			if (error) throw error;
+			finishLoadingSuccess(toastId, tm("success"));
 			router.push(`/${locale}/dashboard`);
 		} catch (error: unknown) {
-			setError(error instanceof Error ? error.message : "An error occurred");
+			const message = error instanceof Error ? error.message : "";
+			const isSamePassword = message.toLowerCase().includes("should be different") || message.toLowerCase().includes("same as");
+			finishLoadingError(toastId, isSamePassword ? tm("samePasswordError") : (message || tm("error")));
 		} finally {
 			setIsLoading(false);
 		}
@@ -68,7 +72,7 @@ export function UpdatePasswordForm({
 									onChange={(e) => setPassword(e.target.value)}
 								/>
 							</div>
-							{error && <p className="text-sm text-red-500">{error}</p>}
+
 							<Button type="submit" className="w-full" disabled={isLoading}>
 								{isLoading ? t("loading") : t("button")}
 							</Button>

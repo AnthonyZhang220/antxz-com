@@ -8,7 +8,7 @@ import {
 	type AppLocale,
 	type AppRegion,
 	type UserSettings,
-} from "@/lib/user-preferences";
+} from "@/lib/user/preferences";
 
 type SessionSyncResult = {
 	supabaseResponse: NextResponse;

@@ -31,12 +31,13 @@ import {
 	finishLoadingError,
 	finishLoadingSuccess,
 	startLoading,
-} from "@/lib/error-utils";
+} from "@/lib/errors/error-utils";
 import { getUserSettings, saveUserSettings } from "./settings-actions";
-import type { UserSettings } from "@/lib/user-preferences";
+import type { UserSettings } from "@/lib/user/preferences";
 
 export default function DashboardSettings() {
 	const t = useTranslations("dashboard.settings");
+	const tm = useTranslations("toast.dashboard.settings");
 	const locale = useLocale();
 	const pathname = usePathname();
 	const router = useRouter();
@@ -51,9 +52,9 @@ export default function DashboardSettings() {
 	const [isLoading, setIsLoading] = useState(true);
 	const [isSaving, setIsSaving] = useState(false);
 	const [hasChanges, setHasChanges] = useState(false);
-	const loadErrorMessage = t("messages.loadError");
-	const saveErrorMessage = t("messages.error");
-	const saveSuccessMessage = t("messages.success");
+	const loadErrorMessage = tm("loadError");
+	const saveErrorMessage = tm("error");
+	const saveSuccessMessage = tm("success");
 	const [loadError, setLoadError] = useState<string | null>(null);
 
 	const loadSettings = useCallback(async () => {

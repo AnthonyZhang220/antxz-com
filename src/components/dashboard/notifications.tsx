@@ -1,24 +1,43 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { Bell, Heart, MessageCircleReply, RefreshCw, Sparkles } from "lucide-react";
+import { useMemo, useState, type ReactNode } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import {
+	Bell,
+	Globe,
+	Heart,
+	MessageCircleReply,
+	RefreshCw,
+	Sparkles,
+} from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { DashboardPageSkeleton } from "@/components/dashboard/dashboard-page-skeleton";
-import { ErrorState } from "@/components/shared/error-state";
-import { handleError, handleSuccess } from "@/lib/error-utils";
-
 import {
-	getNotifications,
 	markAllNotificationsAsRead,
 	markNotificationAsRead,
 	type DashboardNotification,
 	type DashboardNotificationType,
 } from "@/components/dashboard/notifications-actions";
+import { useNotificationData } from "@/hooks/use-notifications";
+import { ErrorState } from "@/components/shared/error-state";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
+import {
+	HoverCard,
+	HoverCardContent,
+	HoverCardTrigger,
+} from "@/components/ui/hover-card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { handleError, handleSuccess } from "@/lib/errors/error-utils";
 
 type FilterKey = "all" | "unread" | DashboardNotificationType;
 
@@ -90,145 +109,204 @@ function getTypeIcon(type: DashboardNotificationType) {
 	return Sparkles;
 }
 
+function UserHoverCard({
+	notification,
+	bioEmptyLabel,
+	websiteLabel,
+	children,
+}: {
+	notification: DashboardNotification;
+	bioEmptyLabel: string;
+	websiteLabel: string;
+	children: ReactNode;
+}) {
+	return (
+		<HoverCard openDelay={120} closeDelay={120}>
+			<HoverCardTrigger asChild>
+				<button
+					type="button"
+					className="cursor-pointer font-medium text-foreground underline-offset-4 transition hover:underline"
+				>
+					{children}
+				</button>
+			</HoverCardTrigger>
+			<HoverCardContent align="start" className="w-80 space-y-3">
+				<div className="flex items-start gap-3">
+					<Avatar size="lg">
+						{notification.actor.avatar_url ? (
+							<AvatarImage
+								src={notification.actor.avatar_url}
+								alt={notification.actor.name}
+							/>
+						) : null}
+						<AvatarFallback>{getInitials(notification.actor.name)}</AvatarFallback>
+					</Avatar>
+					<div className="min-w-0 space-y-1">
+						<p className="truncate font-medium">{notification.actor.name}</p>
+						<p className="text-sm text-muted-foreground">
+							{notification.actor.bio || bioEmptyLabel}
+						</p>
+					</div>
+				</div>
+				{notification.actor.website ? (
+					<a
+						href={notification.actor.website}
+						target="_blank"
+						rel="noreferrer"
+						className="inline-flex items-center gap-2 text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+					>
+						<Globe className="size-4" />
+						<span>{websiteLabel}</span>
+					</a>
+				) : null}
+			</HoverCardContent>
+		</HoverCard>
+	);
+}
+
+function ArticleHoverCard({
+	notification,
+	articleLabel,
+	missingLabel,
+	children,
+}: {
+	notification: DashboardNotification;
+	articleLabel: string;
+	missingLabel: string;
+	children: ReactNode;
+}) {
+	if (!notification.article) {
+		return <span className="font-medium text-foreground">{children}</span>;
+	}
+
+	return (
+		<HoverCard openDelay={120} closeDelay={120}>
+			<HoverCardTrigger asChild>
+				<Link
+					href={notification.article.target_url || notification.target_url || "#"}
+					className="font-medium text-foreground underline-offset-4 transition hover:underline"
+				>
+					{children}
+				</Link>
+			</HoverCardTrigger>
+			<HoverCardContent align="start" className="w-84 space-y-3">
+				{notification.article.cover_image_url ? (
+					<Image
+						src={notification.article.cover_image_url}
+						alt={notification.article.title}
+						width={336}
+						height={144}
+						className="h-36 w-full rounded-md object-cover"
+						unoptimized
+					/>
+				) : (
+					<div className="flex h-24 items-center justify-center rounded-md border border-dashed text-sm text-muted-foreground">
+						{missingLabel}
+					</div>
+				)}
+				<div className="space-y-1">
+					<p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+						{articleLabel}
+					</p>
+					<p className="font-medium">{notification.article.title}</p>
+				</div>
+			</HoverCardContent>
+		</HoverCard>
+	);
+}
+
 export default function DashboardNotifications() {
 	const t = useTranslations("dashboard.notifications");
+	const tm = useTranslations("toast.dashboard.notifications");
 	const locale = useLocale();
 
-	const [notifications, setNotifications] = useState<DashboardNotification[]>([]);
-	const [isLoading, setIsLoading] = useState(true);
 	const [isMutating, setIsMutating] = useState(false);
-	const [loadError, setLoadError] = useState<string | null>(null);
 	const [activeFilter, setActiveFilter] = useState<FilterKey>("all");
 
+	// ── labels ────────────────────────────────────────────────────────────────
+	const userFallback = t("hover.userFallback");
+	const userBioEmpty = t("hover.userBioEmpty");
+	const userWebsiteLabel = t("hover.userWebsite");
+	const articleLabel = t("hover.articleLabel");
+	const articleMissing = t("hover.articleMissing");
+	const commentPreviewLabel = t("hover.commentPreview");
+	const markReadErrorMessage = tm("markReadError");
+	const markAllReadErrorMessage = tm("markAllReadError");
+
+	// ── message helpers (declared before hook so the toast callback can use them) ──
+	function getArticleTitle(notification: DashboardNotification) {
+		return (
+			notification.article?.title ||
+			notification.metadata.article_key?.replace(/^blog:/, "") ||
+			articleMissing
+		);
+	}
+
+	function getNotificationTitle(notification: DashboardNotification) {
+		if (notification.type === "reply") return t("content.replyTitle");
+		if (notification.type === "like") return t("content.likeTitle");
+		if (notification.type === "system") return notification.title || t("content.systemTitle");
+		return notification.title || t(`types.${notification.type}`);
+	}
+
+	function getNotificationPlainMessage(notification: DashboardNotification) {
+		const actorName = notification.actor.name || userFallback;
+		const articleTitle = getArticleTitle(notification);
+		if (notification.type === "reply") return t("content.replyMessage", { actor: actorName, article: articleTitle });
+		if (notification.type === "like") return t("content.likeMessage", { actor: actorName, article: articleTitle });
+		return notification.message || t("content.systemMessage");
+	}
+
+	// ── data + realtime ──────────────────────────────────────────────────────
+	const { notifications, isLoading, loadError, reload, setNotificationState } =
+		useNotificationData(tm("loadError"));
+
+	// ── derived state ────────────────────────────────────────────────────────
 	const unreadCount = useMemo(
-		() => notifications.filter((item) => !item.is_read).length,
+		() => notifications.filter((n) => !n.is_read).length,
 		[notifications]
 	);
 
 	const filteredNotifications = useMemo(() => {
-		if (activeFilter === "all") {
-			return notifications;
-		}
-
-		if (activeFilter === "unread") {
-			return notifications.filter((item) => !item.is_read);
-		}
-
-		return notifications.filter((item) => item.type === activeFilter);
+		if (activeFilter === "all") return notifications;
+		if (activeFilter === "unread") return notifications.filter((n) => !n.is_read);
+		return notifications.filter((n) => n.type === activeFilter);
 	}, [activeFilter, notifications]);
 
-	const loadErrorMessage = t("messages.loadError");
-	const markReadErrorMessage = t("messages.markReadError");
-	const markAllReadErrorMessage = t("messages.markAllReadError");
-
-	const loadNotifications = async (withLoading: boolean) => {
-		if (withLoading) {
-			setIsLoading(true);
-		}
-		setLoadError(null);
-
-		const result = await getNotifications();
-		if (!result.success) {
-			setLoadError(result.error || loadErrorMessage);
-			setIsLoading(false);
-			return;
-		}
-
-		setNotifications(result.data || []);
-		setIsLoading(false);
-	};
-
-	useEffect(() => {
-		let isMounted = true;
-
-		const load = async () => {
-			setLoadError(null);
-			const result = await getNotifications();
-			if (!isMounted) {
-				return;
-			}
-
-			if (!result.success) {
-				setLoadError(result.error || loadErrorMessage);
-				setIsLoading(false);
-				return;
-			}
-
-			setNotifications(result.data || []);
-			setIsLoading(false);
-		};
-
-		void load();
-
-		return () => {
-			isMounted = false;
-		};
-	}, [loadErrorMessage]);
-
+	// ── message helpers (declared before hook so the toast callback can use them) ──
+	// ── action handlers ──────────────────────────────────────────────────────
 	const onMarkRead = async (id: string) => {
 		setIsMutating(true);
-
 		const result = await markNotificationAsRead(id);
 		if (!result.success) {
 			handleError(new Error(result.error || markReadErrorMessage), markReadErrorMessage);
 			setIsMutating(false);
 			return;
 		}
-
-		setNotifications((prev) =>
+		setNotificationState((prev) =>
 			prev.map((item) =>
-				item.id === id
-					? {
-						...item,
-						is_read: true,
-						read_at: new Date().toISOString(),
-					}
-					: item
+				item.id === id ? { ...item, is_read: true, read_at: new Date().toISOString() } : item
 			)
 		);
-
 		setIsMutating(false);
 	};
 
 	const onMarkAllRead = async () => {
 		setIsMutating(true);
-
 		const result = await markAllNotificationsAsRead();
 		if (!result.success) {
 			handleError(new Error(result.error || markAllReadErrorMessage), markAllReadErrorMessage);
 			setIsMutating(false);
 			return;
 		}
-
-		setNotifications((prev) =>
-			prev.map((item) => ({
-				...item,
-				is_read: true,
-				read_at: item.read_at || new Date().toISOString(),
-			}))
+		setNotificationState((prev) =>
+			prev.map((item) => ({ ...item, is_read: true, read_at: item.read_at || new Date().toISOString() }))
 		);
-		handleSuccess(t("messages.markAllReadSuccess"));
-
+		handleSuccess(tm("markAllReadSuccess"));
 		setIsMutating(false);
 	};
 
-	if (isLoading) {
-		return <DashboardPageSkeleton rows={5} />;
-	}
-
-	if (loadError) {
-		return (
-			<div className="space-y-6 p-4 lg:p-6">
-				<ErrorState
-					title={t("title")}
-					description={loadError}
-					onRetry={() => void loadNotifications(true)}
-					retryLabel={t("actions.refresh")}
-				/>
-			</div>
-		);
-	}
-
+	// ── render ───────────────────────────────────────────────────────────────
 	return (
 		<div className="space-y-6 p-4 lg:p-6">
 			<Card>
@@ -243,8 +321,8 @@ export default function DashboardNotifications() {
 							<Button
 								variant="outline"
 								size="sm"
-								onClick={() => void loadNotifications(true)}
-								disabled={isMutating}
+								onClick={() => void reload(true)}
+								disabled={isMutating || isLoading}
 							>
 								<RefreshCw className="size-4" />
 								{t("actions.refresh")}
@@ -253,7 +331,7 @@ export default function DashboardNotifications() {
 								variant="default"
 								size="sm"
 								onClick={onMarkAllRead}
-								disabled={isMutating || unreadCount === 0}
+								disabled={isMutating || isLoading || unreadCount === 0}
 							>
 								{t("actions.markAllRead")}
 							</Button>
@@ -274,14 +352,64 @@ export default function DashboardNotifications() {
 					</div>
 				</CardHeader>
 				<CardContent className="space-y-3">
-					{filteredNotifications.length === 0 ? (
+					{isLoading ? (
+						<div className="space-y-3">
+							{Array.from({ length: 4 }).map((_, idx) => (
+								<Skeleton key={idx} className="h-24 w-full rounded-lg" />
+							))}
+						</div>
+					) : loadError ? (
+						<ErrorState
+							title={t("title")}
+							description={loadError}
+							onRetry={() => void reload(true)}
+							retryLabel={t("actions.refresh")}
+						/>
+					) : filteredNotifications.length === 0 ? (
 						<div className="rounded-lg border border-dashed p-8 text-center">
 							<p className="text-sm font-medium">{t("empty.title")}</p>
-							<p className="mt-1 text-sm text-muted-foreground">{t("empty.description")}</p>
+							<p className="mt-1 text-sm text-muted-foreground">
+								{t("empty.description")}
+							</p>
 						</div>
 					) : (
-						filteredNotifications.map((notification) => {
+						<div className="space-y-3">
+							{filteredNotifications.map((notification) => {
 							const Icon = getTypeIcon(notification.type);
+							const actorName = notification.actor.name || userFallback;
+							const articleTitle = getArticleTitle(notification);
+
+							const message =
+								notification.type === "reply" || notification.type === "like"
+									? t.rich(
+										notification.type === "reply"
+											? "content.replyMessageRich"
+											: "content.likeMessageRich",
+										{
+											actorName,
+											articleTitle,
+											actor: (chunks) => (
+												<UserHoverCard
+													notification={notification}
+													bioEmptyLabel={userBioEmpty}
+													websiteLabel={userWebsiteLabel}
+												>
+													{chunks}
+												</UserHoverCard>
+											),
+											article: (chunks) => (
+												<ArticleHoverCard
+													notification={notification}
+													articleLabel={articleLabel}
+													missingLabel={articleMissing}
+												>
+													{chunks}
+												</ArticleHoverCard>
+											),
+										}
+									)
+									: getNotificationPlainMessage(notification);
+
 							return (
 								<div
 									key={notification.id}
@@ -291,7 +419,10 @@ export default function DashboardNotifications() {
 										<div className="flex min-w-0 flex-1 gap-3">
 											<Avatar size="lg" className="mt-0.5">
 												{notification.actor_avatar_url ? (
-													<AvatarImage src={notification.actor_avatar_url} alt={notification.actor_name} />
+													<AvatarImage
+														src={notification.actor_avatar_url}
+														alt={notification.actor_name}
+													/>
 												) : null}
 												<AvatarFallback>{getInitials(notification.actor_name)}</AvatarFallback>
 											</Avatar>
@@ -307,10 +438,18 @@ export default function DashboardNotifications() {
 													) : null}
 												</div>
 
-												<p className="font-medium">{notification.title}</p>
-												<p className="text-sm text-muted-foreground">{notification.message}</p>
+												<p className="font-medium">{getNotificationTitle(notification)}</p>
+												<p className="text-sm leading-6 text-muted-foreground">{message}</p>
+												{notification.type === "reply" && notification.metadata.comment_preview ? (
+													<div className="rounded-md border bg-muted/40 px-3 py-2 text-sm text-muted-foreground">
+														<p className="mb-1 text-xs font-medium uppercase tracking-wide">
+															{commentPreviewLabel}
+														</p>
+														<p className="line-clamp-3">{notification.metadata.comment_preview}</p>
+													</div>
+												) : null}
 												<p className="text-xs text-muted-foreground">
-													{t("meta.from", { name: notification.actor_name })} · {getRelativeTime(locale, notification.created_at)}
+													{t("meta.from", { name: actorName })} · {getRelativeTime(locale, notification.created_at)}
 												</p>
 											</div>
 										</div>
@@ -318,17 +457,17 @@ export default function DashboardNotifications() {
 										<div className="flex shrink-0 flex-wrap items-center gap-2 md:justify-end">
 											{notification.target_url ? (
 												<Button variant="outline" size="sm" asChild>
-													<a href={notification.target_url}>{t("actions.view")}</a>
+													<Link href={notification.target_url}>{t("actions.view")}</Link>
 												</Button>
 											) : null}
 											{notification.type === "reply" ? (
 												<Button variant="outline" size="sm" asChild>
-													<a href={notification.target_url || "#"}>{t("actions.reply")}</a>
+													<Link href={notification.target_url || "#"}>{t("actions.reply")}</Link>
 												</Button>
 											) : null}
 											{notification.type === "like" ? (
 												<Button variant="outline" size="sm" asChild>
-													<a href={notification.target_url || "#"}>{t("actions.likeBack")}</a>
+													<Link href={notification.target_url || "#"}>{t("actions.likeBack")}</Link>
 												</Button>
 											) : null}
 											{!notification.is_read ? (
@@ -346,6 +485,8 @@ export default function DashboardNotifications() {
 								</div>
 							);
 						})
+						}
+					</div>
 					)}
 				</CardContent>
 			</Card>

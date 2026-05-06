@@ -21,7 +21,7 @@ import {
 	finishLoadingError,
 	finishLoadingSuccess,
 	startLoading,
-} from "@/lib/error-utils";
+} from "@/lib/errors/error-utils";
 
 import {
 	getAccountProfile,
@@ -56,7 +56,8 @@ function formatDate(value: string | null) {
 
 export default function DashboardAccount() {
 	const t = useTranslations("dashboard.account");
-	const loadErrorMessage = t("messages.loadError");
+	const tm = useTranslations("toast.dashboard.account");
+	const loadErrorMessage = tm("loadError");
 	const [form, setForm] = useState<AccountProfile>(emptyForm);
 	const [initialForm, setInitialForm] = useState<AccountProfile>(emptyForm);
 	const [isLoading, setIsLoading] = useState(true);
@@ -121,21 +122,21 @@ export default function DashboardAccount() {
 			});
 
 			if (!result.success) {
-				finishLoadingError(loadingToastId, result.error || t("messages.saveError"));
+				finishLoadingError(loadingToastId, result.error || tm("saveError"));
 				return;
 			}
 
 			if (!result.data) {
-				finishLoadingError(loadingToastId, t("messages.saveError"));
+				finishLoadingError(loadingToastId, tm("saveError"));
 				return;
 			}
 
 			setForm(result.data);
 			setInitialForm(result.data);
-			finishLoadingSuccess(loadingToastId, t("messages.saved"));
+			finishLoadingSuccess(loadingToastId, tm("saved"));
 		} catch (error) {
 			const message =
-				error instanceof Error && error.message ? error.message : t("messages.saveError");
+				error instanceof Error && error.message ? error.message : tm("saveError");
 			finishLoadingError(loadingToastId, message);
 		} finally {
 			setIsSaving(false);

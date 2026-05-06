@@ -3,8 +3,8 @@
 import {
 	getAuthenticatedUserSettings,
 	saveUserPreferences,
-} from "@/lib/user-preferences-service";
-import type { UserSettings } from "@/lib/user-preferences";
+} from "@/lib/user/preferences-service";
+import type { UserSettings } from "@/lib/user/preferences";
 
 /**
  * Read dashboard user settings.

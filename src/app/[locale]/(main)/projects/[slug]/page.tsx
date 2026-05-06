@@ -2,7 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 
 import { ProjectDetail } from "@/components/projects/project-detail";
-import { mapProjectLabels } from "@/lib/project-labels";
+import { mapProjectLabels } from "@/lib/shared/project-labels";
 import { client } from "@/sanity/lib/client";
 import { allProjectSlugsQuery, projectBySlugQuery } from "@/sanity/lib/queries";
 import type { ProjectItem } from "@/types/project";

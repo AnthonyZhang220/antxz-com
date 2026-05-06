@@ -1,6 +1,6 @@
 import { client } from "@/sanity/lib/client";
 import { allPostSlugsQuery, postBySlugQuery } from "@/sanity/lib/queries";
-import { getBlogEngagementBySlug } from "@/lib/blog-engagement";
+import { getBlogEngagementBySlug } from "@/lib/blog/engagement";
 import { notFound } from "next/navigation";
 import BlogPostPage from "@/components/blog/blog-post";
 import BlogComments from "@/components/blog/blog-comments";
@@ -28,7 +28,7 @@ export default async function Page({ params }: Props) {
 	return (
 		<>
 			<BlogPostPage post={postWithEngagement} />
-			<div className="mx-auto max-w-3xl px-5 sm:px-8">
+			<div className="mx-auto max-w-4xl px-5 sm:px-8">
 				<BlogComments articleKey={`blog:${slug}`} />
 			</div>
 		</>

@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { startLoading, finishLoadingSuccess, finishLoadingError } from "@/lib/errors/error-utils";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/shared/utils";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,8 +23,8 @@ export function ForgotPasswordForm({
 	...props
 }: React.ComponentPropsWithoutRef<"div">) {
 	const t = useTranslations("auth.forgotPasswordForm");
+	const tm = useTranslations("toast.auth.forgotPassword");
 	const [email, setEmail] = useState("");
-	const [error, setError] = useState<string | null>(null);
 	const [success, setSuccess] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const locale = useLocale();
@@ -32,7 +33,7 @@ export function ForgotPasswordForm({
 		e.preventDefault();
 		const supabase = createClient();
 		setIsLoading(true);
-		setError(null);
+		const toastId = startLoading(tm("loading"));
 
 		try {
 			// The url which will be included in the email. This URL needs to be configured in your redirect URLs in the Supabase dashboard at https://supabase.com/dashboard/project/_/auth/url-configuration
@@ -41,8 +42,9 @@ export function ForgotPasswordForm({
 			});
 			if (error) throw error;
 			setSuccess(true);
+			finishLoadingSuccess(toastId, tm("success"));
 		} catch (error: unknown) {
-			setError(error instanceof Error ? error.message : "An error occurred");
+			finishLoadingError(toastId, error instanceof Error ? error.message : tm("error"));
 		} finally {
 			setIsLoading(false);
 		}
@@ -82,7 +84,7 @@ export function ForgotPasswordForm({
 										onChange={(e) => setEmail(e.target.value)}
 									/>
 								</div>
-								{error && <p className="text-sm text-red-500">{error}</p>}
+
 								<Button type="submit" className="w-full" disabled={isLoading}>
 									{isLoading ? t("loading") : t("button")}
 								</Button>

@@ -1,7 +1,7 @@
 import { getTranslations } from "next-intl/server";
 
 import { ProjectsShowcase } from "@/components/projects/projects-showcase";
-import { mapProjectLabels } from "@/lib/project-labels";
+import { mapProjectLabels } from "@/lib/shared/project-labels";
 import { client } from "@/sanity/lib/client";
 import { allProjectsQuery } from "@/sanity/lib/queries";
 import type { ProjectItem } from "@/types/project";

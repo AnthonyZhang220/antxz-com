@@ -10,8 +10,8 @@ import {
 	isMissingUserSettingsTableError,
 	preferenceCookieOptions,
 	type UserSettings,
-} from "@/lib/user-preferences";
-import { readUserSettingsFromCookies } from "@/lib/user-preferences-server";
+} from "@/lib/user/preferences";
+import { readUserSettingsFromCookies } from "@/lib/user/preferences-server";
 
 type PreferencesResult<T = void> =
 	| { success: true; data?: T }

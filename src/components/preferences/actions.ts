@@ -1,6 +1,6 @@
 "use server";
 
-import { saveUserPreferences } from "@/lib/user-preferences-service";
+import { saveUserPreferences } from "@/lib/user/preferences-service";
 
 /**
  * Save user locale/region preferences.

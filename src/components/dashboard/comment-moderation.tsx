@@ -2,13 +2,20 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
+import { getActionErrorMessage } from "@/lib/errors/action-error";
+import {
+	blockCommentUser,
+	deleteCommentAsAdmin,
+	getCommentModerationQueue,
+	setCommentModerationStatus,
+} from "@/lib/actions/comments";
 
 import { DashboardPageSkeleton } from "@/components/dashboard/dashboard-page-skeleton";
 import { ErrorState } from "@/components/shared/error-state";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { handleError, handleSuccess } from "@/lib/error-utils";
+import { handleError, handleSuccess } from "@/lib/errors/error-utils";
 
 type AdminComment = {
 	id: string;
@@ -30,8 +37,9 @@ const statusVariants: Record<AdminComment["status"], "secondary" | "destructive"
 
 export default function CommentModeration() {
 	const t = useTranslations("dashboard.comments");
-	const updateErrorMessage = t("messages.updateError");
-	const updateSuccessMessage = t("messages.updateSuccess");
+	const tm = useTranslations("toast.dashboard.comments");
+	const updateErrorMessage = tm("updateError");
+	const updateSuccessMessage = tm("updateSuccess");
 	const [comments, setComments] = useState<AdminComment[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [isForbidden, setIsForbidden] = useState(false);
@@ -42,22 +50,11 @@ export default function CommentModeration() {
 		setIsLoading(true);
 		setLoadError(null);
 		try {
-			const response = await fetch("/api/comments/admin", { cache: "no-store" });
-			if (response.status === 403) {
-				setIsForbidden(true);
-				setComments([]);
-				return;
-			}
-
-			if (!response.ok) {
-				throw new Error(t("messages.loadError"));
-			}
-
-			const payload = await response.json();
-			setIsForbidden(false);
+			const payload = await getCommentModerationQueue();
+			setIsForbidden(Boolean(payload.forbidden));
 			setComments(payload.comments ?? []);
 		} catch (error) {
-			setLoadError(error instanceof Error ? error.message : t("messages.loadError"));
+			setLoadError(getActionErrorMessage(error, tm("loadError")));
 		} finally {
 			setIsLoading(false);
 		}
@@ -71,13 +68,16 @@ export default function CommentModeration() {
 		const key = `${payload.action}:${payload.commentId || payload.userId || ""}`;
 		setPendingAction(key);
 		try {
-			const response = await fetch("/api/comments/admin", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(payload),
-			});
-
-			if (!response.ok) {
+			if (payload.action === "set-status") {
+				await setCommentModerationStatus(
+					String(payload.commentId),
+					String(payload.status) as AdminComment["status"],
+				);
+			} else if (payload.action === "block-user") {
+				await blockCommentUser(String(payload.userId));
+			} else if (payload.action === "delete-comment") {
+				await deleteCommentAsAdmin(String(payload.commentId));
+			} else {
 				throw new Error(updateErrorMessage);
 			}
 
@@ -91,7 +91,7 @@ export default function CommentModeration() {
 	};
 
 	return (
-		<div className="p-4 lg:p-6">
+		<div>
 			{isLoading ? <DashboardPageSkeleton rows={3} /> : null}
 			{!isLoading && !isForbidden && loadError ? (
 				<ErrorState
@@ -114,11 +114,11 @@ export default function CommentModeration() {
 					<CardContent className="space-y-4">
 						{isForbidden ? (
 							<p className="text-sm text-muted-foreground">
-								Admin access is limited to emails listed in COMMENT_ADMIN_EMAILS.
+								{t("adminForbidden")}
 							</p>
 						) : null}
 						{!isForbidden && comments.length === 0 ? (
-							<p className="text-sm text-muted-foreground">No quarantined or spam comments right now.</p>
+							<p className="text-sm text-muted-foreground">{t("adminQueueEmpty")}</p>
 						) : null}
 						{comments.map((comment) => (
 							<div key={comment.id} className="rounded-lg border p-4">
@@ -141,7 +141,7 @@ export default function CommentModeration() {
 											onClick={() => void runAction({ action: "set-status", commentId: comment.id, status: "published" })}
 											disabled={pendingAction === `set-status:${comment.id}`}
 										>
-											Publish
+											{t("actions.publish")}
 										</Button>
 										<Button
 											size="sm"
@@ -149,7 +149,7 @@ export default function CommentModeration() {
 											onClick={() => void runAction({ action: "block-user", userId: comment.user_id })}
 											disabled={pendingAction === `block-user:${comment.user_id}`}
 										>
-											Block user
+											{t("actions.blockUser")}
 										</Button>
 										<Button
 											size="sm"
@@ -157,7 +157,7 @@ export default function CommentModeration() {
 											onClick={() => void runAction({ action: "delete-comment", commentId: comment.id })}
 											disabled={pendingAction === `delete-comment:${comment.id}`}
 										>
-											Delete
+											{t("actions.delete")}
 										</Button>
 									</div>
 								</div>

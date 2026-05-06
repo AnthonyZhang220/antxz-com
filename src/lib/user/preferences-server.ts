@@ -9,7 +9,7 @@ import {
 	isMissingUserSettingsRowError,
 	isMissingUserSettingsTableError,
 	type UserSettings,
-} from "@/lib/user-preferences";
+} from "@/lib/user/preferences";
 
 export async function readUserSettingsFromCookies(): Promise<UserSettings> {
 	const cookieStore = await cookies();

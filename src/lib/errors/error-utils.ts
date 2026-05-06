@@ -1,4 +1,5 @@
 import { toast } from "sonner";
+import { getActionErrorMessage } from "@/lib/errors/action-error";
 
 type ToastId = string | number;
 const SUCCESS_TOAST_DURATION = 2000;
@@ -12,8 +13,10 @@ export function handleError(
 	error: unknown,
 	defaultMessage?: string,
 ) {
-	const message = defaultMessage
-		?? (error instanceof Error ? error.message : "Something went wrong");
+	const message = getActionErrorMessage(
+		error,
+		defaultMessage ?? "Something went wrong",
+	);
 	toast.error(message);
 }
 
@@ -54,13 +57,7 @@ export function finishLoadingError(
  * 将 Server Action 的错误转换为可读的消息
  */
 export function getErrorMessage(error: unknown): string {
-	if (error instanceof Error) {
-		return error.message;
-	}
-	if (typeof error === "string") {
-		return error;
-	}
-	return "An unexpected error occurred";
+	return getActionErrorMessage(error, "An unexpected error occurred");
 }
 
 export function getResultErrorMessage(

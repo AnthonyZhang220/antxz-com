@@ -6,7 +6,7 @@ import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Globe } from "lucide-react";
-import { getCookie } from "@/lib/cookies";
+import { getCookie } from "@/lib/shared/cookies";
 
 const REGION_OPTIONS = ["us", "cn", "global"] as const;
 const LOCALE_OPTIONS = ["en", "zh"] as const;

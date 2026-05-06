@@ -20,12 +20,15 @@ export function getActorProfile(user: User) {
 			String(
 				user.user_metadata?.full_name ||
 					user.user_metadata?.name ||
+					user.user_metadata?.user_name ||
 					user.email?.split("@")[0] ||
 					"User"
 			) || "User",
 		avatarUrl: String(
 			user.user_metadata?.avatar_url || user.user_metadata?.picture || ""
 		),
+		bio: String(user.user_metadata?.bio || ""),
+		website: String(user.user_metadata?.website || ""),
 	};
 }
 

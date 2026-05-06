@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import type { User } from "@supabase/supabase-js";
@@ -20,6 +21,7 @@ import {
 } from "@/components/ui/sidebar";
 import { useAuthNavigation, useUserState } from "@/hooks";
 import { useSidebar } from "@/components/ui/sidebar";
+import { createClient } from "@/lib/supabase/client";
 
 type DashboardSidebarProps = React.ComponentProps<typeof Sidebar> & {
 	initialUser?: User | null;
@@ -37,12 +39,41 @@ export function DashboardSidebar({
 	const { user, displayName, isLoading, initials, signOut } =
 		useUserState(initialUser);
 	const { handleLogout } = useAuthNavigation(signOut);
+	const supabase = useMemo(() => createClient(), []);
+	const [unreadCount, setUnreadCount] = useState(0);
+
+	useEffect(() => {
+		if (!user?.id) return;
+		let disposed = false;
+
+		const loadUnread = async () => {
+			const { count } = await supabase
+				.from("notifications")
+				.select("id", { count: "exact", head: true })
+				.eq("user_id", user.id)
+				.eq("is_read", false);
+			if (!disposed) setUnreadCount(count ?? 0);
+		};
+
+		void loadUnread();
+
+		const channel = supabase
+			.channel(`sidebar-notifications-${user.id}`)
+			.on("postgres_changes", { event: "*", schema: "public", table: "notifications", filter: `user_id=eq.${user.id}` }, () => { void loadUnread(); })
+			.subscribe();
+
+		return () => {
+			disposed = true;
+			void supabase.removeChannel(channel);
+		};
+	}, [supabase, user?.id]);
 
 	// Replace titleKey with actual translations
 	const navigation = {
 		navMain: rawNavigation.navMain.map((item) => ({
 			...item,
 			title: t(item.titleKey),
+			...(item.slug === "notifications" ? { badge: unreadCount } : {}),
 		})),
 		navSecondary: rawNavigation.navSecondary.map((item) => ({
 			...item,

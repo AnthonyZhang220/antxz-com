@@ -20,21 +20,22 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { getCookie } from "@/lib/cookies";
+import { getCookie } from "@/lib/shared/cookies";
 import { savePreferences } from "@/components/preferences/actions";
 import {
 	finishLoadingError,
 	finishLoadingSuccess,
 	startLoading,
-} from "@/lib/error-utils";
+} from "@/lib/errors/error-utils";
 
 export default function PreferencesForm() {
 	const t = useTranslations("preferences");
+	const tt = useTranslations();
 	const router = useRouter();
 	const params = useParams<{ locale?: string }>();
 	const searchParams = useSearchParams();
-	const saveErrorMessage = t("messages.error");
-	const saveSuccessMessage = t("messages.success");
+	const saveErrorMessage = tt("toast.preferences.error");
+	const saveSuccessMessage = tt("toast.preferences.success");
 	// Language 从 URL params 获取（正确方式）
 	const currentLocale = params?.locale ?? "en";
 
@@ -61,7 +62,7 @@ export default function PreferencesForm() {
 	async function onSave(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault();
 		setIsLoading(true);
-		const loadingToastId = startLoading(t("messages.saving"));
+		const loadingToastId = startLoading(tt("toast.preferences.saving"));
 
 		try {
 			const result = await savePreferences(locale, region);
@@ -140,7 +141,7 @@ export default function PreferencesForm() {
 					</CardContent>
 					<CardFooter className="justify-end">
 						<Button type="submit" disabled={isLoading}>
-							{isLoading ? t("messages.saving") : t("saveButton")}
+							{isLoading ? tt("toast.preferences.saving") : t("saveButton")}
 						</Button>
 					</CardFooter>
 				</form>

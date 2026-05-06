@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { withI18n } from "./middlewares/with-i18n";
 import { updateSession } from "@/middlewares/with-supabase";
-import { preferenceCookieOptions } from "@/lib/user-preferences";
+import { preferenceCookieOptions } from "@/lib/user/preferences";
 
 
 type Region = "cn" | "us" | "global";

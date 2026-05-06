@@ -1,7 +1,7 @@
 import Navbar from "@/components/shared/navbar";
 import Footer from "@/components/shared/footer";
 import { createClient } from "@/lib/supabase/server";
-import { ensureUserSettingsFromCookies } from "@/lib/user-preferences-server";
+import { ensureUserSettingsFromCookies } from "@/lib/user/preferences-server";
 
 export default async function MainLayout({
 	children,

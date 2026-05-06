@@ -6,7 +6,7 @@ import NextTopLoader from "nextjs-toploader";
 import { ToasterProvider } from "@/components/providers/toaster-provider";
 import { SystemEasterEgg } from "@/components/shared/system-easter-egg";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { isAppTheme } from "@/lib/user-preferences";
+import { isAppTheme } from "@/lib/user/preferences";
 
 import "./globals.css";
 

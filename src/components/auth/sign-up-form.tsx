@@ -3,10 +3,12 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { getCookie } from "@/lib/cookies";
+import { getCookie } from "@/lib/shared/cookies";
 import Link from "next/link";
+import { toast } from "sonner";
+import { startLoading, finishLoadingSuccess, finishLoadingError } from "@/lib/errors/error-utils";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/shared/utils";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,10 +26,10 @@ export function SignUpForm({
 }: React.ComponentPropsWithoutRef<"form">) {
 	const t = useTranslations("auth.signupForm");
 	const l = useTranslations("auth.socialButton");
+	const tm = useTranslations("toast.auth.signup");
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [repeatPassword, setRepeatPassword] = useState("");
-	const [error, setError] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
 	const router = useRouter();
 	const locale = useLocale();
@@ -37,13 +39,14 @@ export function SignUpForm({
 		e.preventDefault();
 		const supabase = createClient();
 		setIsLoading(true);
-		setError(null);
 
 		if (password !== repeatPassword) {
-			setError("Passwords do not match");
+			toast.error(tm("passwordMismatch"));
 			setIsLoading(false);
 			return;
 		}
+
+		const toastId = startLoading(tm("loading"));
 
 		try {
 			const { error } = await supabase.auth.signUp({
@@ -54,9 +57,10 @@ export function SignUpForm({
 				},
 			});
 			if (error) throw error;
+			finishLoadingSuccess(toastId, tm("success"));
 			router.push(`/${locale}/auth/sign-up-success`);
 		} catch (error: unknown) {
-			setError(error instanceof Error ? error.message : "An error occurred");
+			finishLoadingError(toastId, error instanceof Error ? error.message : tm("error"));
 		} finally {
 			setIsLoading(false);
 		}
@@ -65,7 +69,7 @@ export function SignUpForm({
 	const handleOAuthSignUp = async (provider: "github" | "google") => {
 		const supabase = createClient();
 		setIsLoading(true);
-		setError(null);
+		const toastId = startLoading(tm("oauthLoading"));
 
 		try {
 			const callbackUrl = new URL(
@@ -88,7 +92,7 @@ export function SignUpForm({
 
 			throw new Error("Missing OAuth redirect URL");
 		} catch (error: unknown) {
-			setError(error instanceof Error ? error.message : "An error occurred");
+			finishLoadingError(toastId, error instanceof Error ? error.message : tm("error"));
 		} finally {
 			setIsLoading(false);
 		}
@@ -143,7 +147,6 @@ export function SignUpForm({
 					/>
 				</Field>
 				<Field>
-					{error && <p className="text-sm text-red-500">{error}</p>}
 					<Button type="submit" className="w-full" disabled={isLoading}>
 						{isLoading ? t("loading") : t("button")}
 					</Button>

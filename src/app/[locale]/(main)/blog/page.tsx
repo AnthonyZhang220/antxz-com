@@ -1,5 +1,5 @@
 import BlogListPage from "@/components/blog/blog-list";
-import { getBlogEngagementBySlugs } from "@/lib/blog-engagement";
+import { getBlogEngagementBySlugs } from "@/lib/blog/engagement";
 import { createClient as createSupabaseClient } from "@/lib/supabase/server";
 import { client } from "@/sanity/lib/client";
 import { allPostsQuery } from "@/sanity/lib/queries";
