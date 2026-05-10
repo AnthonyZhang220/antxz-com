@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import type { User } from "@supabase/supabase-js";
@@ -83,21 +84,32 @@ export function DashboardSidebar({
 
 	return (
 		<Sidebar
-			collapsible="offcanvas"
+			collapsible="icon"
 			side={isMobile ? "right" : "left"}
+			style={
+				{
+					"--sidebar-width-icon": "4rem",
+				} as React.CSSProperties
+			}
 			{...props}
 		>
 			<SidebarHeader>
 				<SidebarMenu>
 					<SidebarMenuItem>
 						<SidebarMenuButton
+							size="lg"
 							asChild
 							className="data-[slot=sidebar-menu-button]:p-1.5!"
 						>
-							<Link href={baseUrl}>
-								<span className="text-base font-semibold">
-									{t("dashboard.navigation.brand")}
-								</span>
+							<Link href={baseUrl} aria-label={t("dashboard.navigation.brand")}>
+								<Image
+									src="/logo.svg"
+									alt={t("dashboard.navigation.brand")}
+									width={1024}
+									height={672}
+									className="h-8 w-auto shrink-0 object-contain dark:invert group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:scale-[1.35]"
+								/>
+								<span className="text-base font-semibold group-data-[collapsible=icon]:hidden">AntXZ.com</span>
 							</Link>
 						</SidebarMenuButton>
 					</SidebarMenuItem>

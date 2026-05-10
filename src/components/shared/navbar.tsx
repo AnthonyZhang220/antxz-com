@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
@@ -161,10 +162,15 @@ export default function Navbar({ initialUser }: NavbarProps) {
 	return (
 		<header className="sticky inset-x-0 top-0 z-50 flex h-14 items-center justify-between px-3 sm:h-16 sm:px-6 bg-background/85 backdrop-blur supports-backdrop-filter:bg-background/70 border-b border-border/60">
 			{/* Logo */}
-			<Link href="/">
-				<span className="font-montserrat text-xl tracking-widest sm:text-2xl">
-					{h("logo")}
-				</span>
+			<Link href="/" aria-label={h("logo")}>
+				<Image
+					src="/logo.svg"
+					alt={h("logo")}
+					width={1024}
+					height={672}
+					className="h-8 w-auto dark:invert sm:h-10"
+					priority
+				/>
 			</Link>
 			{/* Sheet 触发按钮 */}
 			<Sheet>
