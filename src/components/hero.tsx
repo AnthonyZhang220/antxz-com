@@ -185,10 +185,16 @@ export default function Hero() {
 
 					{/* Ghost buttons — transparent fill, thin border */}
 					<div className="flex flex-wrap items-center justify-center gap-3 lg:justify-start lg:gap-3.5">
-						<Button variant="default" asChild>
+						<Button
+							asChild
+							className="px-8 py-4 text-lg font-semibold bg-sky-500 hover:bg-sky-600 text-white shadow-lg border-0 transition"
+						>
 							<Link href="/blog">{t("blogButton")}</Link>
 						</Button>
-						<Button variant="outline" asChild>
+						<Button
+							asChild
+							className="px-8 py-4 text-lg font-medium bg-sky-100 hover:bg-sky-200 text-sky-700 border border-sky-300 shadow transition"
+						>
 							<Link href="/about/me">{t("aboutMeButton")}</Link>
 						</Button>
 					</div>
@@ -217,6 +223,24 @@ export default function Hero() {
 					<p className="mt-3 text-[11px] text-zinc-500 sm:text-xs dark:text-zinc-400">
 						{t("contactReplyEta")}
 					</p>
+					<hr className="mt-4 border-zinc-300 dark:border-zinc-700" />
+					<p className="mt-4 text-[11px] font-semibold tracking-[0.14em] text-zinc-500 dark:text-zinc-400 sm:text-xs sm:tracking-[0.16em]">
+						{t("archiveLabel") || "Archive"}
+					</p>
+					<Button
+						variant="outline"
+						asChild
+						size="default"
+						className="mt-2 h-10 w-full border-zinc-300 bg-white/90 px-3.5 text-sm font-medium text-zinc-900 shadow-sm hover:bg-white sm:h-10 sm:px-4 sm:text-sm dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700"
+					>
+						<a
+							href="https://old.antxz.com"
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							{t("oldWebsiteButton") || "Visit Old Website"}
+						</a>
+					</Button>
 				</div>
 			</div>
 		</section>
