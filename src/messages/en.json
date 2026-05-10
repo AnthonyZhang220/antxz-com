@@ -10,6 +10,9 @@
     "nextjs": {
         "title": "Next.js"
     },
+    "interaction": {
+        "title": "Interaction"
+    },
     "navbar": {
         "home": {
             "title": "Back to the beginning",
@@ -62,7 +65,7 @@
         "introTitle": "About Me",
         "introTitleLine1": "Building",
         "introTitleLine2": "the web.",
-        "introBody": "I'm a full-stack developer specializing in building web applications with Next.js, TypeScript, and Tailwind CSS. In my spare time, I enjoy photography, blogging, and exploring new technologies.",
+        "introBody": "I'm a full-stack developer specializing in building web applications with Next.js, TypeScript, and Tailwind CSS. With 3 years of web application development experience and full-stack capabilities, I've led small teams in delivering AI-integrated B2B SaaS products and am passionate about real-time systems and scalable architecture design. In my spare time, I enjoy exploring obscure knowledge, listening to music, and tinkering with new technologies. ",
         "introRole": "Full-stack Developer",
         "introLocation": "New York City",
         "introStack": "Next.js · TypeScript · React · Tailwind",
@@ -114,7 +117,9 @@
                     "blog": "Read Blog",
                     "projects": "View Projects"
                 }
-            }
+            },
+            "emptyStateEn": "Add your self-description in the Sanity Studio under \u201cAbout Me\u201d and it will appear here.",
+            "emptyStateZh": "在 Sanity Studio 的「About Me」里填写中文内容后，这里会自动展示。"
         },
         "cv": {
             "title": "My CV",
@@ -156,7 +161,7 @@
                         "Figma"
                     ],
                     "highlights": [
-                        "Led 2-engineer team in code reviews, reducing production bugs by 30% and accelerating feature delivery.",
+                        "Led team in code reviews, reducing production bugs by 30% and accelerating feature delivery.",
                         "Engineered a real-time AI data pipeline with OpenAI API + FastAPI + SSE, cutting UI latency by 40% and boosting user engagement.",
                         "Optimized data handling, saving 25% in API costs.",
                         "Eliminated auth bottlenecks through custom Auth0.js integration supporting SSR/CSR."
@@ -387,15 +392,15 @@
         "commentsLike": "Like",
         "commentsUnlike": "Liked",
         "commentsLikeCount": "{count} likes",
-            "commentsReply": "Reply",
-            "commentsCancel": "Cancel",
-            "commentsReplyTo": "Replying to {name}",
-            "commentsReplyPlaceholder": "Write a reply...",
-            "commentsDelete": "Delete",
-            "commentsDeleting": "Deleting...",
-            "commentsDeleteConfirm": "Delete this comment? This action cannot be undone.",
-            "commentsDeleteForbidden": "You can only delete your own comments.",
-            "commentsDeleteError": "Failed to delete comment.",
+        "commentsReply": "Reply",
+        "commentsCancel": "Cancel",
+        "commentsReplyTo": "Replying to {name}",
+        "commentsReplyPlaceholder": "Write a reply...",
+        "commentsDelete": "Delete",
+        "commentsDeleting": "Deleting...",
+        "commentsDeleteConfirm": "Delete this comment? This action cannot be undone.",
+        "commentsDeleteForbidden": "You can only delete your own comments.",
+        "commentsDeleteError": "Failed to delete comment.",
         "commentsErrorBlocked": "Your account is unable to post comments.",
         "commentsErrorSpam": "Your comment violates our guidelines.",
         "commentsErrorQuarantine": "Your comment needs review before posting.",
@@ -414,6 +419,15 @@
         "articleLikeCount": "{count} likes",
         "articleLikeError": "Failed to update article like.",
         "articleLikeLoginRequired": "Please log in to like this post.",
+        "articleBookmark": "Save",
+        "articleUnbookmark": "Saved",
+        "articleBookmarkError": "Failed to update article bookmark.",
+        "articleBookmarkLoginRequired": "Please log in to save this post.",
+        "authPromptTitle": "Sign in required",
+        "authPromptDescription": "Sign in or create an account to continue.",
+        "authPromptLogin": "Log in",
+        "authPromptSignup": "Sign up",
+        "authPromptCancel": "Cancel",
         "sourceLabel": "Source: {source}",
         "sourceOpen": "Open original",
         "sourceOriginal": "Original",
@@ -429,6 +443,15 @@
         "clearFilters": "Clear all filters",
         "filterLabel": "Filters",
         "filterAll": "All",
+        "contentLanguage": "Article language",
+        "filterLanguage": "Language",
+        "filterLanguageBilingual": "Bilingual",
+        "filterLanguageZh": "Chinese",
+        "filterLanguageEn": "English",
+        "originalLanguageLabel": "Original language: {language}",
+        "originalLanguageZh": "Chinese",
+        "originalLanguageEn": "English",
+        "translationNotice": "You are reading a machine-translated version from {from} to {to}.",
         "filterCategory": "Category",
         "filterTopic": "Tags",
         "filterShowMoreTags": "Show more (+{count})",
@@ -559,6 +582,7 @@
     "dashboard": {
         "navigation": {
             "overview": "Overview",
+            "bookmarks": "Bookmarks",
             "comments": "Comments",
             "notifications": "Notifications",
             "settings": "Settings",
@@ -566,6 +590,13 @@
             "search": "AI Search",
             "account": "Account",
             "brand": "AntXZ.com"
+        },
+        "bookmarks": {
+            "title": "Saved Posts",
+            "description": "Articles you bookmarked for later reading.",
+            "emptyTitle": "No saved posts yet",
+            "emptyDescription": "Save a blog post and it will show up here.",
+            "loadError": "Failed to load saved posts."
         },
         "overview": {
             "title": "Overview",

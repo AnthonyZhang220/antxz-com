@@ -10,6 +10,9 @@
     "nextjs": {
         "title": "Next.js"
     },
+    "interaction": {
+        "title": "访客互动"
+    },
     "navbar": {
         "home": {
             "title": "回到起点",
@@ -62,7 +65,7 @@
         "introTitle": "关于我",
         "introTitleLine1": "构建",
         "introTitleLine2": "互联网。",
-        "introBody": "我是一个全栈开发者，专注于使用 Next.js、TypeScript 和 Tailwind CSS 构建 Web 应用。在业余时间，我喜欢摄影、写博客和探索新技术。",
+        "introBody": "我是一个全栈开发者，专注于使用 Next.js、TypeScript 和 Tailwind CSS 构建 Web 应用。3年Web应用开发经验，具备全栈开发能力。有带领小团队交付AI集成B2B SaaS产品的经验，热衷实时系统与可扩展架构设计。在业余时间，我喜欢了解一些奇怪的知识、听音乐、探索和折腾新技术。",
         "introRole": "全栈开发者",
         "introLocation": "纽约",
         "introStack": "Next.js · TypeScript · React · Tailwind",
@@ -114,7 +117,9 @@
                     "blog": "阅读博客",
                     "projects": "查看项目"
                 }
-            }
+            },
+            "emptyStateEn": "在 Sanity Studio 的「About Me」里填写英文内容后，这里会自动展示。",
+            "emptyStateZh": "在 Sanity Studio 的「About Me」里填写中文内容后，这里会自动展示。"
         },
         "cv": {
             "title": "我的简历",
@@ -156,7 +161,7 @@
                         "Figma"
                     ],
                     "highlights": [
-                        "带领2人团队进行代码审查，减少了30%的线上缺陷，加快了功能交付节奏。",
+                        "带领团队进行代码审查，减少了30%的线上缺陷，加快了功能交付节奏。",
                         "基于 OpenAI API + FastAPI + SSE 构建实时AI数据管道，将UI响应延迟降低40%，显著提升用户参与度。",
                         "优化数据处理流程，节省25%的API调用成本。",
                         "通过自定义 Auth0.js 集成（支持SSR/CSR），解决了认证实现的瓶颈问题。"
@@ -397,8 +402,8 @@
             "commentsDeleteForbidden": "你只能删除自己的评论。",
             "commentsDeleteError": "删除评论失败。",
         "commentsErrorBlocked": "您的账户无法发表评论。",
-        "commentsErrorSpam": "您的评论违反了我们的指南。",
-        "commentsErrorQuarantine": "您的评论需要审核后才能发布。",
+        "commentsErrorSpam": "您的评论违反了我们的规则。",
+        "commentsErrorQuarantine": "您的评论需要修改后才能发布。",
         "commentsErrorTooShort": "您的评论太短了（最少 3 个字符）。",
         "commentsErrorTooLong": "您的评论太长了（最多 1800 个字符）。",
         "commentsErrorEmojiOnly": "评论不能只包含 Emoji。",
@@ -414,6 +419,15 @@
         "articleLikeCount": "{count} 个赞",
         "articleLikeError": "文章点赞更新失败。",
         "articleLikeLoginRequired": "请先登录后再点赞。",
+        "articleBookmark": "收藏",
+        "articleUnbookmark": "已收藏",
+        "articleBookmarkError": "文章收藏更新失败。",
+        "articleBookmarkLoginRequired": "请先登录后再收藏。",
+        "authPromptTitle": "需要登录",
+        "authPromptDescription": "登录或注册后即可继续操作。",
+        "authPromptLogin": "去登录",
+        "authPromptSignup": "去注册",
+        "authPromptCancel": "取消",
         "sourceLabel": "文章来源：{source}",
         "sourceOpen": "查看原文",
         "sourceOriginal": "原创",
@@ -429,6 +443,15 @@
         "clearFilters": "清除所有筛选",
         "filterLabel": "筛选",
         "filterAll": "全部",
+        "contentLanguage": "文章语言",
+        "filterLanguage": "语言",
+        "filterLanguageBilingual": "双语",
+        "filterLanguageZh": "中文",
+        "filterLanguageEn": "英文",
+        "originalLanguageLabel": "原文语言：{language}",
+        "originalLanguageZh": "中文",
+        "originalLanguageEn": "英文",
+        "translationNotice": "你正在阅读由 {from} 自动翻译到 {to} 的版本。",
         "filterCategory": "分类",
         "filterTopic": "标签",
         "filterShowMoreTags": "显示更多（+{count}）",
@@ -559,6 +582,7 @@
     "dashboard": {
         "navigation": {
             "overview": "概览",
+            "bookmarks": "收藏",
             "comments": "评论",
             "notifications": "通知",
             "settings": "设置",
@@ -566,6 +590,13 @@
             "search": "AI 搜索",
             "account": "账户",
             "brand": "AntXZ.com"
+        },
+        "bookmarks": {
+            "title": "已收藏",
+            "description": "你收藏后准备稍后阅读的文章。",
+            "emptyTitle": "还没有收藏内容",
+            "emptyDescription": "收藏一篇博客文章后，会显示在这里。",
+            "loadError": "加载收藏内容失败。"
         },
         "overview": {
             "title": "概览",
