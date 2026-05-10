@@ -50,7 +50,7 @@ function getSourceLabel(post: BlogPost, t: ReturnType<typeof useTranslations<"bl
 // ─── Section Label ────────────────────────────────────────────────────────────
 
 // ─── Featured Card ────────────────────────────────────────────────────────────
-function FeaturedCard({ post }: { post: BlogPost }) {
+export function FeaturedCard({ post }: { post: BlogPost }) {
 	const fmt = useFormatter();
 	const t = useTranslations("blog");
 	const coverSrc = getCoverSrc(post);
@@ -135,7 +135,7 @@ function FeaturedCard({ post }: { post: BlogPost }) {
 }
 
 // ─── Small Card ───────────────────────────────────────────────────────────────
-function SmallCard({ post }: { post: BlogPost }) {
+export function SmallCard({ post }: { post: BlogPost }) {
 	const fmt = useFormatter();
 	const t = useTranslations("blog");
 	const coverSrc = getCoverSrc(post);
@@ -304,6 +304,8 @@ export default function BlogListPage({
 	// delegate filter state/logic to custom hook
 	const {
 		filtered,
+		language,
+		setLanguage,
 		category,
 		setCategory,
 		tag,
@@ -317,6 +319,8 @@ export default function BlogListPage({
 		go,
 		isDefault,
 		clearAll,
+		allLanguages,
+		languageCounts,
 		allCategories,
 		categoryCounts,
 		tagCounts,
@@ -377,6 +381,10 @@ export default function BlogListPage({
 								<div className="p-4 sm:p-6">
 									<BlogFilter
 										posts={posts}
+										language={language}
+										setLanguage={setLanguage}
+										allLanguages={allLanguages}
+										languageCounts={languageCounts}
 										category={category}
 										setCategory={setCategory}
 										allCategories={allCategories}
@@ -436,6 +444,10 @@ export default function BlogListPage({
 					<div className="hidden lg:block lg:sticky lg:top-24 lg:self-start">
 						<BlogFilter
 							posts={posts}
+							language={language}
+							setLanguage={setLanguage}
+							allLanguages={allLanguages}
+							languageCounts={languageCounts}
 							category={category}
 							setCategory={setCategory}
 							allCategories={allCategories}

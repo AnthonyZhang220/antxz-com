@@ -1,109 +1,55 @@
 "use client";
 
-import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { PortableText, PortableTextComponents } from "next-sanity";
 import { useFormatter, useTranslations } from "next-intl";
 import { urlFor } from "@/sanity/lib/image";
 import { getActionErrorMessage } from "@/lib/errors/action-error";
+import { cn } from "@/lib/shared/utils";
+import {
+	createPortableTextComponents,
+	extractPortableTextHeadingItems,
+	getPortableTextHeadingIdFromBlock,
+} from "@/components/shared/portable-text-components";
 import {
 	getArticleLikeState,
 	likeArticle,
+	getArticleBookmarkState,
+	bookmarkArticle,
+	unbookmarkArticle,
 	unlikeArticle,
 } from "@/lib/actions/blog";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import {
-	HoverCard,
-	HoverCardContent,
-	HoverCardTrigger,
-} from "@/components/ui/hover-card";
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import {
 	ArrowLeft,
 	Calendar,
 	Clock,
 	ExternalLink,
 	Heart,
-	MessageCircle,
 	User,
+	Star,
+	MessageCircleMore,
 } from "lucide-react";
-
-interface HeadingItem {
-	id: string;
-	text: string;
-	level: 2 | 3 | 4;
-}
-
-interface PortableTextBlock {
-	_type?: string;
-	_key?: string;
-	style?: string;
-	children?: Array<{ _type?: string; text?: string }>;
-}
-
-function getHeadingIdFromBlock(block: PortableTextBlock): string {
-	if (typeof block._key === "string" && block._key.trim().length > 0) {
-		return `heading-${block._key}`;
-	}
-
-	const text = extractBlockText(block);
-	return `heading-${slugifyHeading(text) || "section"}`;
-}
-
-function slugifyHeading(text: string): string {
-	return text
-		.toLowerCase()
-		.trim()
-		.replace(/[^\w\s-]/g, "")
-		.replace(/\s+/g, "-")
-		.replace(/-+/g, "-");
-}
-
-function extractBlockText(block: PortableTextBlock): string {
-	return (block.children ?? [])
-		.filter(
-			(child) => child?._type === "span" && typeof child.text === "string",
-		)
-		.map((child) => child.text)
-		.join("")
-		.trim();
-}
-
-function extractHeadingItems(body?: unknown[]): HeadingItem[] {
-	if (!Array.isArray(body)) return [];
-
-	const idCounts = new Map<string, number>();
-	const results: HeadingItem[] = [];
-
-	for (const raw of body) {
-		const block = raw as PortableTextBlock;
-		if (block?._type !== "block") continue;
-		if (block.style !== "h2" && block.style !== "h3" && block.style !== "h4")
-			continue;
-
-		const text = extractBlockText(block);
-		if (!text) continue;
-
-		const base = slugifyHeading(text) || "section";
-		const seen = idCounts.get(base) ?? 0;
-		idCounts.set(base, seen + 1);
-		const rawId = getHeadingIdFromBlock(block);
-		const id = seen === 0 ? rawId : `${rawId}-${seen + 1}`;
-
-		results.push({
-			id,
-			text,
-			level: Number(block.style.slice(1)) as 2 | 3 | 4,
-		});
-	}
-
-	return results;
-}
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 interface BlogPostPageProps {
+	routeLocale: "en" | "zh";
+	contentLang: "en" | "zh";
 	post: {
 		_id: string;
 		slug: string;
@@ -132,24 +78,34 @@ interface BlogPostPageProps {
 			bio?: string;
 			avatar?: { url?: string };
 		};
+		hasEn?: boolean;
+		hasZh?: boolean;
+		originalLanguage?: "en" | "zh";
 	};
 }
 
-export default function BlogPostPage({ post }: BlogPostPageProps) {
+export default function BlogPostPage({
+	routeLocale,
+	contentLang,
+	post,
+}: BlogPostPageProps) {
+	const router = useRouter();
 	const t = useTranslations("blog");
 	const fmt = useFormatter();
 	const articleKey = useMemo(() => `blog:${post.slug}`, [post.slug]);
-	const headingItems = useMemo(
-		() => extractHeadingItems(post.body),
-		[post.body],
-	);
+	const headingItems = useMemo(() => extractPortableTextHeadingItems(post.body), [post.body]);
 	const hasToc = headingItems.length > 0;
 	const readingTime = post.readingTime ?? 1;
 	const [likeCount, setLikeCount] = useState(post.likeCount ?? 0);
 	const [userLiked, setUserLiked] = useState(false);
 	const [isLiking, setIsLiking] = useState(false);
 	const [likeError, setLikeError] = useState<string | null>(null);
+	const [userBookmarked, setUserBookmarked] = useState(false);
+	const [isBookmarking, setIsBookmarking] = useState(false);
+	const [bookmarkError, setBookmarkError] = useState<string | null>(null);
 	const [activeHeadingId, setActiveHeadingId] = useState<string | null>(null);
+	const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
+	const [authDialogMessage, setAuthDialogMessage] = useState<string>("");
 
 	const sourcePlatform = String(
 		post.source?.platform ?? "original",
@@ -167,162 +123,45 @@ export default function BlogPostPage({ post }: BlogPostPageProps) {
 		(post.coverImage?.asset?._ref
 			? urlFor(post.coverImage).width(1600).url()
 			: null);
+	const canSwitchToEn = Boolean(post.hasEn);
+	const canSwitchToZh = Boolean(post.hasZh);
+	const toEnHref = `/${routeLocale}/blog/${post.slug}?lang=en`;
+	const toZhHref = `/${routeLocale}/blog/${post.slug}?lang=zh`;
+	const originalLanguage = post.originalLanguage === "zh" ? "zh" : "en";
+	const originalLanguageLabel =
+		originalLanguage === "zh"
+			? t("originalLanguageZh")
+			: t("originalLanguageEn");
+	const currentLanguageLabel =
+		contentLang === "zh" ? t("filterLanguageZh") : t("filterLanguageEn");
+	const showTranslationNotice = contentLang !== originalLanguage;
 
-	const renderLinkWithPreview = useCallback((children: ReactNode, hrefRaw?: string) => {
-		const href =
-			typeof hrefRaw === "string" && hrefRaw.trim().length > 0 ? hrefRaw : "#";
-		const isHttp = /^https?:\/\//i.test(href);
-		let host = t("linkPreviewUnknown");
-		let path = href;
+	const showAuthRequiredDialog = useCallback((message: string) => {
+		setAuthDialogMessage(message);
+		setIsAuthDialogOpen(true);
+	}, []);
 
-		try {
-			const parsed = new URL(href, "https://antxz.local");
-			host = parsed.hostname || t("linkPreviewUnknown");
-			path = `${parsed.pathname}${parsed.search}${parsed.hash}` || "/";
-		} catch {
-			// Keep fallback values.
+	const scrollToAnchor = useCallback((targetId: string) => {
+		const target = document.getElementById(targetId);
+		if (!target) return;
+
+		const offsetTop = 104;
+		const nextTop = target.getBoundingClientRect().top + window.scrollY - offsetTop;
+		window.scrollTo({ top: Math.max(0, nextTop), behavior: "smooth" });
+		window.history.replaceState(null, "", `#${targetId}`);
+
+		if (hasToc) {
+			setActiveHeadingId(targetId);
 		}
-
-		return (
-			<HoverCard openDelay={120} closeDelay={120}>
-				<HoverCardTrigger asChild>
-					<a
-						href={href}
-						target={isHttp ? "_blank" : undefined}
-						rel={isHttp ? "noopener noreferrer" : undefined}
-						className="underline decoration-zinc-400 underline-offset-2 transition-colors hover:text-foreground hover:decoration-foreground"
-					>
-						{children}
-					</a>
-				</HoverCardTrigger>
-				<HoverCardContent align="start" className="w-80 space-y-2">
-					<p className="text-sm font-medium text-foreground">
-						{t("linkPreviewTitle")}
-					</p>
-					<p className="text-xs text-muted-foreground">
-						{t("linkPreviewHost", { host })}
-					</p>
-					<p className="line-clamp-2 break-all text-xs text-muted-foreground">
-						{t("linkPreviewPath", { path })}
-					</p>
-					<a
-						href={href}
-						target={isHttp ? "_blank" : undefined}
-						rel={isHttp ? "noopener noreferrer" : undefined}
-						className="inline-flex items-center gap-1 text-xs font-medium text-foreground underline underline-offset-2"
-					>
-						<ExternalLink className="h-3 w-3" />
-						{t("linkPreviewOpen")}
-					</a>
-				</HoverCardContent>
-			</HoverCard>
-		);
-	}, [t]);
+	}, [hasToc]);
 
 	const ptComponents = useMemo<PortableTextComponents>(() => {
-		return {
-			types: {
-				image: ({ value }) => {
-					const src = value?.asset?._ref
-						? urlFor(value).width(1200).url()
-						: value?.url;
-					if (!src) return null;
-					return (
-						<figure className="my-8">
-							<div className="relative aspect-video w-full overflow-hidden rounded-xl">
-								<Image
-									src={src}
-									alt={value?.caption ?? ""}
-									fill
-									className="object-cover"
-								/>
-							</div>
-							{value?.caption && (
-								<figcaption className="mt-2 text-center text-sm text-muted-foreground">
-									{value.caption}
-								</figcaption>
-							)}
-						</figure>
-					);
-				},
-				code: ({ value }) => (
-					<pre className="my-6 overflow-x-auto rounded-xl bg-zinc-900 p-5 text-sm text-zinc-100 dark:bg-zinc-950">
-						<code>{value?.code}</code>
-					</pre>
-				),
-			},
-			block: {
-				h1: ({ children }) => (
-					<h1 className="mt-10 mb-4 font-serif text-4xl font-bold tracking-tight text-foreground">
-						{children}
-					</h1>
-				),
-				h2: ({ children, value }) => (
-					<h2
-						id={getHeadingIdFromBlock((value ?? {}) as PortableTextBlock)}
-						className="mt-10 mb-4 scroll-mt-24 font-serif text-3xl font-semibold tracking-tight text-foreground"
-					>
-						{children}
-					</h2>
-				),
-				h3: ({ children, value }) => (
-					<h3
-						id={getHeadingIdFromBlock((value ?? {}) as PortableTextBlock)}
-						className="mt-8 mb-3 scroll-mt-24 font-serif text-2xl font-semibold text-foreground"
-					>
-						{children}
-					</h3>
-				),
-				h4: ({ children, value }) => (
-					<h4
-						id={getHeadingIdFromBlock((value ?? {}) as PortableTextBlock)}
-						className="mt-6 mb-2 scroll-mt-24 text-xl font-semibold text-foreground"
-					>
-						{children}
-					</h4>
-				),
-				normal: ({ children }) => (
-					<p className="my-5 leading-8 text-zinc-700 dark:text-zinc-300">
-						{children}
-					</p>
-				),
-				blockquote: ({ children }) => (
-					<blockquote className="my-6 border-l-4 border-zinc-300 pl-5 italic text-muted-foreground dark:border-zinc-700">
-						{children}
-					</blockquote>
-				),
-			},
-			list: {
-				bullet: ({ children }) => (
-					<ul className="my-5 ml-6 list-disc space-y-2 text-zinc-700 dark:text-zinc-300">
-						{children}
-					</ul>
-				),
-				number: ({ children }) => (
-					<ol className="my-5 ml-6 list-decimal space-y-2 text-zinc-700 dark:text-zinc-300">
-						{children}
-					</ol>
-				),
-			},
-			listItem: {
-				bullet: ({ children }) => <li className="leading-7">{children}</li>,
-				number: ({ children }) => <li className="leading-7">{children}</li>,
-			},
-			marks: {
-				strong: ({ children }) => (
-					<strong className="font-semibold text-foreground">{children}</strong>
-				),
-				em: ({ children }) => <em className="italic">{children}</em>,
-				code: ({ children }) => (
-					<code className="rounded bg-zinc-100 px-1.5 py-0.5 font-mono text-sm text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200">
-						{children}
-					</code>
-				),
-				link: ({ children, value }) =>
-					renderLinkWithPreview(children, value?.href),
-			},
-		};
-	}, [renderLinkWithPreview]);
+		return createPortableTextComponents({
+			t,
+			imageWidth: 1200,
+			headingIdResolver: getPortableTextHeadingIdFromBlock,
+		});
+	}, [t]);
 
 	useEffect(() => {
 		if (!hasToc) {
@@ -364,18 +203,22 @@ export default function BlogPostPage({ post }: BlogPostPageProps) {
 	useEffect(() => {
 		let mounted = true;
 
-		const loadArticleLikes = async () => {
+		const loadArticleEngagement = async () => {
 			try {
-				const payload = await getArticleLikeState(articleKey);
+				const [likePayload, bookmarkPayload] = await Promise.all([
+					getArticleLikeState(articleKey),
+					getArticleBookmarkState(articleKey),
+				]);
 				if (!mounted) return;
-				setLikeCount(Number(payload.likeCount ?? 0));
-				setUserLiked(Boolean(payload.userLiked));
+				setLikeCount(Number(likePayload.likeCount ?? 0));
+				setUserLiked(Boolean(likePayload.userLiked));
+				setUserBookmarked(Boolean(bookmarkPayload.userBookmarked));
 			} catch {
 				// Keep initial server values on request failure.
 			}
 		};
 
-		loadArticleLikes();
+		loadArticleEngagement();
 
 		return () => {
 			mounted = false;
@@ -397,14 +240,65 @@ export default function BlogPostPage({ post }: BlogPostPageProps) {
 			setUserLiked((prev) => !prev);
 			setLikeCount((prev) => Math.max(0, prev + (userLiked ? -1 : 1)));
 		} catch (error) {
-			setLikeError(getActionErrorMessage(error, t("articleLikeError")));
+			const message = getActionErrorMessage(error, t("articleLikeError"));
+			if (message === t("articleLikeLoginRequired")) {
+				showAuthRequiredDialog(message);
+				return;
+			}
+			setLikeError(message);
 		} finally {
 			setIsLiking(false);
 		}
 	};
 
+	const onToggleArticleBookmark = async () => {
+		if (isBookmarking) return;
+		setIsBookmarking(true);
+		setBookmarkError(null);
+
+		try {
+			if (userBookmarked) {
+				await unbookmarkArticle(articleKey);
+			} else {
+				await bookmarkArticle(articleKey);
+			}
+
+			setUserBookmarked((prev) => !prev);
+		} catch (error) {
+			const message = getActionErrorMessage(error, t("articleBookmarkError"));
+			if (message === t("articleBookmarkLoginRequired")) {
+				showAuthRequiredDialog(message);
+				return;
+			}
+			setBookmarkError(message);
+		} finally {
+			setIsBookmarking(false);
+		}
+	};
+
 	return (
-		<div className="min-h-screen bg-background">
+		<>
+			<AlertDialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen}>
+				<AlertDialogContent>
+					<AlertDialogHeader>
+						<AlertDialogTitle>{t("authPromptTitle")}</AlertDialogTitle>
+						<AlertDialogDescription>
+							{authDialogMessage || t("authPromptDescription")}
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel>{t("authPromptCancel")}</AlertDialogCancel>
+						<AlertDialogAction onClick={() => router.push(`/${routeLocale}/auth/sign-up`)}>
+							{t("authPromptSignup")}
+						</AlertDialogAction>
+						<AlertDialogAction onClick={() => router.push(`/${routeLocale}/auth/login`)}>
+							{t("authPromptLogin")}
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
+
+			<div className="min-h-screen bg-background">
 			{/* ── Cover ── */}
 			{coverSrc && (
 				<div className="relative h-[30vh] w-full overflow-hidden sm:h-[38vh] lg:h-[44vh]">
@@ -420,11 +314,8 @@ export default function BlogPostPage({ post }: BlogPostPageProps) {
 			)}
 
 			{/* ── Article ── */}
-			<div className={hasToc
-				? "mx-auto flex max-w-300 gap-10 px-5 sm:px-8"
-				: "mx-auto max-w-3xl px-5 sm:px-8"
-			}>
-				<article className="min-w-0 max-w-3xl flex-1">
+			<div className="mx-auto flex max-w-300 justify-center gap-3 px-5 sm:px-8 lg:gap-4">
+				<article className="min-w-0 w-full max-w-3xl lg:flex-1">
 					{/* Back button */}
 					<div className={coverSrc ? "-mt-8 sm:-mt-10 relative z-10" : "pt-16"}>
 						<Button
@@ -463,6 +354,67 @@ export default function BlogPostPage({ post }: BlogPostPageProps) {
 						</div>
 					)}
 
+					{/* Content language toggle — only shown when both languages exist */}
+					{canSwitchToEn && canSwitchToZh && (
+						<div className="mb-5">
+							<p className="mb-2 text-xs uppercase tracking-[0.12em] text-muted-foreground">
+								{t("contentLanguage")}
+							</p>
+							<div
+								role="tablist"
+								aria-label={t("contentLanguage")}
+								className="inline-flex items-center rounded-xl border border-border bg-muted/60 p-1 shadow-sm"
+							>
+								<Button
+									type="button"
+									size="sm"
+									variant="ghost"
+									role="tab"
+									aria-selected={contentLang === "en"}
+									onClick={() => router.push(toEnHref)}
+									className={cn(
+										"h-8 w-16 rounded-lg px-3.5 font-mono text-xs transition-all duration-150",
+										contentLang === "en"
+											? "bg-foreground text-background shadow-sm"
+											: "text-muted-foreground hover:bg-background/70 hover:text-foreground",
+									)}
+								>
+									English
+								</Button>
+								<Button
+									type="button"
+									size="sm"
+									variant="ghost"
+									role="tab"
+									aria-selected={contentLang === "zh"}
+									onClick={() => router.push(toZhHref)}
+									className={cn(
+										"h-8 w-16 rounded-lg px-3.5 font-mono text-xs transition-all duration-150",
+										contentLang === "zh"
+											? "bg-foreground text-background shadow-sm"
+											: "text-muted-foreground hover:bg-background/70 hover:text-foreground",
+									)}
+								>
+									中文
+								</Button>
+							</div>
+							<p className="mt-2 text-xs text-muted-foreground">
+								{t("originalLanguageLabel", {
+									language: originalLanguageLabel,
+								})}
+							</p>
+						</div>
+					)}
+
+					{canSwitchToEn && canSwitchToZh && showTranslationNotice && (
+						<p className="mb-5 rounded-md border border-zinc-200 bg-zinc-50 px-3 py-2 text-xs text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900/40 dark:text-zinc-300">
+							{t("translationNotice", {
+								from: originalLanguageLabel,
+								to: currentLanguageLabel,
+							})}
+						</p>
+					)}
+
 					{/* Title */}
 					<h1 className="font-serif text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl md:text-5xl">
 						{post.title}
@@ -495,27 +447,6 @@ export default function BlogPostPage({ post }: BlogPostPageProps) {
 							<Clock className="h-3.5 w-3.5" />
 							{t("readingTime", { minutes: readingTime })}
 						</span>
-						<Button
-							type="button"
-							variant={userLiked ? "default" : "outline"}
-							size="sm"
-							disabled={isLiking}
-							onClick={() => void onToggleArticleLike()}
-							className="h-7 px-2.5 text-xs"
-						>
-							<Heart
-								className={
-									userLiked
-										? "icon-jiggle-once mr-1.5 h-3.5 w-3.5 fill-current"
-										: "icon-jiggle-once mr-1.5 h-3.5 w-3.5"
-								}
-							/>
-							{t("articleLikeCount", { count: likeCount })}
-						</Button>
-						<span className="flex items-center gap-1.5">
-							<MessageCircle className="icon-jiggle-once h-3.5 w-3.5" />
-							{t("commentsCountShort", { count: post.commentCount ?? 0 })}
-						</span>
 						<span className="flex items-center gap-1.5">
 							{t("sourceLabel", { source: sourceLabel })}
 						</span>
@@ -531,8 +462,10 @@ export default function BlogPostPage({ post }: BlogPostPageProps) {
 							</a>
 						) : null}
 					</div>
-					{likeError ? (
-						<p className="mt-2 text-xs text-red-500">{likeError}</p>
+					{likeError || bookmarkError ? (
+						<p className="mt-2 text-xs text-red-500">
+							{likeError ?? bookmarkError}
+						</p>
 					) : null}
 
 					<Separator className="my-8" />
@@ -552,41 +485,160 @@ export default function BlogPostPage({ post }: BlogPostPageProps) {
 					)}
 				</article>
 
-				{hasToc && (
-					<aside className="hidden lg:block lg:w-64">
-						<nav className="sticky top-24 rounded-xl border border-border/70 bg-card/85 p-4 backdrop-blur-sm">
-							<p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-								{t("tocTitle")}
-							</p>
-							<ul className="space-y-1.5">
-								{headingItems.map((item) => (
-									<li key={item.id}>
-										<a
-											href={`#${item.id}`}
-											className={`relative flex items-center text-sm transition-colors hover:text-foreground ${
-												activeHeadingId === item.id
-													? "font-medium text-foreground"
-													: "text-muted-foreground"
-											} ${
-												item.level === 2
-													? "pl-3"
-													: item.level === 3
-														? "pl-6"
-														: "pl-9"
-											}`}
-										>
-											{activeHeadingId === item.id && (
-												<span className="absolute left-0 h-4 w-1 rounded-full bg-foreground/90" aria-hidden="true" />
-											)}
-											{item.text}
-										</a>
-									</li>
-								))}
-							</ul>
-						</nav>
-					</aside>
-				)}
+				<aside className="hidden lg:block lg:flex-none lg:w-fit">
+					<div className="sticky top-24 space-y-4">
+						<div className="flex w-fit flex-col items-center gap-1 rounded-2xl border border-border py-3 px-3">
+							{/* Like */}
+							<button
+								type="button"
+								onClick={() => void onToggleArticleLike()}
+								disabled={isLiking}
+								aria-label={userLiked ? t("articleUnlike") : t("articleLike")}
+								className="icon-jiggle-group flex flex-col items-center gap-0.5 p-2"
+							>
+								<Heart
+									className={cn(
+										"icon-jiggle-once h-8 w-8 transition-all",
+										userLiked
+											? "fill-current text-red-500"
+											: "text-muted-foreground",
+									)}
+								/>
+								<span className="text-xs text-muted-foreground">{likeCount}</span>
+							</button>
+
+							{/* Comments */}
+							<Link
+								href="#comments"
+								onClick={(event) => {
+									event.preventDefault();
+									scrollToAnchor("comments");
+								}}
+								aria-label={t("commentsCountShort", { count: post.commentCount ?? 0 })}
+								className="icon-jiggle-group flex flex-col items-center gap-0.5 p-2"
+							>
+								<MessageCircleMore className="icon-jiggle-once h-8 w-8 transition-all text-muted-foreground" />
+								<span className="text-xs text-muted-foreground">{post.commentCount ?? 0}</span>
+							</Link>
+
+							{/* Bookmark */}
+							<button
+								type="button"
+								onClick={() => void onToggleArticleBookmark()}
+								disabled={isBookmarking}
+								aria-label={userBookmarked ? t("articleUnbookmark") : t("articleBookmark")}
+								className="icon-jiggle-group flex flex-col items-center gap-0.5 p-2"
+							>
+								<Star
+									className={cn(
+										"icon-jiggle-once h-8 w-8 transition-all",
+										userBookmarked
+											? "fill-current text-amber-500"
+											: "text-muted-foreground",
+									)}
+								/>
+								<span className="text-xs text-muted-foreground">
+									{userBookmarked ? t("articleUnbookmark") : t("articleBookmark")}
+								</span>
+							</button>
+						</div>
+
+						{hasToc && (
+							<nav className="max-w-xs rounded-xl border border-border/70 bg-card/85 p-4 backdrop-blur-sm">
+								<p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+									{t("tocTitle")}
+								</p>
+								<ul className="space-y-1.5">
+									{headingItems.map((item) => (
+										<li key={item.id}>
+											<a
+												href={`#${item.id}`}
+												onClick={(event) => {
+													event.preventDefault();
+													scrollToAnchor(item.id);
+												}}
+												className={`relative flex items-center text-sm transition-colors hover:text-foreground wrap-break-word ${
+													activeHeadingId === item.id
+														? "font-medium text-foreground"
+														: "text-muted-foreground"
+												} ${
+													item.level === 2
+														? "pl-3"
+														: item.level === 3
+															? "pl-6"
+															: "pl-9"
+												}`}
+											>
+												{activeHeadingId === item.id && (
+													<span
+														className="absolute left-0 h-4 w-1 rounded-full bg-foreground/90"
+														aria-hidden="true"
+													/>
+												)}
+												{item.text} 
+											</a>
+										</li>
+									))}
+								</ul>
+							</nav>
+						)}
+					</div>
+				</aside>
 			</div>
-		</div>
+
+			{/* Mobile/Tablet floating action rail */}
+			<div className="fixed right-4 bottom-4 z-40 lg:hidden">
+				<div className="flex flex-col items-center gap-1 rounded-2xl border border-border bg-card/95 px-2 py-2 shadow-lg backdrop-blur supports-backdrop-filter:bg-card/80">
+					<button
+						type="button"
+						onClick={() => void onToggleArticleLike()}
+						disabled={isLiking}
+						aria-label={userLiked ? t("articleUnlike") : t("articleLike")}
+						className="icon-jiggle-group flex flex-col items-center gap-0.5 p-1.5"
+					>
+						<Heart
+							className={cn(
+								"icon-jiggle-once h-6 w-6 transition-all",
+								userLiked
+									? "fill-current text-red-500"
+									: "text-muted-foreground",
+							)}
+						/>
+						<span className="text-[10px] text-muted-foreground">{likeCount}</span>
+					</button>
+
+					<Link
+						href="#comments"
+						onClick={(event) => {
+							event.preventDefault();
+							scrollToAnchor("comments");
+						}}
+						aria-label={t("commentsCountShort", { count: post.commentCount ?? 0 })}
+						className="icon-jiggle-group flex flex-col items-center gap-0.5 p-1.5"
+					>
+						<MessageCircleMore className="icon-jiggle-once h-6 w-6 transition-all text-muted-foreground" />
+						<span className="text-[10px] text-muted-foreground">{post.commentCount ?? 0}</span>
+					</Link>
+
+					<button
+						type="button"
+						onClick={() => void onToggleArticleBookmark()}
+						disabled={isBookmarking}
+						aria-label={userBookmarked ? t("articleUnbookmark") : t("articleBookmark")}
+						className="icon-jiggle-group flex flex-col items-center gap-0.5 p-1.5"
+					>
+						<Star
+							className={cn(
+								"icon-jiggle-once h-6 w-6 transition-all",
+								userBookmarked
+									? "fill-current text-amber-500"
+									: "text-muted-foreground",
+							)}
+						/>
+					</button>
+				</div>
+			</div>
+			</div>
+		</>
 	);
 }

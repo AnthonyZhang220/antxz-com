@@ -238,3 +238,20 @@
 .scrollbar-hide::-webkit-scrollbar-thumb:hover {
   background-color: rgba(0, 0, 0, 0.3);
 }
+
+@keyframes icon-jiggle {
+  0% { transform: rotate(0deg); }
+  20% { transform: rotate(-14deg); }
+  40% { transform: rotate(12deg); }
+  60% { transform: rotate(-8deg); }
+  80% { transform: rotate(5deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.icon-jiggle-once:hover {
+  animation: icon-jiggle 320ms ease-in-out 1;
+}
+
+.icon-jiggle-group:hover .icon-jiggle-once {
+  animation: icon-jiggle 320ms ease-in-out 1;
+}

@@ -53,8 +53,11 @@ import {
 	MessageSquare,
 	Trash2,
 	AlertCircle,
+	MessageCircle,
+	MessageCircleReply,
+	MessageCircleMore,
 } from "lucide-react";
-import { Alert, AlertTitle } from "@/components/ui/alert";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 interface LikerInfo {
 	user_id: string;
@@ -115,7 +118,10 @@ export default function BlogComments({ articleKey }: BlogCommentsProps) {
 	const [replyMessage, setReplyMessage] = useState("");
 	const [replyingToId, setReplyingToId] = useState<string | null>(null);
 	const [replyingToName, setReplyingToName] = useState("");
-	const [error, setError] = useState<string | null>(null);
+	const [mainError, setMainError] = useState<string | null>(null);
+	const [mainErrorReasons, setMainErrorReasons] = useState<string[]>([]);
+	const [replyError, setReplyError] = useState<string | null>(null);
+	const [replyErrorReasons, setReplyErrorReasons] = useState<string[]>([]);
 	const [notice, setNotice] = useState<string | null>(null);
 	const [likingId, setLikingId] = useState<string | null>(null);
 	const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -207,9 +213,29 @@ export default function BlogComments({ articleKey }: BlogCommentsProps) {
 		);
 	};
 
+	const getErrorMessageKey = (reason: string): string => {
+		const reasonMap: Record<string, string> = {
+			blocked_user: "commentsErrorBlocked",
+			too_short: "commentsErrorTooShort",
+			too_long: "commentsErrorTooLong",
+			emoji_only: "commentsErrorEmojiOnly",
+			too_many_links: "commentsErrorTooManyLinks",
+			blacklist_terms: "commentsErrorBlacklistTerms",
+			repeated_characters: "commentsErrorRepeatedCharacters",
+			repeated_sentences: "commentsErrorRepeatedSentences",
+			high_frequency: "commentsErrorHighFrequency",
+			duplicate_recent_comment: "commentsErrorDuplicateRecent",
+		};
+
+		return reasonMap[reason] ?? "commentsSubmitError";
+	};
+
 	const loadComments = useCallback(async () => {
 		setIsLoading(true);
-		setError(null);
+		setMainError(null);
+		setMainErrorReasons([]);
+		setReplyError(null);
+		setReplyErrorReasons([]);
 		setNotice(null);
 		try {
 			const response = await fetch(
@@ -240,7 +266,7 @@ export default function BlogComments({ articleKey }: BlogCommentsProps) {
 				setComments(rawComments);
 			}
 		} catch {
-			setError(commentsLoadErrorMessage);
+			setMainError(commentsLoadErrorMessage);
 		} finally {
 			setIsLoading(false);
 		}
@@ -283,10 +309,26 @@ export default function BlogComments({ articleKey }: BlogCommentsProps) {
 
 	const submitComment = async (content: string, parentId?: string) => {
 		setIsSubmitting(true);
-		setError(null);
+		if (parentId) {
+			setReplyError(null);
+			setReplyErrorReasons([]);
+		} else {
+			setMainError(null);
+			setMainErrorReasons([]);
+		}
 		setNotice(null);
 		try {
-			await submitCommentAction(articleKey, content, parentId);
+			const result = await submitCommentAction(articleKey, content, parentId);
+			if (!result.ok) {
+				if (parentId) {
+					setReplyError(result.message);
+					setReplyErrorReasons(result.reasons);
+				} else {
+					setMainError(result.message);
+					setMainErrorReasons(result.reasons);
+				}
+				return;
+			}
 
 			if (parentId) {
 				setReplyMessage("");
@@ -297,7 +339,14 @@ export default function BlogComments({ articleKey }: BlogCommentsProps) {
 			}
 			await loadComments();
 		} catch (err) {
-			setError(getActionErrorMessage(err, t("commentsSubmitError")));
+			const message = getActionErrorMessage(err, t("commentsSubmitError"));
+			if (parentId) {
+				setReplyError(message);
+				setReplyErrorReasons([]);
+			} else {
+				setMainError(message);
+				setMainErrorReasons([]);
+			}
 		} finally {
 			setIsSubmitting(false);
 		}
@@ -305,12 +354,14 @@ export default function BlogComments({ articleKey }: BlogCommentsProps) {
 
 	const onDeleteComment = async (commentId: string) => {
 		if (!isLoggedIn) {
-			setError(t("commentsLoginRequired"));
+			setMainError(t("commentsLoginRequired"));
+			setMainErrorReasons([]);
 			return;
 		}
 
 		setDeletingId(commentId);
-		setError(null);
+		setMainError(null);
+		setMainErrorReasons([]);
 		setNotice(null);
 
 		try {
@@ -324,7 +375,8 @@ export default function BlogComments({ articleKey }: BlogCommentsProps) {
 
 			await loadComments();
 		} catch (err) {
-			setError(getActionErrorMessage(err, t("commentsDeleteError")));
+			setMainError(getActionErrorMessage(err, t("commentsDeleteError")));
+			setMainErrorReasons([]);
 		} finally {
 			setDeletingId(null);
 		}
@@ -347,23 +399,27 @@ export default function BlogComments({ articleKey }: BlogCommentsProps) {
 			setReplyingToId(null);
 			setReplyingToName("");
 			setReplyMessage("");
-			setError(null);
+			setReplyError(null);
+			setReplyErrorReasons([]);
 		} else {
 			setReplyingToId(comment.id);
 			setReplyingToName(comment.author_name || "User");
 			setReplyMessage("");
-			setError(null);
+			setReplyError(null);
+			setReplyErrorReasons([]);
 		}
 	};
 
 	const onToggleLike = async (commentId: string, liked: boolean) => {
 		if (!isLoggedIn) {
-			setError(t("commentsLoginRequired"));
+			setMainError(t("commentsLoginRequired"));
+			setMainErrorReasons([]);
 			return;
 		}
 
 		setLikingId(commentId);
-		setError(null);
+		setMainError(null);
+		setMainErrorReasons([]);
 		setNotice(null);
 
 		try {
@@ -385,7 +441,8 @@ export default function BlogComments({ articleKey }: BlogCommentsProps) {
 				),
 			);
 		} catch (err) {
-			setError(getActionErrorMessage(err, t("commentsLikeError")));
+			setMainError(getActionErrorMessage(err, t("commentsLikeError")));
+			setMainErrorReasons([]);
 		} finally {
 			setLikingId(null);
 		}
@@ -449,7 +506,7 @@ export default function BlogComments({ articleKey }: BlogCommentsProps) {
 					onClick={() => onStartReply(comment)}
 					className={`icon-jiggle-group h-8 px-2 ${replyingToId === comment.id ? "text-foreground" : "text-muted-foreground hover:text-foreground"}`}
 				>
-					<MessageSquare className="icon-jiggle-once mr-1 h-4 w-4" />
+					<MessageCircleMore className="icon-jiggle-once mr-1 h-4 w-4" />
 					{replyingToId === comment.id
 						? t("commentsCancel")
 						: t("commentsReply")}
@@ -483,10 +540,21 @@ export default function BlogComments({ articleKey }: BlogCommentsProps) {
 				disabled={!isLoggedIn || isSubmitting}
 				className={textareaClass}
 			/>
-			{error && (
+			{replyError && (
 				<Alert variant="destructive" className="text-sm">
 					<AlertCircle className="h-4 w-4" />
-					<AlertTitle className="text-sm">{error}</AlertTitle>
+					<div className="flex-1">
+						<AlertTitle className="text-sm">{replyError}</AlertTitle>
+						{replyErrorReasons.length > 0 && (
+							<AlertDescription className="mt-1.5 text-xs text-destructive">
+								<ul className="list-inside list-disc space-y-0.5">
+									{replyErrorReasons.map((reason) => (
+										<li key={reason}>{t(getErrorMessageKey(reason))}</li>
+									))}
+								</ul>
+							</AlertDescription>
+						)}
+					</div>
 				</Alert>
 			)}
 			<div className="flex gap-2">
@@ -505,7 +573,8 @@ export default function BlogComments({ articleKey }: BlogCommentsProps) {
 					onClick={() => {
 						setReplyingToId(null);
 						setReplyMessage("");
-						setError(null);
+						setReplyError(null);
+						setReplyErrorReasons([]);
 					}}
 				>
 					{t("commentsCancel")}
@@ -577,10 +646,23 @@ export default function BlogComments({ articleKey }: BlogCommentsProps) {
 							</Button>
 						</div>
 					)}
-					{error && (
+					{mainError && (
 						<Alert variant="destructive">
 							<AlertCircle className="h-4 w-4" />
-						<AlertTitle>{error}</AlertTitle>
+							<div className="flex-1">
+								<AlertTitle>{mainError}</AlertTitle>
+								{mainErrorReasons.length > 0 && (
+									<AlertDescription className="mt-2 text-destructive">
+										<ul className="list-inside list-disc space-y-1">
+											{mainErrorReasons.map((reason) => (
+												<li key={reason} className="text-xs">
+													{t(getErrorMessageKey(reason))}
+												</li>
+											))}
+										</ul>
+									</AlertDescription>
+								)}
+							</div>
 						</Alert>
 					)}
 					{notice && (

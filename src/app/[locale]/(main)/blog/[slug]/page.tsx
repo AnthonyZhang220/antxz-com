@@ -7,6 +7,7 @@ import BlogComments from "@/components/blog/blog-comments";
 
 interface Props {
 	params: Promise<{ slug: string; locale: string }>;
+	searchParams?: Promise<{ lang?: string }>;
 }
 
 export async function generateStaticParams() {
@@ -14,9 +15,21 @@ export async function generateStaticParams() {
 	return slugs.map(({ slug }: { slug: string }) => ({ slug }));
 }
 
-export default async function Page({ params }: Props) {
+export default async function Page({ params, searchParams }: Props) {
 	const { slug, locale } = await params;
-	const post = await client.fetch(postBySlugQuery, { slug, locale });
+	const resolvedSearchParams = (await searchParams) ?? {};
+	const requestedLang = resolvedSearchParams.lang;
+	const contentLang =
+		requestedLang === "en" || requestedLang === "zh"
+			? requestedLang
+			: locale === "zh"
+				? "zh"
+				: "en";
+	const post = await client.fetch(postBySlugQuery, {
+		slug,
+		locale,
+		contentLang,
+	});
 	if (!post) notFound();
 	const engagement = await getBlogEngagementBySlug(slug);
 	const postWithEngagement = {
@@ -27,8 +40,12 @@ export default async function Page({ params }: Props) {
 
 	return (
 		<>
-			<BlogPostPage post={postWithEngagement} />
-			<div className="mx-auto max-w-4xl px-5 sm:px-8">
+			<BlogPostPage
+				routeLocale={locale === "zh" ? "zh" : "en"}
+				contentLang={contentLang}
+				post={postWithEngagement}
+			/>
+			<div id="comments" className="mx-auto max-w-4xl scroll-mt-24 px-5 sm:px-8">
 				<BlogComments articleKey={`blog:${slug}`} />
 			</div>
 		</>

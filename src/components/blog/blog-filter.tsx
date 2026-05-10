@@ -5,9 +5,9 @@ import { Toggle } from "@/components/ui/toggle";
 import { Slider } from "@/components/ui/slider";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/shared/utils";
-import { BlogPost } from "@/types/blog";
+import { BlogLanguageType, BlogPost } from "@/types/blog";
 
-const TAG_COLLAPSED_LIMIT = 8;
+const TAG_COLLAPSED_LIMIT = 4;
 
 // Helper used for the "reading time" section. Copied from blog-list.tsx
 const READ_DEFS = [
@@ -26,6 +26,10 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 
 interface BlogFilterProps {
 	posts: BlogPost[];
+	language: BlogLanguageType | null;
+	setLanguage: React.Dispatch<React.SetStateAction<BlogLanguageType | null>>;
+	allLanguages: BlogLanguageType[];
+	languageCounts: Record<BlogLanguageType, number>;
 	category: string | null;
 	setCategory: React.Dispatch<React.SetStateAction<string | null>>;
 	allCategories: string[];
@@ -48,6 +52,10 @@ interface BlogFilterProps {
 
 export default function BlogFilter({
 	posts,
+	language,
+	setLanguage,
+	allLanguages,
+	languageCounts,
 	category,
 	setCategory,
 	allCategories,
@@ -83,8 +91,61 @@ export default function BlogFilter({
 
 	const hiddenTagCount = Math.max(0, allTags.length - TAG_COLLAPSED_LIMIT);
 
+	const languageLabel = (value: BlogLanguageType) => {
+		if (value === "bilingual") return t("filterLanguageBilingual");
+		if (value === "zh") return t("filterLanguageZh");
+		return t("filterLanguageEn");
+	};
+
 	return (
 		<aside className="w-full flex flex-col gap-5 lg:w-56 lg:shrink-0 lg:sticky lg:top-6">
+			{/* Language */}
+			<div>
+				<SectionLabel>{t("filterLanguage")}</SectionLabel>
+				<div className="flex flex-col gap-0.5">
+					<Button
+						variant="ghost"
+						size="sm"
+						onClick={() => go(() => setLanguage(null))}
+						className={cn(
+							"w-full justify-between font-normal text-sm h-8 px-2.5 rounded-lg",
+							!language
+								? "bg-foreground text-background hover:bg-foreground hover:text-background dark:hover:bg-foreground dark:hover:text-background"
+								: "text-muted-foreground hover:text-foreground",
+						)}
+					>
+						<span>{t("filterAll")}</span>
+						<span className="font-mono text-xs md:text-sm opacity-70">
+							{posts.length}
+						</span>
+					</Button>
+
+					{allLanguages.map((value) => (
+						<Button
+							key={value}
+							variant="ghost"
+							size="sm"
+							onClick={() =>
+								go(() => setLanguage(language === value ? null : value))
+							}
+							className={cn(
+								"w-full justify-between font-normal text-sm h-8 px-2.5 rounded-lg",
+								language === value
+									? "bg-foreground text-background hover:bg-foreground hover:text-background dark:hover:bg-foreground dark:hover:text-background"
+									: "text-muted-foreground hover:text-foreground",
+							)}
+						>
+							<span>{languageLabel(value)}</span>
+							<span className="font-mono text-xs md:text-sm opacity-55">
+								{languageCounts[value] ?? 0}
+							</span>
+						</Button>
+					))}
+				</div>
+			</div>
+
+			<Separator />
+
 			{/* Category */}
 			<div>
 				<SectionLabel>{t("filterCategory")}</SectionLabel>
