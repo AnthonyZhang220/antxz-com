@@ -30,6 +30,11 @@ export const metadata: Metadata = {
 	title: "AntXZ - Personal Platform",
 	description:
 		"A personal platform showcasing projects, thoughts, and experiences.",
+	icons: {
+		icon: "/favicon.svg",
+		shortcut: "/favicon.svg",
+		apple: "/favicon.svg",
+	},
 };
 
 export default async function RootLayout({
