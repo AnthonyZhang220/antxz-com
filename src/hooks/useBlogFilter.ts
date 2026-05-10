@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { BlogPost } from "@/types/blog";
+import { BlogLanguageType, BlogPost } from "@/types/blog";
 
 const READ_DEFS = [
 	{ key: "short", label: "< 5 min", test: (r: number) => r < 5 },
@@ -16,10 +16,18 @@ export function useBlogFilter(
 ) {
 	// filter state
 	const [category, setCategory] = useState<string | null>(null);
+	const [language, setLanguage] = useState<BlogLanguageType | null>(null);
 	const [tag, setTag] = useState<string | null>(null);
 	const [yearRange, setYearRange] = useState<[number, number]>([minYear, maxYear]);
 	const [readTime, setReadTime] = useState<string | null>(null);
 	const [page, setPage] = useState(1);
+
+	const resolveLanguageType = (post: BlogPost): BlogLanguageType => {
+		if (post.languageType) return post.languageType;
+		if (post.hasEn && post.hasZh) return "bilingual";
+		if (post.hasZh) return "zh";
+		return "en";
+	};
 
 	const go = (fn: () => void) => {
 		fn();
@@ -30,6 +38,8 @@ export function useBlogFilter(
 		() =>
 			posts.filter((p: BlogPost) => {
 				const y = getYear(p.publishedAt);
+				const pLanguage = resolveLanguageType(p);
+				if (language && pLanguage !== language) return false;
 				if (category && p.category?.title !== category) return false;
 				if (tag && !p.tags.includes(tag)) return false;
 				if (y < yearRange[0] || y > yearRange[1]) return false;
@@ -39,15 +49,31 @@ export function useBlogFilter(
 				}
 				return true;
 			}),
-		[posts, category, tag, yearRange, readTime],
+		[posts, language, category, tag, yearRange, readTime],
 	);
 
 	const isDefault =
+		!language &&
 		!category &&
 		!tag &&
 		yearRange[0] === minYear &&
 		yearRange[1] === maxYear &&
 		!readTime;
+
+	const languageCounts = Object.fromEntries(
+		posts.reduce(
+			(map, post) => {
+				const value = resolveLanguageType(post);
+				map.set(value, (map.get(value) || 0) + 1);
+				return map;
+			},
+			new Map<BlogLanguageType, number>(),
+		),
+	) as Record<BlogLanguageType, number>;
+
+	const allLanguages = ["bilingual", "zh", "en"].filter(
+		(value) => (languageCounts as Record<string, number>)[value] > 0,
+	) as BlogLanguageType[];
 
 	const categoryCounts = Object.fromEntries(
 		posts
@@ -71,6 +97,8 @@ export function useBlogFilter(
 
 	return {
 		filtered,
+		language,
+		setLanguage,
 		category,
 		setCategory,
 		tag,
@@ -84,12 +112,15 @@ export function useBlogFilter(
 		go,
 		isDefault,
 		clearAll: () => {
+			setLanguage(null);
 			setCategory(null);
 			setTag(null);
 			setYearRange([minYear, maxYear]);
 			setReadTime(null);
 			setPage(1);
 		},
+		allLanguages,
+		languageCounts,
 		allCategories,
 		categoryCounts,
 		tagCounts,

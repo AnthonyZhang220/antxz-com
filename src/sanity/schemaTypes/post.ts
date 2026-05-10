@@ -6,6 +6,16 @@ export const post = defineType({
 	type: "document",
 	fields: [
 		defineField({
+			name: "titleI18n",
+			title: "Title (i18n)",
+			type: "object",
+			description: "Optional bilingual title. Falls back to legacy Title when empty.",
+			fields: [
+				defineField({ name: "en", title: "English", type: "string" }),
+				defineField({ name: "zh", title: "Chinese", type: "string" }),
+			],
+		}),
+		defineField({
 			name: "title",
 			title: "Title",
 			type: "string",
@@ -23,6 +33,16 @@ export const post = defineType({
 			title: "Published At",
 			type: "datetime",
 			validation: (Rule) => Rule.required(),
+		}),
+		defineField({
+			name: "excerptI18n",
+			title: "Excerpt (i18n)",
+			type: "object",
+			description: "Optional bilingual excerpt. Falls back to legacy Excerpt when empty.",
+			fields: [
+				defineField({ name: "en", title: "English", type: "text", rows: 3 }),
+				defineField({ name: "zh", title: "Chinese", type: "text", rows: 3 }),
+			],
 		}),
 		defineField({
 			name: "excerpt",
@@ -62,6 +82,54 @@ export const post = defineType({
 				"Specific topics covered in the post, such as React, Frontend, Performance, Travel, or Shanghai.",
 		}),
 		defineField({
+			name: "bodyI18n",
+			title: "Body (i18n)",
+			type: "object",
+			description: "Optional bilingual body. Falls back to legacy Body when empty.",
+			fields: [
+				defineField({
+					name: "en",
+					title: "English",
+					type: "array",
+					of: [
+						{ type: "block" },
+						{
+							type: "image",
+							options: { hotspot: true },
+							fields: [
+								{
+									name: "caption",
+									type: "string",
+									title: "Caption",
+								},
+							],
+						},
+						{ type: "code" },
+					],
+				}),
+				defineField({
+					name: "zh",
+					title: "Chinese",
+					type: "array",
+					of: [
+						{ type: "block" },
+						{
+							type: "image",
+							options: { hotspot: true },
+							fields: [
+								{
+									name: "caption",
+									type: "string",
+									title: "Caption",
+								},
+							],
+						},
+						{ type: "code" },
+					],
+				}),
+			],
+		}),
+		defineField({
 			name: "body",
 			title: "Body",
 			type: "array",
@@ -80,6 +148,19 @@ export const post = defineType({
 				},
 				{ type: "code" }, // requires @sanity/code-input
 			],
+		}),
+		defineField({
+			name: "originalLanguage",
+			title: "Original Language",
+			type: "string",
+			description: "Which language is the original content written in?",
+			options: {
+				list: [
+					{ title: "English", value: "en" },
+					{ title: "Chinese", value: "zh" },
+				],
+			},
+			initialValue: "en",
 		}),
 		defineField({
 			name: "source",

@@ -1,6 +1,7 @@
 // ─── Locale ───────────────────────────────────────────────────────────────────
 
 export type BlogLocale = "en" | "zh";
+export type BlogLanguageType = "bilingual" | "zh" | "en";
 
 // ─── Sanity Image ─────────────────────────────────────────────────────────────
 // Sanity 返回的图片对象结构，配合 @sanity/image-url 使用
@@ -64,6 +65,9 @@ export interface BlogPost {
 	category?: BlogCategory;
 	author?: BlogAuthor;
 	locale: BlogLocale;
+	hasEn?: boolean;
+	hasZh?: boolean;
+	languageType?: BlogLanguageType;
 	// 如果 Sanity schema 里用了双语字段，原始数据里会有这两个
 	titleLocales?: {
 		en: string;
@@ -102,6 +106,7 @@ export interface ReadingTimeDef {
 
 export interface BlogFilters {
 	tag: string | null;
+	language: BlogLanguageType | null;
 	yearRange: [number, number];
 	readingTime: ReadingTimeFilter | null;
 }
