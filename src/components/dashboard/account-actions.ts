@@ -47,6 +47,29 @@ function sanitizeProfilePatch(input: AccountProfilePatch): AccountProfilePatch {
 	};
 }
 
+function buildAccountProfile(
+	user: {
+		id: string;
+		email?: string | null;
+		created_at?: string | null;
+		last_sign_in_at?: string | null;
+		app_metadata?: { provider?: string } | null;
+	},
+	metadata: Record<string, unknown>
+): AccountProfile {
+	return {
+		id: user.id,
+		email: user.email ?? "",
+		provider: user.app_metadata?.provider ?? "email",
+		created_at: user.created_at ?? null,
+		last_sign_in_at: user.last_sign_in_at ?? null,
+		full_name: String(metadata.full_name ?? metadata.name ?? metadata.user_name ?? ""),
+		avatar_url: String(metadata.avatar_url ?? metadata.picture ?? ""),
+		bio: String(metadata.bio ?? ""),
+		website: String(metadata.website ?? ""),
+	};
+}
+
 export async function getAccountProfile(): Promise<AccountResult<AccountProfile>> {
 	const supabase = await createClient();
 	const {
@@ -58,21 +81,11 @@ export async function getAccountProfile(): Promise<AccountResult<AccountProfile>
 		return { success: false, error: "Not authenticated" };
 	}
 
-	const metadata = user.user_metadata ?? {};
+	const metadata = (user.user_metadata ?? {}) as Record<string, unknown>;
 
 	return {
 		success: true,
-		data: {
-			id: user.id,
-			email: user.email ?? "",
-			provider: user.app_metadata?.provider ?? "email",
-			created_at: user.created_at ?? null,
-			last_sign_in_at: user.last_sign_in_at ?? null,
-			full_name: String(metadata.full_name ?? metadata.name ?? ""),
-			avatar_url: String(metadata.avatar_url ?? metadata.picture ?? ""),
-			bio: String(metadata.bio ?? ""),
-			website: String(metadata.website ?? ""),
-		},
+		data: buildAccountProfile(user, metadata),
 	};
 }
 
@@ -99,7 +112,7 @@ export async function saveAccountProfile(
 		return { success: false, error: "Not authenticated" };
 	}
 
-	const existingMetadata = user.user_metadata ?? {};
+	const existingMetadata = (user.user_metadata ?? {}) as Record<string, unknown>;
 	const { error: updateError } = await supabase.auth.updateUser({
 		data: {
 			...existingMetadata,
@@ -114,7 +127,7 @@ export async function saveAccountProfile(
 		return { success: false, error: updateError.message || "Failed to save account" };
 	}
 
-	const metadata = {
+	const metadata: Record<string, unknown> = {
 		...existingMetadata,
 		full_name: sanitized.full_name,
 		avatar_url: sanitized.avatar_url,
@@ -124,16 +137,6 @@ export async function saveAccountProfile(
 
 	return {
 		success: true,
-		data: {
-			id: user.id,
-			email: user.email ?? "",
-			provider: user.app_metadata?.provider ?? "email",
-			created_at: user.created_at ?? null,
-			last_sign_in_at: user.last_sign_in_at ?? null,
-			full_name: String(metadata.full_name ?? metadata.name ?? ""),
-			avatar_url: String(metadata.avatar_url ?? metadata.picture ?? ""),
-			bio: String(metadata.bio ?? ""),
-			website: String(metadata.website ?? ""),
-		},
+		data: buildAccountProfile(user, metadata),
 	};
 }

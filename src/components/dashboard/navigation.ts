@@ -1,9 +1,10 @@
 import {
 	Bell,
+	Bookmark,
 	LayoutDashboard,
 	MessageCircleMore,
 	MessageCircleQuestionMark,
-	Search,
+	Sparkles,
 	Settings,
 	type LucideIcon,
 } from "lucide-react";
@@ -27,6 +28,11 @@ const dashboardNavDefinitions = {
 			slug: "",
 			icon: LayoutDashboard,
 		},
+			{
+				titleKey: "dashboard.navigation.bookmarks",
+				slug: "bookmarks",
+				icon: Bookmark,
+			},
 		{
 			titleKey: "dashboard.navigation.comments",
 			slug: "comments",
@@ -52,7 +58,7 @@ const dashboardNavDefinitions = {
 		{
 			titleKey: "dashboard.navigation.search",
 			slug: "search",
-			icon: Search,
+			icon: Sparkles,
 		},
 	],
 } satisfies {
@@ -68,8 +74,9 @@ export function getDashboardNavDefinitions() {
 // Map slug to titleKey for client-side title lookup
 const slugToTitleKey: Record<string, string> = {
 	"": dashboardNavDefinitions.navMain[0].titleKey,
-	comments: dashboardNavDefinitions.navMain[1].titleKey,
-	notifications: dashboardNavDefinitions.navMain[2].titleKey,
+	bookmarks: dashboardNavDefinitions.navMain[1].titleKey,
+	comments: dashboardNavDefinitions.navMain[2].titleKey,
+	notifications: dashboardNavDefinitions.navMain[3].titleKey,
 	settings: dashboardNavDefinitions.navSecondary[0].titleKey,
 	help: dashboardNavDefinitions.navSecondary[1].titleKey,
 	search: dashboardNavDefinitions.navSecondary[2].titleKey,

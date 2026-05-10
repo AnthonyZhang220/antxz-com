@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getTranslations } from "next-intl/server";
+import { NotificationToastListener } from "@/components/providers/notification-toast-listener";
 
 type LocaleLayoutProps = Readonly<{
 	children: React.ReactNode;
@@ -35,5 +36,10 @@ export async function generateMetadata({
 export default async function LocaleLayout({
 	children,
 }: LocaleLayoutProps) {
-	return <NextIntlClientProvider>{children}</NextIntlClientProvider>;
+	return (
+		<NextIntlClientProvider>
+			<NotificationToastListener />
+			{children}
+		</NextIntlClientProvider>
+	);
 }

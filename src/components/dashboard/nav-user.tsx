@@ -1,6 +1,6 @@
 "use client";
 
-import { EllipsisVertical, LogOut, Bell, User } from "lucide-react";
+import { EllipsisVertical, LogOut, User } from "lucide-react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -60,7 +60,7 @@ export function NavUser({
 							size="lg"
 							className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
 						>
-							<Avatar className="h-8 w-8 rounded-lg grayscale">
+							<Avatar className="h-8 w-8">
 								<AvatarImage src={avatarUrl} alt={displayName} />
 								<AvatarFallback className="rounded-lg bg-zinc-200 dark:bg-zinc-800">
 									{hasAvatar ? null : initials}
@@ -83,9 +83,9 @@ export function NavUser({
 					>
 						<DropdownMenuLabel className="p-0 font-normal">
 							<div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-								<Avatar className="h-8 w-8 rounded-lg">
+								<Avatar className="h-8 w-8">
 									<AvatarImage src={avatarUrl} alt={displayName} />
-									<AvatarFallback className="rounded-lg bg-zinc-200 dark:bg-zinc-800">
+									<AvatarFallback className="bg-zinc-200 dark:bg-zinc-800">
 										{hasAvatar ? null : initials}
 									</AvatarFallback>
 								</Avatar>
@@ -103,12 +103,6 @@ export function NavUser({
 								<Link href={`/${locale}/dashboard/account`}>
 									<User />
 									{t("account")}
-								</Link>
-							</DropdownMenuItem>
-							<DropdownMenuItem asChild>
-								<Link href={`/${locale}/dashboard/notifications`}>
-									<Bell />
-									{t("notifications")}
 								</Link>
 							</DropdownMenuItem>
 						</DropdownMenuGroup>

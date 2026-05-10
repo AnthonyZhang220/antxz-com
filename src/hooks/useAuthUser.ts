@@ -55,6 +55,7 @@ export function useAuthUser(initialUser?: User | null): UseAuthUserResult {
 	const displayName =
 		user?.user_metadata?.full_name ||
 		user?.user_metadata?.name ||
+		user?.user_metadata?.user_name ||
 		user?.email ||
 		"User";
 

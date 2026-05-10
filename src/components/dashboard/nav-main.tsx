@@ -13,6 +13,7 @@ import {
 	SidebarMenuItem,
 	useSidebar,
 } from "@/components/ui/sidebar";
+import { Badge } from "../ui/badge";
 
 export function NavMain({
 	items,
@@ -21,6 +22,7 @@ export function NavMain({
 		title: string;
 		url: string;
 		icon?: LucideIcon;
+		badge?: number;
 	}[];
 }) {
 	const pathname = usePathname();
@@ -55,22 +57,35 @@ export function NavMain({
 					</SidebarMenuItem>
 				</SidebarMenu>
 				<SidebarMenu>
-					{items.map((item) => (
+					{items.map((item) => {
+						// For dashboard root (overview), only match exact path
+						// For other items, match exact or when it's a sub-route
+						const isDashboardRoot = item.url.endsWith("/dashboard");
+						const isActive = isDashboardRoot
+							? pathname === item.url
+							: pathname === item.url ||
+								pathname?.startsWith(`${item.url}/`);
+
+						return (
 						<SidebarMenuItem key={item.title}>
 							<SidebarMenuButton
 								asChild
 								tooltip={item.title}
-								isActive={
-									pathname === item.url || pathname?.startsWith(`${item.url}/`)
-								}
+								isActive={isActive}
 							>
 								<Link href={item.url} onClick={handleLinkClick}>
 									{item.icon && <item.icon />}
 									<span>{item.title}</span>
+									{item.badge != null && item.badge > 0 && (
+										<Badge variant="destructive" className="ml-auto">
+											{item.badge > 99 ? "99+" : item.badge}
+										</Badge>
+									)}
 								</Link>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
-					))}
+						);
+					})}
 				</SidebarMenu>
 			</SidebarGroupContent>
 		</SidebarGroup>
