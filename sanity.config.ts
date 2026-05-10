@@ -14,6 +14,7 @@ import { apiVersion, dataset, projectId } from "./src/sanity/env";
 import { schema } from "./src/sanity/schemaTypes";
 import { structure } from "./src/sanity/structure";
 import { createPublishWithReadingTimeAction } from "./src/sanity/lib/publish-with-reading-time-action";
+import { AutoTranslateEnToZhAction, AutoTranslateZhToEnAction } from "./src/sanity/lib/auto-translate-action";
 
 export default defineConfig({
 	basePath: "/studio",
@@ -25,13 +26,20 @@ export default defineConfig({
 	},
 	document: {
 		actions: (prev, context) => {
-			if (context.schemaType !== "post") return prev;
+			const withPublishReadingTime =
+				context.schemaType === "post"
+					? prev.map((originalAction) =>
+							originalAction.action === "publish"
+								? createPublishWithReadingTimeAction(originalAction)
+								: originalAction,
+						)
+					: prev;
 
-			return prev.map((originalAction) =>
-				originalAction.action === "publish"
-					? createPublishWithReadingTimeAction(originalAction)
-					: originalAction,
-			);
+			if (context.schemaType === "post" || context.schemaType === "aboutMe") {
+				return [...withPublishReadingTime, AutoTranslateEnToZhAction, AutoTranslateZhToEnAction];
+			}
+
+			return withPublishReadingTime;
 		},
 	},
 	plugins: [

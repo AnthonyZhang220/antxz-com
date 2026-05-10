@@ -1,5 +1,13 @@
-import type { DocumentActionComponent } from "sanity";
-import { apiVersion } from "@/sanity/env";
+import { type DocumentActionComponent } from "sanity";
+import { createClient } from "next-sanity";
+import { apiVersion, dataset, projectId } from "@/sanity/env";
+
+const sanityClient = createClient({
+	projectId,
+	dataset,
+	apiVersion,
+	useCdn: false,
+});
 
 function estimateReadingTimeMinutes(body: unknown[] | undefined): number {
 	if (!Array.isArray(body)) return 1;
@@ -49,15 +57,6 @@ function getPatchTargetId(props: {
 	return props.id.startsWith("drafts.") ? props.id : `drafts.${props.id}`;
 }
 
-type ActionPropsWithClient = {
-	getClient: (config: { apiVersion: string }) => {
-		patch: (id: string) => {
-			set: (value: { readingTime: number }) => {
-				commit: () => Promise<unknown>;
-			};
-		};
-	};
-};
 
 export function createPublishWithReadingTimeAction(
 	originalPublishAction: DocumentActionComponent,
@@ -78,11 +77,17 @@ export function createPublishWithReadingTimeAction(
 					draft: props.draft as { _id?: string } | null,
 					published: props.published as { _id?: string } | null,
 				});
-				const typedProps = props as unknown as ActionPropsWithClient;
-
 				try {
-					await typedProps
-						.getClient({ apiVersion })
+					// Ensure client has token for write operations
+					const clientWithToken = createClient({
+						projectId,
+						dataset,
+						apiVersion,
+						useCdn: false,
+						token: process.env.NEXT_PUBLIC_SANITY_API_TOKEN || "",
+					});
+
+					await clientWithToken
 						.patch(targetId)
 						.set({ readingTime: nextReadingTime })
 						.commit();

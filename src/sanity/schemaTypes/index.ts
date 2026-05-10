@@ -3,7 +3,8 @@ import { post } from "./post";
 import { category } from "./category";
 import { project } from "./project";
 import { product } from "./product";
+import { aboutMe } from "./aboutMe";
 
 export const schema: { types: SchemaTypeDefinition[] } = {
-	types: [post, category, project, product],
+	types: [aboutMe, post, category, project, product],
 };
