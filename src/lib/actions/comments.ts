@@ -23,6 +23,17 @@ interface CommentData {
 	status: "published" | "quarantine" | "spam" | "blocked";
 }
 
+export type SubmitCommentResult =
+	| {
+		ok: true;
+		comment: CommentData;
+	}
+	| {
+		ok: false;
+		message: string;
+		reasons: string[];
+	};
+
 export interface AdminCommentData {
 	id: string;
 	article_key: string;
@@ -58,7 +69,7 @@ export async function submitComment(
 	articleKey: string,
 	content: string,
 	parentId?: string
-): Promise<CommentData> {
+): Promise<SubmitCommentResult> {
 	const t = await getTranslations("blog");
 	const supabase = await createClient();
 
@@ -69,7 +80,11 @@ export async function submitComment(
 	} = await supabase.auth.getUser();
 
 	if (authError || !user) {
-		throw createActionError("COMMENTS_LOGIN_REQUIRED", t("commentsLoginRequired"), { status: 401 });
+		return {
+			ok: false,
+			message: t("commentsLoginRequired"),
+			reasons: [],
+		};
 	}
 
 	// 验证输入
@@ -77,11 +92,19 @@ export async function submitComment(
 	const trimmedArticleKey = String(articleKey ?? "").trim();
 
 	if (!trimmedArticleKey || !trimmedContent) {
-		throw createActionError("COMMENTS_SUBMIT_INVALID_INPUT", t("commentsSubmitError"), { status: 400 });
+		return {
+			ok: false,
+			message: t("commentsSubmitError"),
+			reasons: [],
+		};
 	}
 
 	if (trimmedContent.length > 4000) {
-		throw createActionError("COMMENTS_SUBMIT_TOO_LONG", t("commentsSubmitError"), { status: 400 });
+		return {
+			ok: false,
+			message: t("commentsSubmitError"),
+			reasons: ["too_long"],
+		};
 	}
 
 	// 验证 parentId
@@ -98,7 +121,11 @@ export async function submitComment(
 			.maybeSingle();
 
 		if (parentError || !parentComment) {
-			throw createActionError("COMMENTS_PARENT_NOT_FOUND", t("commentsSubmitError"), { status: 404 });
+			return {
+				ok: false,
+				message: t("commentsSubmitError"),
+				reasons: [],
+			};
 		}
 
 		finalParentId = trimmedParentId;
@@ -142,24 +169,27 @@ export async function submitComment(
 
 	// 检查审核状态并返回适当的错误
 	if (moderation.status === "blocked") {
-		throw createActionError("COMMENTS_BLOCKED", t("commentsErrorBlocked"), {
+		return {
+			ok: false,
+			message: t("commentsErrorBlocked"),
 			reasons: moderation.reasons,
-			status: 403,
-		});
+		};
 	}
 
 	if (moderation.status === "spam") {
-		throw createActionError("COMMENTS_SPAM", t("commentsErrorSpam"), {
+		return {
+			ok: false,
+			message: t("commentsErrorSpam"),
 			reasons: moderation.reasons,
-			status: 400,
-		});
+		};
 	}
 
 	if (moderation.status === "quarantine") {
-		throw createActionError("COMMENTS_QUARANTINE", t("commentsErrorQuarantine"), {
+		return {
+			ok: false,
+			message: t("commentsErrorQuarantine"),
 			reasons: moderation.reasons,
-			status: 400,
-		});
+		};
 	}
 
 	// 插入评论
@@ -180,7 +210,11 @@ export async function submitComment(
 		.single();
 
 	if (error) {
-		throw createActionError("COMMENTS_SUBMIT_FAILED", t("commentsSubmitError"), { status: 500 });
+		return {
+			ok: false,
+			message: t("commentsSubmitError"),
+			reasons: [],
+		};
 	}
 
 	// 发送通知
@@ -237,7 +271,10 @@ export async function submitComment(
 		}
 	}
 
-	return data as CommentData;
+	return {
+		ok: true,
+		comment: data as CommentData,
+	};
 }
 
 /**

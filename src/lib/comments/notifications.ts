@@ -1,6 +1,10 @@
 import type { User } from "@supabase/supabase-js";
 
 import { createClient } from "@/lib/supabase/server";
+import {
+	isMissingUserSettingsRowError,
+	isMissingUserSettingsTableError,
+} from "@/lib/user/preferences";
 
 type CreateNotificationInput = {
 	userId: string;
@@ -57,6 +61,25 @@ export async function getArticleNotificationTarget(articleKey: string) {
 
 export async function createNotification(input: CreateNotificationInput) {
 	const supabase = await createClient();
+
+	const { data: userSettings, error: userSettingsError } = await supabase
+		.from("user_settings")
+		.select("notifications_enabled")
+		.eq("user_id", input.userId)
+		.maybeSingle();
+
+	if (
+		userSettingsError &&
+		!isMissingUserSettingsRowError(userSettingsError) &&
+		!isMissingUserSettingsTableError(userSettingsError)
+	) {
+		console.error("Failed to read notification settings:", userSettingsError);
+	}
+
+	if (userSettings?.notifications_enabled === false) {
+		return;
+	}
+
 	const { error } = await supabase.rpc("create_notification", {
 		p_user_id: input.userId,
 		p_actor_user_id: input.actorUserId ?? null,
