@@ -27,6 +27,7 @@ import {
 	finishLoadingSuccess,
 	startLoading,
 } from "@/lib/errors/error-utils";
+import { AppLocale, AppRegion } from "@/lib/user/preferences";
 
 export default function PreferencesForm() {
 	const t = useTranslations("preferences");
@@ -39,10 +40,10 @@ export default function PreferencesForm() {
 	// Language 从 URL params 获取（正确方式）
 	const currentLocale = params?.locale ?? "en";
 
-	const [locale, setLocale] = useState<string>(currentLocale);
-	const [region, setRegion] = useState<string>(() => {
+	const [locale, setLocale] = useState<AppLocale>(currentLocale as AppLocale);
+	const [region, setRegion] = useState<AppRegion>(() => {
 		const savedRegion = getCookie("preferred_region");
-		if (savedRegion) return savedRegion;
+		if (savedRegion) return savedRegion as AppRegion;
 		return typeof window !== "undefined" && navigator.language?.startsWith("zh")
 			? "cn"
 			: "global";
@@ -65,7 +66,7 @@ export default function PreferencesForm() {
 		const loadingToastId = startLoading(tt("toast.preferences.saving"));
 
 		try {
-			const result = await savePreferences(locale, region);
+			const result = await savePreferences(locale as AppLocale, region as AppRegion);
 
 			if (!result.success) {
 				finishLoadingError(loadingToastId, result.error || saveErrorMessage);
@@ -98,7 +99,7 @@ export default function PreferencesForm() {
 							<Label htmlFor="locale">{t("languageLabel")}</Label>
 							<Select
 								value={locale}
-								onValueChange={setLocale}
+								onValueChange={(value) => setLocale(value as AppLocale)}
 								disabled={isLoading}
 							>
 								<SelectTrigger id="locale" className="w-full">
@@ -115,7 +116,7 @@ export default function PreferencesForm() {
 							<Label htmlFor="region">{t("regionLabel")}</Label>
 							<Select
 								value={region}
-								onValueChange={setRegion}
+								onValueChange={(value) => setRegion(value as AppRegion)}
 								disabled={isLoading}
 							>
 								<SelectTrigger id="region" className="w-full">
