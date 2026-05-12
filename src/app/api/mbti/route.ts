@@ -1,13 +1,20 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server"; // 你自写的工具类
 
-export async function POST(request: Request) {
-	const answers = await request.json();
-	// 1. 这里写你的 MBTI 算法
-	const result = calculateMBTI(answers);
+/**
+ * @deprecated 
+ * This route has been replaced by Server Actions in src/lib/actions/blog.ts
+ */
+export async function GET() {
+    return NextResponse.json(
+        { message: "This endpoint is deprecated. Use Server Actions instead." },
+        { status: 410 } // 410 Gone 表示资源已永久失效
+    );
+}
 
-	// 2. 调用 Supabase 存储
-	// ...
-
-	return NextResponse.json({ type: result });
+// 如果你之前用的是 POST，也可以导出一个 POST
+export async function POST() {
+    return NextResponse.json(
+        { error: "Deprecated" },
+        { status: 410 }
+    );
 }
