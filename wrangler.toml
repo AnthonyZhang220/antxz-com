@@ -1,3 +1,10 @@
 name = "antxz-com"
 compatibility_date = "2024-09-23"
 compatibility_flags = ["nodejs_compat"]
+
+[build]
+command = "npm run build"
+
+[[routes]]
+pattern = "antxz.com/*"
+zone_name = "antxz.com"
