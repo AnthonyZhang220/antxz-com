@@ -15,8 +15,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { DashboardPageSkeleton } from "@/components/dashboard/dashboard-page-skeleton";
 import { ErrorState } from "@/components/shared/error-state";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
 	finishLoadingError,
 	finishLoadingSuccess,
@@ -136,16 +136,14 @@ export default function DashboardAccount() {
 			finishLoadingSuccess(loadingToastId, tm("saved"));
 		} catch (error) {
 			const message =
-				error instanceof Error && error.message ? error.message : tm("saveError");
+				error instanceof Error && error.message
+					? error.message
+					: tm("saveError");
 			finishLoadingError(loadingToastId, message);
 		} finally {
 			setIsSaving(false);
 		}
 	};
-
-	if (isLoading) {
-		return <DashboardPageSkeleton rows={4} />;
-	}
 
 	if (loadError) {
 		return (
@@ -167,37 +165,70 @@ export default function DashboardAccount() {
 					<CardTitle>{t("title")}</CardTitle>
 					<CardDescription>{t("description")}</CardDescription>
 				</CardHeader>
-				<CardContent className="space-y-6">
-					<div className="flex items-center gap-4">
-						<Avatar size="lg" className="size-16">
-							{form.avatar_url ? (
-								<AvatarImage src={form.avatar_url} alt={form.full_name || form.email} />
-							) : null}
-							<AvatarFallback>{initials}</AvatarFallback>
-						</Avatar>
-						<div className="space-y-1">
-							<p className="font-medium">{form.full_name || t("fields.noName")}</p>
-							<p className="text-sm text-muted-foreground">{form.email}</p>
+				{isLoading ? (
+					<CardContent className="space-y-6">
+						<div className="flex items-center gap-4">
+							<Skeleton className="h-16 w-16 rounded-full" />
+							<div className="space-y-1">
+								<Skeleton className="h-4 w-32" />
+								<Skeleton className="h-3 w-24" />
+							</div>
 						</div>
-					</div>
+						<div className="grid gap-4 md:grid-cols-2">
+							<Skeleton className="h-8 w-full md:col-span-1" />
+							<Skeleton className="h-8 w-full md:col-span-1" />
+							<Skeleton className="h-8 w-full md:col-span-1" />
+						</div>
+					</CardContent>
+				) : (
+					<CardContent className="space-y-6">
+						<div className="flex items-center gap-4">
+							<Avatar size="lg" className="size-16">
+								{form.avatar_url ? (
+									<AvatarImage
+										src={form.avatar_url}
+										alt={form.full_name || form.email}
+									/>
+								) : null}
+								<AvatarFallback>{initials}</AvatarFallback>
+							</Avatar>
+							<div className="space-y-1">
+								<p className="font-medium">
+									{form.full_name || t("fields.noName")}
+								</p>
+								<p className="text-sm text-muted-foreground">{form.email}</p>
+							</div>
+						</div>
 
-					<div className="grid gap-4 md:grid-cols-2">
-						<div className="space-y-1">
-							<p className="text-xs text-muted-foreground">{t("fields.provider")}</p>
-							<p className="text-sm font-medium capitalize">{form.provider || "-"}</p>
+						<div className="grid gap-4 md:grid-cols-2">
+							<div className="space-y-1">
+								<p className="text-xs text-muted-foreground">
+									{t("fields.provider")}
+								</p>
+								<p className="text-sm font-medium capitalize">
+									{form.provider || "-"}
+								</p>
+							</div>
+							<div className="space-y-1">
+								<p className="text-xs text-muted-foreground">
+									{t("fields.memberSince")}
+								</p>
+								<p className="text-sm font-medium">
+									{formatDate(form.created_at)}
+								</p>
+							</div>
+							<div className="space-y-1 md:col-span-2">
+								<p className="text-xs text-muted-foreground">
+									{t("fields.lastSignIn")}
+								</p>
+								<p className="text-sm font-medium">
+									{formatDate(form.last_sign_in_at)}
+								</p>
+							</div>
 						</div>
-						<div className="space-y-1">
-							<p className="text-xs text-muted-foreground">{t("fields.memberSince")}</p>
-							<p className="text-sm font-medium">{formatDate(form.created_at)}</p>
-						</div>
-						<div className="space-y-1 md:col-span-2">
-							<p className="text-xs text-muted-foreground">{t("fields.lastSignIn")}</p>
-							<p className="text-sm font-medium">{formatDate(form.last_sign_in_at)}</p>
-						</div>
-					</div>
-				</CardContent>
+					</CardContent>
+				)}
 			</Card>
-
 			<form onSubmit={onSubmit}>
 				<Card>
 					<CardHeader>
@@ -209,12 +240,12 @@ export default function DashboardAccount() {
 							<Label htmlFor="full_name">{t("fields.fullName")}</Label>
 							<Input
 								id="full_name"
-								value={form.full_name}
+								value={isLoading ? "" : form.full_name}
 								onChange={(e) =>
 									setForm((prev) => ({ ...prev, full_name: e.target.value }))
 								}
 								placeholder={t("placeholders.fullName")}
-								disabled={isSaving}
+								disabled={isSaving || isLoading}
 							/>
 						</div>
 
@@ -223,12 +254,12 @@ export default function DashboardAccount() {
 							<Input
 								id="avatar_url"
 								type="url"
-								value={form.avatar_url}
+								value={isLoading ? "" : form.avatar_url}
 								onChange={(e) =>
 									setForm((prev) => ({ ...prev, avatar_url: e.target.value }))
 								}
 								placeholder="https://example.com/avatar.png"
-								disabled={isSaving}
+								disabled={isSaving || isLoading}
 							/>
 						</div>
 
@@ -237,12 +268,12 @@ export default function DashboardAccount() {
 							<Input
 								id="website"
 								type="url"
-								value={form.website}
+								value={isLoading ? "" : form.website}
 								onChange={(e) =>
 									setForm((prev) => ({ ...prev, website: e.target.value }))
 								}
 								placeholder="https://your-site.com"
-								disabled={isSaving}
+								disabled={isSaving || isLoading}
 							/>
 						</div>
 
@@ -250,12 +281,12 @@ export default function DashboardAccount() {
 							<Label htmlFor="bio">{t("fields.bio")}</Label>
 							<textarea
 								id="bio"
-								value={form.bio}
+								value={isLoading ? "" : form.bio}
 								onChange={(e) =>
 									setForm((prev) => ({ ...prev, bio: e.target.value }))
 								}
 								placeholder={t("placeholders.bio")}
-								disabled={isSaving}
+								disabled={isSaving || isLoading}
 								rows={4}
 								className="flex min-h-24 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50"
 							/>

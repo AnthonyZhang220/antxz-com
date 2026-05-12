@@ -25,7 +25,6 @@ import {
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Toggle } from "@/components/ui/toggle";
-import { DashboardPageSkeleton } from "@/components/dashboard/dashboard-page-skeleton";
 import { ErrorState } from "@/components/shared/error-state";
 import {
 	finishLoadingError,
@@ -34,6 +33,7 @@ import {
 } from "@/lib/errors/error-utils";
 import { getUserSettings, saveUserSettings } from "./settings-actions";
 import type { UserSettings } from "@/lib/user/preferences";
+import { Skeleton } from "../ui/skeleton";
 
 export default function DashboardSettings() {
 	const t = useTranslations("dashboard.settings");
@@ -68,12 +68,14 @@ export default function DashboardSettings() {
 			return;
 		}
 
-		setSettings((result.data as UserSettings) || {
-			locale: "en",
-			region: "global",
-			theme: "system",
-			notifications_enabled: true,
-		});
+		setSettings(
+			(result.data as UserSettings) || {
+				locale: "en",
+				region: "global",
+				theme: "system",
+				notifications_enabled: true,
+			},
+		);
 		setIsLoading(false);
 	}, [loadErrorMessage]);
 
@@ -125,16 +127,14 @@ export default function DashboardSettings() {
 			router.refresh();
 		} catch (error) {
 			const message =
-				error instanceof Error && error.message ? error.message : saveErrorMessage;
+				error instanceof Error && error.message
+					? error.message
+					: saveErrorMessage;
 			finishLoadingError(loadingToastId, message);
 		} finally {
 			setIsSaving(false);
 		}
 	};
-
-	if (isLoading) {
-		return <DashboardPageSkeleton rows={4} />;
-	}
 
 	if (loadError) {
 		return (
@@ -173,15 +173,12 @@ export default function DashboardSettings() {
 							<Select
 								value={settings.locale}
 								onValueChange={(value) =>
-									handleSettingChange(
-										"locale",
-										value as "en" | "zh"
-									)
+									handleSettingChange("locale", value as "en" | "zh")
 								}
-								disabled={isSaving}
+								disabled={isSaving || isLoading}
 							>
 								<SelectTrigger id="locale" className="w-full">
-									<SelectValue />
+									{isLoading ? <Skeleton /> : <SelectValue />}
 								</SelectTrigger>
 								<SelectContent>
 									<SelectItem value="en">English</SelectItem>
@@ -197,40 +194,25 @@ export default function DashboardSettings() {
 							<Select
 								value={settings.region}
 								onValueChange={(value) =>
-									handleSettingChange(
-										"region",
-										value as "cn" | "us" | "global"
-									)
+									handleSettingChange("region", value as "cn" | "us" | "global")
 								}
-								disabled={isSaving}
+								disabled={isSaving || isLoading}
 							>
 								<SelectTrigger id="region" className="w-full">
-									<SelectValue />
+									{isLoading ? <Skeleton /> : <SelectValue />}
 								</SelectTrigger>
 								<SelectContent>
 									{locale === "zh" ? (
 										<>
-											<SelectItem value="cn">
-												中国
-											</SelectItem>
-											<SelectItem value="us">
-												美国
-											</SelectItem>
-											<SelectItem value="global">
-												全球
-											</SelectItem>
+											<SelectItem value="cn">中国</SelectItem>
+											<SelectItem value="us">美国</SelectItem>
+											<SelectItem value="global">全球</SelectItem>
 										</>
 									) : (
 										<>
-											<SelectItem value="cn">
-												China
-											</SelectItem>
-											<SelectItem value="us">
-												United States
-											</SelectItem>
-											<SelectItem value="global">
-												Global
-											</SelectItem>
+											<SelectItem value="cn">China</SelectItem>
+											<SelectItem value="us">United States</SelectItem>
+											<SelectItem value="global">Global</SelectItem>
 										</>
 									)}
 								</SelectContent>
@@ -264,13 +246,13 @@ export default function DashboardSettings() {
 								onValueChange={(value) =>
 									handleSettingChange(
 										"theme",
-										value as "light" | "dark" | "system"
+										value as "light" | "dark" | "system",
 									)
 								}
-								disabled={isSaving}
+								disabled={isSaving || isLoading}
 							>
 								<SelectTrigger id="theme" className="w-full">
-									<SelectValue />
+									{isLoading ? <Skeleton /> : <SelectValue />}
 								</SelectTrigger>
 								<SelectContent>
 									<SelectItem value="light">
@@ -307,9 +289,7 @@ export default function DashboardSettings() {
 						<div className="flex items-center justify-between">
 							<div className="space-y-1">
 								<p className="font-medium">
-									{locale === "zh"
-										? "启用通知"
-										: "Enable Notifications"}
+									{locale === "zh" ? "启用通知" : "Enable Notifications"}
 								</p>
 								<p className="text-sm text-muted-foreground">
 									{locale === "zh"
@@ -320,7 +300,7 @@ export default function DashboardSettings() {
 							<Toggle
 								pressed={settings.notifications_enabled}
 								onPressedChange={handleToggleNotifications}
-								disabled={isSaving}
+								disabled={isSaving || isLoading}
 								aria-label="Toggle notifications"
 								className="size-10"
 							>
@@ -340,7 +320,7 @@ export default function DashboardSettings() {
 				<CardFooter className="justify-end">
 					<Button
 						type="submit"
-						disabled={isSaving || !hasChanges}
+						disabled={isSaving || isLoading || !hasChanges}
 						size="lg"
 					>
 						{isSaving

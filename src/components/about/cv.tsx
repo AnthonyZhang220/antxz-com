@@ -21,7 +21,7 @@ type CVProps = {
 
 export default function CV({ initialTab = "profile" }: CVProps) {
 	const t = useTranslations("about.cv");
-	const tMe = useTranslations("about.me");
+	const tProfile = useTranslations("about.profile");
 	const locale = useLocale();
 	const [activeProject, setActiveProject] = useState(0);
 	const [activeTab, setActiveTab] = useState<"resume" | "profile">(initialTab);
@@ -32,33 +32,19 @@ export default function CV({ initialTab = "profile" }: CVProps) {
 	const education = t.raw("education") as ResumeEducation[];
 	const skills = t.raw("skills") as ResumeSkills;
 	const projects = t.raw("projects") as ResumeProject[];
-	const introParagraphs = [tMe("intro.paragraph1"), tMe("intro.paragraph2")];
+	const introParagraphs = [
+		tProfile("intro.paragraph1"),
+		tProfile("intro.paragraph2"),
+	];
 	const focusItems = [
-		tMe("focus.frontend"),
-		tMe("focus.fullstack"),
-		tMe("focus.product"),
+		tProfile("focus.frontend"),
+		tProfile("focus.fullstack"),
+		tProfile("focus.product"),
 	];
 	const valueItems = [
-		tMe("values.ownership"),
-		tMe("values.consistency"),
-		tMe("values.learning"),
-	];
-	const profileSections = [
-		{
-			key: "me",
-			title: tMe("sections.me.title"),
-			content: tMe("sections.me.content"),
-		},
-		{
-			key: "background",
-			title: tMe("sections.background.title"),
-			content: tMe("sections.background.content"),
-		},
-		{
-			key: "blog",
-			title: tMe("sections.blog.title"),
-			content: tMe("sections.blog.content"),
-		},
+		tProfile("values.ownership"),
+		tProfile("values.consistency"),
+		tProfile("values.learning"),
 	];
 
 	const currentResumePdf =
@@ -77,41 +63,27 @@ export default function CV({ initialTab = "profile" }: CVProps) {
 				<section className="rounded-2xl border border-white/40 bg-white/80 p-6 shadow-lg backdrop-blur-sm dark:border-white/10 dark:bg-slate-900/75 md:p-8">
 					<div className="flex flex-wrap items-start justify-between gap-3 md:gap-4">
 						<h1 className="text-3xl font-bold tracking-tight md:text-5xl">
-							{activeTab === "resume" ? t("title") : tMe("title")}
+							{activeTab === "resume" ? t("title") : tProfile("title")}
 						</h1>
 						{activeTab === "resume" ? (
 							<div className="inline-flex flex-wrap items-center gap-2 rounded-xl border border-slate-200 bg-white p-2 dark:border-slate-700 dark:bg-slate-900">
-								<Button
-									size="sm"
-									variant="secondary"
-									onClick={() => setResumeViewerOpen(true)}
-								>
+								<Button size="sm" variant="secondary" disabled>
 									{t("viewResume")}
 								</Button>
-								<Button asChild size="sm">
-									<a href="/resume-en.pdf" download>
-										{t("downloadEN")}
-									</a>
+								<Button size="sm" disabled>
+									{t("downloadEN")}
 								</Button>
-								<Button asChild size="sm" variant="outline">
-									<a href="/resume-zh.pdf" download>
-										{t("downloadZH")}
-									</a>
+								<Button size="sm" variant="outline" disabled>
+									{t("downloadZH")}
 								</Button>
-								<Button asChild size="sm" variant="ghost">
-									<a
-										href={currentResumePdf}
-										target="_blank"
-										rel="noopener noreferrer"
-									>
-										{t("openInNewTab")}
-									</a>
+								<Button size="sm" variant="ghost" disabled>
+									{t("openInNewTab")}
 								</Button>
 							</div>
 						) : null}
 					</div>
 					<p className="mt-3 max-w-3xl text-base text-slate-700 dark:text-slate-300 md:text-lg">
-						{activeTab === "resume" ? t("subtitle") : tMe("subtitle")}
+						{activeTab === "resume" ? t("subtitle") : tProfile("subtitle")}
 					</p>
 
 					<Tabs
@@ -154,21 +126,20 @@ export default function CV({ initialTab = "profile" }: CVProps) {
 						<TabsContent value="profile" className="mt-6">
 							<CVProfileTabContent
 								chips={{
-									role: tMe("chips.role"),
-									stack: tMe("chips.stack"),
-									location: tMe("chips.location"),
+									role: tProfile("chips.role"),
+									stack: tProfile("chips.stack"),
+									location: tProfile("chips.location"),
 								}}
 								focusItems={focusItems}
-								introTitle={tMe("intro.title")}
+								introTitle={tProfile("intro.title")}
 								introParagraphs={introParagraphs}
-								profileSections={profileSections}
-								valuesTitle={tMe("values.title")}
+								valuesTitle={tProfile("values.title")}
 								valueItems={valueItems}
 								contactTitle={t("contactTitle")}
 								contactDescription={t("contactDescription")}
 								nextActions={{
-									blog: tMe("next.actions.blog"),
-									projects: tMe("next.actions.projects"),
+									blog: tProfile("next.actions.blog"),
+									projects: tProfile("next.actions.projects"),
 								}}
 								locale={locale}
 							/>

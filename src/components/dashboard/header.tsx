@@ -1,6 +1,7 @@
 "use client";
 
 import { useSelectedLayoutSegment } from "next/navigation";
+import Link from "next/link";
 import { useTranslations } from "next-intl";
 
 import { getDashboardTitleKey } from "./navigation";
@@ -27,7 +28,7 @@ export function DashboardHeader() {
 				<h1 className="text-base font-medium">{title}</h1>
 				<div className="ml-auto flex items-center gap-2">
 					<Button variant="outline" asChild size="sm" className="hidden sm:flex">
-						<a
+						<Link
 							href="https://github.com/AnthonyZhang220/antxz-com"
 							rel="noopener noreferrer"
 							target="_blank"
@@ -35,7 +36,7 @@ export function DashboardHeader() {
 						>
 							<GitHubIcon className="size-4 fill-current" />
 							GitHub
-						</a>
+						</Link>
 					</Button>
 				</div>
 			</div>

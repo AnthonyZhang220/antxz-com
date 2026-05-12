@@ -8,7 +8,7 @@ import { PortableText, PortableTextComponents } from "next-sanity";
 import { useFormatter, useTranslations } from "next-intl";
 import { urlFor } from "@/sanity/lib/image";
 import { getActionErrorMessage } from "@/lib/errors/action-error";
-import { cn } from "@/lib/shared/utils";
+import { cn } from "@/lib/utils";
 import {
 	createPortableTextComponents,
 	extractPortableTextHeadingItems,

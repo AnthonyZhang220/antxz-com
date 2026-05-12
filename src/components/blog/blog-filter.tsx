@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Toggle } from "@/components/ui/toggle";
 import { Slider } from "@/components/ui/slider";
 import { Separator } from "@/components/ui/separator";
-import { cn } from "@/lib/shared/utils";
-import { BlogLanguageType, BlogPost } from "@/types/blog";
+import { cn } from "@/lib/utils";
+import type { BlogPost } from "@/types/blog";
 
 const TAG_COLLAPSED_LIMIT = 4;
 
@@ -24,12 +24,13 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 	);
 }
 
+
 interface BlogFilterProps {
 	posts: BlogPost[];
-	language: BlogLanguageType | null;
-	setLanguage: React.Dispatch<React.SetStateAction<BlogLanguageType | null>>;
-	allLanguages: BlogLanguageType[];
-	languageCounts: Record<BlogLanguageType, number>;
+	language: "en" | "zh" | null;
+	setLanguage: React.Dispatch<React.SetStateAction<"en" | "zh" | null>>;
+	allLanguages: ("en" | "zh")[];
+	languageCounts: Record<"en" | "zh", number>;
 	category: string | null;
 	setCategory: React.Dispatch<React.SetStateAction<string | null>>;
 	allCategories: string[];
@@ -91,8 +92,7 @@ export default function BlogFilter({
 
 	const hiddenTagCount = Math.max(0, allTags.length - TAG_COLLAPSED_LIMIT);
 
-	const languageLabel = (value: BlogLanguageType) => {
-		if (value === "bilingual") return t("filterLanguageBilingual");
+	const languageLabel = (value: "en" | "zh") => {
 		if (value === "zh") return t("filterLanguageZh");
 		return t("filterLanguageEn");
 	};
@@ -101,7 +101,7 @@ export default function BlogFilter({
 		<aside className="w-full flex flex-col gap-5 lg:w-56 lg:shrink-0 lg:sticky lg:top-6">
 			{/* Language */}
 			<div>
-				<SectionLabel>{t("filterLanguage")}</SectionLabel>
+				<SectionLabel>{t("originalLanguageLabel", { language: "" }).replace(/[:：\s]*$/, "")}</SectionLabel>
 				<div className="flex flex-col gap-0.5">
 					<Button
 						variant="ghost"
@@ -120,27 +120,25 @@ export default function BlogFilter({
 						</span>
 					</Button>
 
-					{allLanguages.map((value) => (
-						<Button
-							key={value}
-							variant="ghost"
-							size="sm"
-							onClick={() =>
-								go(() => setLanguage(language === value ? null : value))
-							}
-							className={cn(
-								"w-full justify-between font-normal text-sm h-8 px-2.5 rounded-lg",
-								language === value
-									? "bg-foreground text-background hover:bg-foreground hover:text-background dark:hover:bg-foreground dark:hover:text-background"
-									: "text-muted-foreground hover:text-foreground",
-							)}
-						>
-							<span>{languageLabel(value)}</span>
-							<span className="font-mono text-xs md:text-sm opacity-55">
-								{languageCounts[value] ?? 0}
-							</span>
-						</Button>
-					))}
+					 {allLanguages.map((value) => (
+						 <Button
+							 key={value}
+							 variant="ghost"
+							 size="sm"
+							 onClick={() => go(() => setLanguage(language === value ? null : value))}
+							 className={cn(
+								 "w-full justify-between font-normal text-sm h-8 px-2.5 rounded-lg",
+								 language === value
+									 ? "bg-foreground text-background hover:bg-foreground hover:text-background dark:hover:bg-foreground dark:hover:text-background"
+									 : "text-muted-foreground hover:text-foreground",
+							 )}
+						 >
+							 <span>{languageLabel(value)}</span>
+							 <span className="font-mono text-xs md:text-sm opacity-55">
+								 {languageCounts[value] ?? 0}
+							 </span>
+						 </Button>
+					 ))}
 				</div>
 			</div>
 

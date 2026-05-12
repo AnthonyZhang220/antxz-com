@@ -50,9 +50,16 @@ async function fetchOverviewStats(userId: string): Promise<OverviewStats> {
 		.eq("user_id", userId);
 
 	const totalNotifications = (allNotifs ?? []).length;
-	const unreadNotifications = (allNotifs ?? []).filter((n) => !n.is_read).length;
+	const unreadNotifications = (allNotifs ?? []).filter(
+		(n) => !n.is_read,
+	).length;
 
-	return { totalComments, likesReceived, unreadNotifications, totalNotifications };
+	return {
+		totalComments,
+		likesReceived,
+		unreadNotifications,
+		totalNotifications,
+	};
 }
 
 export function SectionCards() {
@@ -92,7 +99,7 @@ export function SectionCards() {
 	];
 
 	return (
-		<div className="grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-linear-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4 dark:*:data-[slot=card]:bg-card">
+		<div className="grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-linear-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4 dark:*:data-[slot=card]:bg-card overflow-y-auto overscroll-contain">
 			{cards.map(({ key, icon: Icon, value }) => (
 				<Card key={key} className="@container/card">
 					<CardHeader>
@@ -104,12 +111,14 @@ export function SectionCards() {
 							{stats === null ? (
 								<Skeleton className="h-8 w-16 rounded" />
 							) : (
-								value?.toLocaleString() ?? "0"
+								(value?.toLocaleString() ?? "0")
 							)}
 						</CardTitle>
 					</CardHeader>
 					<CardFooter className="text-sm">
-						<div className="text-muted-foreground">{t(`${key}.description`)}</div>
+						<div className="text-muted-foreground">
+							{t(`${key}.description`)}
+						</div>
 					</CardFooter>
 				</Card>
 			))}

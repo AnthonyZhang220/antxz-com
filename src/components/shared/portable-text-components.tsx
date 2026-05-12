@@ -70,8 +70,6 @@ export function extractPortableTextHeadingItems(
 	body?: unknown[],
 ): PortableTextHeadingItem[] {
 	if (!Array.isArray(body)) return [];
-
-	const idCounts = new Map<string, number>();
 	const results: PortableTextHeadingItem[] = [];
 
 	for (const raw of body) {
@@ -83,12 +81,7 @@ export function extractPortableTextHeadingItems(
 
 		const text = extractBlockText(block);
 		if (!text) continue;
-
-		const base = slugifyHeading(text) || "section";
-		const seen = idCounts.get(base) ?? 0;
-		idCounts.set(base, seen + 1);
-		const rawId = getPortableTextHeadingIdFromBlock(block);
-		const id = seen === 0 ? rawId : `${rawId}-${seen + 1}`;
+		const id = getPortableTextHeadingIdFromBlock(block);
 
 		results.push({
 			id,
@@ -195,7 +188,7 @@ export function createPortableTextComponents(
 	return {
 		   types: {
 			   image: ({ value }) => {
-				   let src = value?.asset?._ref
+				   const src = value?.asset?._ref
 					   ? urlFor(value)
 						   .width(imageWidth)
 						   .auto('format')

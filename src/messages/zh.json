@@ -74,16 +74,41 @@
     "about": {
         "me": {
             "title": "关于我",
-            "subtitle": "我是一个偏全栈方向的开发者，喜欢把想法落成稳定、好用、可维护的产品体验。",
+            "emptyStateEn": "在 Sanity Studio 的「About Me」里填写英文内容后，这里会自动展示。",
+            "emptyStateZh": "在 Sanity Studio 的「About Me」里填写中文内容后，这里会自动展示。",
+            "lastUpdated": "最后更新于：",
+            "contactTitle": "一起交流",
+            "contactDescription": "欢迎联系我。无论是项目合作、技术讨论，还是日常聊天，我都很乐意听听你的想法。",
+            "contactIntentHint": "联系时请备注来意。",
+            "contactEmail": "邮箱",
+            "contactGithub": "GitHub",
+                "contactWechat": "微信",
+                "contactActionEmail": "打开邮箱",
+                "contactActionExternal": "外部链接",
+                "contactActionQr": "打开二维码",
+                "contactEmailHint": "点击后会调用你的默认邮箱客户端。",
+                "contactGithubHint": "点击后会在新标签页打开我的 GitHub。",
+                "contactWechatHint": "点击后会打开二维码卡片，并显示我的微信号。",
+                "wechatDialogTitle": "扫码查看我的微信",
+                "wechatDialogDescription": "这个二维码编码的是我的微信号，方便你扫码后搜索。",
+                "wechatDialogFootnote": "如果扫码后没有直接跳转，也可以在微信里搜索 Noobita220。",
+                "contactCV": "我的简历",
+                "contactActionCV": "查看简历",
+                "contactCVHint": "直接在站内查看我的简历。",
+                "contactDialogClose": "关闭"
+        },
+        "profile": {
+            "title": "个人侧写",
+            "subtitle": "我主要做面向业务的 Web 产品，关注可交付性、稳定性和长期维护成本。",
             "chips": {
                 "role": "全栈开发者",
                 "stack": "Next.js / TypeScript / React",
                 "location": "纽约"
             },
             "intro": {
-                "title": "我如何做事",
-                "paragraph1": "我在意的不只是功能能不能跑起来，更在意体验是否顺畅、结构是否清晰、后续是否容易维护。我习惯从用户问题出发，再回到工程实现。",
-                "paragraph2": "除了写代码，我也会写博客、做记录、拍照和复盘。对我来说，工程成长不仅是技术栈的变化，更是思考方式的持续迭代。"
+                "title": "工作方式",
+                "paragraph1": "我通常先明确目标和约束，再拆解成可落地的迭代任务。实现时优先保证可读性、边界清晰和可测试性，避免为短期速度牺牲长期维护。",
+                "paragraph2": "在交付阶段，我会重点关注性能基线、错误监控和回归风险，确保上线后的行为可预期、问题可定位、改动可追踪。"
             },
             "focus": {
                 "frontend": "打造快速、响应式、易理解的前端体验",
@@ -105,10 +130,10 @@
                 }
             },
             "values": {
-                "title": "我看重的事",
-                "ownership": "责任感：做出来只是开始，能长期维护才算完成。",
-                "consistency": "一致性：小的工程决策，长期会放大成系统质量。",
-                "learning": "持续学习：保持好奇，是技术成长最重要的驱动力。"
+                "title": "实践原则",
+                "ownership": "对结果负责：交付不止是上线，还包括监控、修复和持续优化。",
+                "consistency": "保持一致：统一的命名、结构和约定，能显著降低协作与维护成本。",
+                "learning": "持续迭代：每个版本都沉淀复盘，把经验转成可复用的方法。"
             },
             "next": {
                 "title": "继续了解我",
@@ -117,9 +142,7 @@
                     "blog": "阅读博客",
                     "projects": "查看项目"
                 }
-            },
-            "emptyStateEn": "在 Sanity Studio 的「About Me」里填写英文内容后，这里会自动展示。",
-            "emptyStateZh": "在 Sanity Studio 的「About Me」里填写中文内容后，这里会自动展示。"
+            }
         },
         "cv": {
             "title": "我的简历",
@@ -171,7 +194,7 @@
             "education": [
                 {
                     "school": "纽约大学",
-                    "degree": "数学与经济学文学学士，辅修日语",
+                    "degree": "数学与经济学学士，辅修日语",
                     "period": "2017年9月 - 2021年9月",
                     "location": "美国纽约"
                 }
@@ -188,6 +211,7 @@
                         "HTML",
                         "CSS",
                         "SASS",
+                        "Tailwind CSS",
                         "Material UI"
                     ]
                 },
@@ -203,6 +227,7 @@
                 "cloud": {
                     "label": "云服务与数据库",
                     "items": [
+                        "Cloudflare",
                         "Azure",
                         "Firebase",
                         "MongoDB",
@@ -536,6 +561,11 @@
         "callback": {
             "title": "正在完成登录",
             "description": "正在为你完成会话并跳转，请稍候。"
+        },
+        "coverPhoto": {
+            "photoBy": "摄影者",
+            "location": "位置",
+            "viewOriginal": "查看原图"
         }
     },
     "hearme": {

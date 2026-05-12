@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { getActionErrorMessage } from "@/lib/errors/action-error";
 import {
@@ -14,7 +14,13 @@ import { DashboardPageSkeleton } from "@/components/dashboard/dashboard-page-ske
 import { ErrorState } from "@/components/shared/error-state";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
 import { handleError, handleSuccess } from "@/lib/errors/error-utils";
 
 type AdminComment = {
@@ -28,7 +34,10 @@ type AdminComment = {
 	created_at: string;
 };
 
-const statusVariants: Record<AdminComment["status"], "secondary" | "destructive" | "outline" | "default"> = {
+const statusVariants: Record<
+	AdminComment["status"],
+	"secondary" | "destructive" | "outline" | "default"
+> = {
 	published: "default",
 	quarantine: "secondary",
 	spam: "destructive",
@@ -38,6 +47,7 @@ const statusVariants: Record<AdminComment["status"], "secondary" | "destructive"
 export default function CommentModeration() {
 	const t = useTranslations("dashboard.comments");
 	const tm = useTranslations("toast.dashboard.comments");
+	const loadErrorMessage = tm("loadError");
 	const updateErrorMessage = tm("updateError");
 	const updateSuccessMessage = tm("updateSuccess");
 	const [comments, setComments] = useState<AdminComment[]>([]);
@@ -46,7 +56,7 @@ export default function CommentModeration() {
 	const [loadError, setLoadError] = useState<string | null>(null);
 	const [pendingAction, setPendingAction] = useState<string | null>(null);
 
-	const loadComments = async () => {
+	const loadComments = useCallback(async () => {
 		setIsLoading(true);
 		setLoadError(null);
 		try {
@@ -54,15 +64,15 @@ export default function CommentModeration() {
 			setIsForbidden(Boolean(payload.forbidden));
 			setComments(payload.comments ?? []);
 		} catch (error) {
-			setLoadError(getActionErrorMessage(error, tm("loadError")));
+			setLoadError(getActionErrorMessage(error, loadErrorMessage));
 		} finally {
 			setIsLoading(false);
 		}
-	};
+	}, [loadErrorMessage]);
 
 	useEffect(() => {
 		void loadComments();
-	}, []);
+	}, [loadComments]);
 
 	const runAction = async (payload: Record<string, string>) => {
 		const key = `${payload.action}:${payload.commentId || payload.userId || ""}`;
@@ -107,9 +117,7 @@ export default function CommentModeration() {
 				<Card>
 					<CardHeader>
 						<CardTitle>{t("safeguardsTitle")}</CardTitle>
-						<CardDescription>
-							{t("safeguardsDescription")}
-						</CardDescription>
+						<CardDescription>{t("safeguardsDescription")}</CardDescription>
 					</CardHeader>
 					<CardContent className="space-y-4">
 						{isForbidden ? (
@@ -118,18 +126,28 @@ export default function CommentModeration() {
 							</p>
 						) : null}
 						{!isForbidden && comments.length === 0 ? (
-							<p className="text-sm text-muted-foreground">{t("adminQueueEmpty")}</p>
+							<p className="text-sm text-muted-foreground">
+								{t("adminQueueEmpty")}
+							</p>
 						) : null}
 						{comments.map((comment) => (
 							<div key={comment.id} className="rounded-lg border p-4">
 								<div className="flex flex-wrap items-start justify-between gap-3">
 									<div className="space-y-2">
 										<div className="flex flex-wrap items-center gap-2">
-											<Badge variant={statusVariants[comment.status]}>{comment.status}</Badge>
-											<span className="text-sm font-medium">{comment.author_name}</span>
-											<span className="text-xs text-muted-foreground">{comment.article_key}</span>
+											<Badge variant={statusVariants[comment.status]}>
+												{comment.status}
+											</Badge>
+											<span className="text-sm font-medium">
+												{comment.author_name}
+											</span>
+											<span className="text-xs text-muted-foreground">
+												{comment.article_key}
+											</span>
 										</div>
-										<p className="text-sm text-muted-foreground">{comment.content}</p>
+										<p className="text-sm text-muted-foreground">
+											{comment.content}
+										</p>
 										<p className="text-xs text-muted-foreground">
 											{new Date(comment.created_at).toLocaleString()}
 										</p>
@@ -138,7 +156,13 @@ export default function CommentModeration() {
 										<Button
 											size="sm"
 											variant="outline"
-											onClick={() => void runAction({ action: "set-status", commentId: comment.id, status: "published" })}
+											onClick={() =>
+												void runAction({
+													action: "set-status",
+													commentId: comment.id,
+													status: "published",
+												})
+											}
 											disabled={pendingAction === `set-status:${comment.id}`}
 										>
 											{t("actions.publish")}
@@ -146,16 +170,30 @@ export default function CommentModeration() {
 										<Button
 											size="sm"
 											variant="outline"
-											onClick={() => void runAction({ action: "block-user", userId: comment.user_id })}
-											disabled={pendingAction === `block-user:${comment.user_id}`}
+											onClick={() =>
+												void runAction({
+													action: "block-user",
+													userId: comment.user_id,
+												})
+											}
+											disabled={
+												pendingAction === `block-user:${comment.user_id}`
+											}
 										>
 											{t("actions.blockUser")}
 										</Button>
 										<Button
 											size="sm"
 											variant="destructive"
-											onClick={() => void runAction({ action: "delete-comment", commentId: comment.id })}
-											disabled={pendingAction === `delete-comment:${comment.id}`}
+											onClick={() =>
+												void runAction({
+													action: "delete-comment",
+													commentId: comment.id,
+												})
+											}
+											disabled={
+												pendingAction === `delete-comment:${comment.id}`
+											}
 										>
 											{t("actions.delete")}
 										</Button>

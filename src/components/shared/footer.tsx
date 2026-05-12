@@ -159,14 +159,14 @@ export default function Footer() {
 						{t("builtWith")}{" "}
 						{techLinks.map((tech, index) => (
 							<Fragment key={tech.label}>
-								<a
+								<Link
 									href={tech.href}
 									target="_blank"
 									rel="noopener noreferrer"
 									className="underline-offset-2 transition-colors hover:text-zinc-800 hover:underline dark:hover:text-zinc-200"
 								>
 									{tech.label}
-								</a>
+								</Link>
 								{index < techLinks.length - 1 && <span>{" + "}</span>}
 							</Fragment>
 						))}

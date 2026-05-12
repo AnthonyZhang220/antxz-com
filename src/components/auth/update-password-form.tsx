@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { startLoading, finishLoadingSuccess, finishLoadingError } from "@/lib/errors/error-utils";
 
-import { cn } from "@/lib/shared/utils";
+import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import {

@@ -38,60 +38,11 @@ import {
 } from "@/components/ui/hover-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { handleError, handleSuccess } from "@/lib/errors/error-utils";
+import { getInitials, getRelativeTime } from "@/lib/shared/format";
 
 type FilterKey = "all" | "unread" | DashboardNotificationType;
 
 const filterOrder: FilterKey[] = ["all", "unread", "reply", "like"];
-
-function getRelativeTime(locale: string, value: string): string {
-	const now = Date.now();
-	const then = new Date(value).getTime();
-
-	if (Number.isNaN(then)) {
-		return "-";
-	}
-
-	const diffSeconds = Math.round((then - now) / 1000);
-	const abs = Math.abs(diffSeconds);
-	const rtf = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
-
-	if (abs < 60) {
-		return rtf.format(diffSeconds, "second");
-	}
-
-	const diffMinutes = Math.round(diffSeconds / 60);
-	if (Math.abs(diffMinutes) < 60) {
-		return rtf.format(diffMinutes, "minute");
-	}
-
-	const diffHours = Math.round(diffMinutes / 60);
-	if (Math.abs(diffHours) < 24) {
-		return rtf.format(diffHours, "hour");
-	}
-
-	const diffDays = Math.round(diffHours / 24);
-	if (Math.abs(diffDays) < 30) {
-		return rtf.format(diffDays, "day");
-	}
-
-	const diffMonths = Math.round(diffDays / 30);
-	if (Math.abs(diffMonths) < 12) {
-		return rtf.format(diffMonths, "month");
-	}
-
-	const diffYears = Math.round(diffMonths / 12);
-	return rtf.format(diffYears, "year");
-}
-
-function getInitials(name: string): string {
-	const trimmed = name.trim();
-	if (!trimmed) {
-		return "U";
-	}
-
-	const parts = trimmed.split(/\s+/);
-	return (parts[0]?.[0] || "U").toUpperCase();
-}
 
 function getTypeIcon(type: DashboardNotificationType) {
 	if (type === "reply") {
@@ -139,7 +90,9 @@ function UserHoverCard({
 								alt={notification.actor.name}
 							/>
 						) : null}
-						<AvatarFallback>{getInitials(notification.actor.name)}</AvatarFallback>
+						<AvatarFallback>
+							{getInitials(notification.actor.name)}
+						</AvatarFallback>
 					</Avatar>
 					<div className="min-w-0 space-y-1">
 						<p className="truncate font-medium">{notification.actor.name}</p>
@@ -183,7 +136,9 @@ function ArticleHoverCard({
 		<HoverCard openDelay={120} closeDelay={120}>
 			<HoverCardTrigger asChild>
 				<Link
-					href={notification.article.target_url || notification.target_url || "#"}
+					href={
+						notification.article.target_url || notification.target_url || "#"
+					}
 					className="font-medium text-foreground underline-offset-4 transition hover:underline"
 				>
 					{children}
@@ -242,18 +197,19 @@ export default function DashboardNotifications() {
 		);
 	}
 
-	function getNotificationTitle(notification: DashboardNotification) {
-		if (notification.type === "reply") return t("content.replyTitle");
-		if (notification.type === "like") return t("content.likeTitle");
-		if (notification.type === "system") return notification.title || t("content.systemTitle");
-		return notification.title || t(`types.${notification.type}`);
-	}
-
 	function getNotificationPlainMessage(notification: DashboardNotification) {
 		const actorName = notification.actor.name || userFallback;
 		const articleTitle = getArticleTitle(notification);
-		if (notification.type === "reply") return t("content.replyMessage", { actor: actorName, article: articleTitle });
-		if (notification.type === "like") return t("content.likeMessage", { actor: actorName, article: articleTitle });
+		if (notification.type === "reply")
+			return t("content.replyMessage", {
+				actor: actorName,
+				article: articleTitle,
+			});
+		if (notification.type === "like")
+			return t("content.likeMessage", {
+				actor: actorName,
+				article: articleTitle,
+			});
 		return notification.message || t("content.systemMessage");
 	}
 
@@ -264,12 +220,13 @@ export default function DashboardNotifications() {
 	// ── derived state ────────────────────────────────────────────────────────
 	const unreadCount = useMemo(
 		() => notifications.filter((n) => !n.is_read).length,
-		[notifications]
+		[notifications],
 	);
 
 	const filteredNotifications = useMemo(() => {
 		if (activeFilter === "all") return notifications;
-		if (activeFilter === "unread") return notifications.filter((n) => !n.is_read);
+		if (activeFilter === "unread")
+			return notifications.filter((n) => !n.is_read);
 		return notifications.filter((n) => n.type === activeFilter);
 	}, [activeFilter, notifications]);
 
@@ -279,14 +236,19 @@ export default function DashboardNotifications() {
 		setIsMutating(true);
 		const result = await markNotificationAsRead(id);
 		if (!result.success) {
-			handleError(new Error(result.error || markReadErrorMessage), markReadErrorMessage);
+			handleError(
+				new Error(result.error || markReadErrorMessage),
+				markReadErrorMessage,
+			);
 			setIsMutating(false);
 			return;
 		}
 		setNotificationState((prev) =>
 			prev.map((item) =>
-				item.id === id ? { ...item, is_read: true, read_at: new Date().toISOString() } : item
-			)
+				item.id === id
+					? { ...item, is_read: true, read_at: new Date().toISOString() }
+					: item,
+			),
 		);
 		setIsMutating(false);
 	};
@@ -295,12 +257,19 @@ export default function DashboardNotifications() {
 		setIsMutating(true);
 		const result = await markAllNotificationsAsRead();
 		if (!result.success) {
-			handleError(new Error(result.error || markAllReadErrorMessage), markAllReadErrorMessage);
+			handleError(
+				new Error(result.error || markAllReadErrorMessage),
+				markAllReadErrorMessage,
+			);
 			setIsMutating(false);
 			return;
 		}
 		setNotificationState((prev) =>
-			prev.map((item) => ({ ...item, is_read: true, read_at: item.read_at || new Date().toISOString() }))
+			prev.map((item) => ({
+				...item,
+				is_read: true,
+				read_at: item.read_at || new Date().toISOString(),
+			})),
 		);
 		handleSuccess(tm("markAllReadSuccess"));
 		setIsMutating(false);
@@ -308,16 +277,18 @@ export default function DashboardNotifications() {
 
 	// ── render ───────────────────────────────────────────────────────────────
 	return (
-		<div className="space-y-6 p-4 lg:p-6">
-			<Card>
-				<CardHeader className="gap-3">
+		<div className="space-y-6 p-4 lg:p-6 h-[calc(100dvh-var(--header-height))]">
+			<Card className="h-full flex flex-col">
+				<CardHeader className="gap-3 shrink-0">
 					<div className="flex flex-wrap items-start justify-between gap-3">
 						<div className="space-y-1">
 							<CardTitle>{t("title")}</CardTitle>
 							<CardDescription>{t("description")}</CardDescription>
 						</div>
 						<div className="flex items-center gap-2">
-							<Badge variant="outline">{t("unreadCount", { count: unreadCount })}</Badge>
+							<Badge variant="outline">
+								{t("unreadCount", { count: unreadCount })}
+							</Badge>
 							<Button
 								variant="outline"
 								size="sm"
@@ -351,7 +322,7 @@ export default function DashboardNotifications() {
 						))}
 					</div>
 				</CardHeader>
-				<CardContent className="space-y-3">
+				<CardContent className="space-y-3 overflow-y-auto overscroll-contain">
 					{isLoading ? (
 						<div className="space-y-3">
 							{Array.from({ length: 4 }).map((_, idx) => (
@@ -375,118 +346,134 @@ export default function DashboardNotifications() {
 					) : (
 						<div className="space-y-3">
 							{filteredNotifications.map((notification) => {
-							const Icon = getTypeIcon(notification.type);
-							const actorName = notification.actor.name || userFallback;
-							const articleTitle = getArticleTitle(notification);
+								const Icon = getTypeIcon(notification.type);
+								const actorName = notification.actor.name || userFallback;
+								const articleTitle = getArticleTitle(notification);
 
-							const message =
-								notification.type === "reply" || notification.type === "like"
-									? t.rich(
-										notification.type === "reply"
-											? "content.replyMessageRich"
-											: "content.likeMessageRich",
-										{
-											actorName,
-											articleTitle,
-											actor: (chunks) => (
-												<UserHoverCard
-													notification={notification}
-													bioEmptyLabel={userBioEmpty}
-													websiteLabel={userWebsiteLabel}
-												>
-													{chunks}
-												</UserHoverCard>
-											),
-											article: (chunks) => (
-												<ArticleHoverCard
-													notification={notification}
-													articleLabel={articleLabel}
-													missingLabel={articleMissing}
-												>
-													{chunks}
-												</ArticleHoverCard>
-											),
-										}
-									)
-									: getNotificationPlainMessage(notification);
+								const message =
+									notification.type === "reply" || notification.type === "like"
+										? t.rich(
+												notification.type === "reply"
+													? "content.replyMessageRich"
+													: "content.likeMessageRich",
+												{
+													actorName,
+													articleTitle,
+													actor: (chunks) => (
+														<UserHoverCard
+															notification={notification}
+															bioEmptyLabel={userBioEmpty}
+															websiteLabel={userWebsiteLabel}
+														>
+															{chunks}
+														</UserHoverCard>
+													),
+													article: (chunks) => (
+														<ArticleHoverCard
+															notification={notification}
+															articleLabel={articleLabel}
+															missingLabel={articleMissing}
+														>
+															{chunks}
+														</ArticleHoverCard>
+													),
+												},
+											)
+										: getNotificationPlainMessage(notification);
 
-							return (
-								<div
-									key={notification.id}
-									className="rounded-lg border bg-card p-4 shadow-xs transition-colors hover:bg-muted/40"
-								>
-									<div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-										<div className="flex min-w-0 flex-1 gap-3">
-											<Avatar size="lg" className="mt-0.5">
-												{notification.actor_avatar_url ? (
-													<AvatarImage
-														src={notification.actor_avatar_url}
-														alt={notification.actor_name}
-													/>
-												) : null}
-												<AvatarFallback>{getInitials(notification.actor_name)}</AvatarFallback>
-											</Avatar>
-
-											<div className="min-w-0 space-y-2">
-												<div className="flex flex-wrap items-center gap-2">
-													<Badge variant={notification.is_read ? "outline" : "default"}>
-														<Icon className="size-3" />
-														{t(`types.${notification.type}`)}
-													</Badge>
-													{!notification.is_read ? (
-														<Badge variant="secondary">{t("status.unread")}</Badge>
+								return (
+									<div
+										key={notification.id}
+										className="rounded-lg border bg-card p-4 shadow-xs transition-colors hover:bg-muted/40"
+									>
+										<div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+											<div className="flex min-w-0 flex-1 gap-3">
+												<Avatar size="lg" className="mt-0.5">
+													{notification.actor_avatar_url ? (
+														<AvatarImage
+															src={notification.actor_avatar_url}
+															alt={notification.actor_name}
+														/>
 													) : null}
-												</div>
+													<AvatarFallback>
+														{getInitials(notification.actor_name)}
+													</AvatarFallback>
+												</Avatar>
 
-												<p className="font-medium">{getNotificationTitle(notification)}</p>
-												<p className="text-sm leading-6 text-muted-foreground">{message}</p>
-												{notification.type === "reply" && notification.metadata.comment_preview ? (
-													<div className="rounded-md border bg-muted/40 px-3 py-2 text-sm text-muted-foreground">
-														<p className="mb-1 text-xs font-medium uppercase tracking-wide">
-															{commentPreviewLabel}
-														</p>
-														<p className="line-clamp-3">{notification.metadata.comment_preview}</p>
+												<div className="min-w-0 space-y-2">
+													{!notification.is_read ? (
+														<Badge variant="secondary">
+															{t("status.unread")}
+														</Badge>
+													) : null}
+													<p className="text-sm leading-6 text-muted-foreground">
+														{message}
+													</p>
+													{notification.type === "reply" &&
+													notification.metadata.comment_preview ? (
+														<div className="rounded-md border bg-muted/40 px-3 py-2 text-sm text-muted-foreground">
+															<p className="mb-1 text-xs font-medium uppercase tracking-wide">
+																{commentPreviewLabel}
+															</p>
+															<p className="line-clamp-3">
+																{notification.metadata.comment_preview}
+															</p>
+														</div>
+													) : null}
+													<div className="flex items-center gap-2 text-xs text-muted-foreground">
+														<Badge
+															variant={
+																notification.is_read ? "outline" : "default"
+															}
+														>
+															<Icon className="size-3" />
+															{t(`types.${notification.type}`)}
+														</Badge>
+														<span className="text-xs text-muted-foreground">
+															{getRelativeTime(locale, notification.created_at)}
+														</span>
 													</div>
+												</div>
+											</div>
+
+											<div className="flex shrink-0 flex-wrap items-center gap-2 md:justify-end">
+												{notification.target_url ? (
+													<Button variant="outline" size="sm" asChild>
+														<Link href={notification.target_url}>
+															{t("actions.view")}
+														</Link>
+													</Button>
 												) : null}
-												<p className="text-xs text-muted-foreground">
-													{t("meta.from", { name: actorName })} · {getRelativeTime(locale, notification.created_at)}
-												</p>
+												{notification.type === "reply" ? (
+													<Button variant="outline" size="sm" asChild>
+														<Link href={notification.target_url || "#"}>
+															{t("actions.reply")}
+														</Link>
+													</Button>
+												) : null}
+												{notification.type === "like" ? (
+													<Button variant="outline" size="sm" asChild>
+														<Link href={notification.target_url || "#"}>
+															{t("actions.likeBack")}
+														</Link>
+													</Button>
+												) : null}
+												{!notification.is_read ? (
+													<Button
+														variant="default"
+														size="sm"
+														onClick={() => void onMarkRead(notification.id)}
+														disabled={isMutating}
+													>
+														{t("actions.markRead")}
+													</Button>
+												) : null}
 											</div>
 										</div>
-
-										<div className="flex shrink-0 flex-wrap items-center gap-2 md:justify-end">
-											{notification.target_url ? (
-												<Button variant="outline" size="sm" asChild>
-													<Link href={notification.target_url}>{t("actions.view")}</Link>
-												</Button>
-											) : null}
-											{notification.type === "reply" ? (
-												<Button variant="outline" size="sm" asChild>
-													<Link href={notification.target_url || "#"}>{t("actions.reply")}</Link>
-												</Button>
-											) : null}
-											{notification.type === "like" ? (
-												<Button variant="outline" size="sm" asChild>
-													<Link href={notification.target_url || "#"}>{t("actions.likeBack")}</Link>
-												</Button>
-											) : null}
-											{!notification.is_read ? (
-												<Button
-													variant="default"
-													size="sm"
-													onClick={() => void onMarkRead(notification.id)}
-													disabled={isMutating}
-												>
-													{t("actions.markRead")}
-												</Button>
-											) : null}
-										</div>
 									</div>
-								</div>
-							);
-						})
-						}
-					</div>
+								);
+							})}
+						</div>
 					)}
 				</CardContent>
 			</Card>

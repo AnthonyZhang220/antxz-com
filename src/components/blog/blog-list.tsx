@@ -16,6 +16,15 @@ import {
 	SheetTrigger,
 } from "@/components/ui/sheet";
 import {
+	Pagination,
+	PaginationContent,
+	PaginationItem,
+	PaginationLink,
+	PaginationEllipsis,
+	PaginationNext,
+	PaginationPrevious,
+} from "@/components/ui/pagination";
+import {
 	Clock,
 	Calendar,
 	Heart,
@@ -29,6 +38,7 @@ import {
 import BlogFilter from "@/components/blog/blog-filter";
 import { useBlogFilter } from "@/hooks/useBlogFilter";
 import { Separator } from "@/components/ui/separator";
+import { useEffect } from "react";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const PAGE_SIZE = 5;
@@ -39,7 +49,10 @@ function getCoverSrc(post: BlogPost) {
 	return null;
 }
 
-function getSourceLabel(post: BlogPost, t: ReturnType<typeof useTranslations<"blog">>) {
+function getSourceLabel(
+	post: BlogPost,
+	t: ReturnType<typeof useTranslations<"blog">>,
+) {
 	const platform = String(post.source?.platform ?? "original").toLowerCase();
 	if (platform === "devto") return t("sourceDevto");
 	if (platform === "medium") return t("sourceMedium");
@@ -58,7 +71,10 @@ export function FeaturedCard({ post }: { post: BlogPost }) {
 	const likeCount = post.likeCount ?? 0;
 	const userLiked = Boolean(post.userLiked);
 	return (
-		<Link href={`/blog/${post.slug}`} className="group block rounded-xl overflow-hidden border border-border shadow-sm hover:shadow-md transition-shadow duration-300 mb-2">
+		<Link
+			href={`/blog/${post.slug}`}
+			className="group block rounded-xl overflow-hidden border border-border shadow-sm hover:shadow-md transition-shadow duration-300 mb-2"
+		>
 			<div className="relative aspect-21/9 overflow-hidden">
 				{coverSrc ? (
 					<Image
@@ -113,9 +129,7 @@ export function FeaturedCard({ post }: { post: BlogPost }) {
 					<span className="flex items-center gap-1.5 font-mono text-xs md:text-sm text-muted-foreground/70">
 						<Heart
 							className={
-								userLiked
-									? "h-3 w-3 fill-current text-rose-500"
-									: "h-3 w-3"
+								userLiked ? "h-3 w-3 fill-current text-rose-500" : "h-3 w-3"
 							}
 						/>
 						{t("articleLikeCount", { count: likeCount })}
@@ -143,7 +157,10 @@ export function SmallCard({ post }: { post: BlogPost }) {
 	const likeCount = post.likeCount ?? 0;
 	const userLiked = Boolean(post.userLiked);
 	return (
-		<Link href={`/blog/${post.slug}`} className="group flex gap-4 py-4.5 border-b border-border/50 last:border-0">
+		<Link
+			href={`/blog/${post.slug}`}
+			className="group flex gap-4 py-4.5 border-b border-border/50 last:border-0"
+		>
 			<div className="w-36 shrink-0 aspect-3/2 rounded-lg overflow-hidden bg-muted relative">
 				{coverSrc ? (
 					<Image
@@ -222,7 +239,7 @@ export function SmallCard({ post }: { post: BlogPost }) {
 }
 
 // ─── Pagination ───────────────────────────────────────────────────────────────
-function Pagination({
+function PaginationContainer({
 	current,
 	total,
 	onChange,
@@ -239,49 +256,30 @@ function Pagination({
 		else if (pages[pages.length - 1] !== "…") pages.push("…");
 	}
 
+
 	return (
-		<div className="flex items-center justify-center gap-1 mt-10 pt-7 border-t border-border/50">
-			<Button
-				variant="outline"
-				size="icon"
-				className="h-8 w-8 rounded-lg"
-				disabled={current === 1}
-				onClick={() => onChange(current - 1)}
-			>
-				<ChevronLeft className="h-3.5 w-3.5" />
-			</Button>
+		<Pagination className="flex items-center justify-center gap-1 mt-10 pt-7 border-t border-border/50">
+			<PaginationContent>
+				<PaginationItem onClick={() => current > 1 && onChange(current - 1)}>
+					<PaginationPrevious href={"#"} aria-disabled={current === 1} />
+				</PaginationItem>
 
-			{pages.map((p, i) =>
-				p === "…" ? (
-					<span
-						key={`e${i}`}
-						className="w-8 h-8 flex items-center justify-center text-muted-foreground/70 text-sm font-mono"
-					>
-						…
-					</span>
-				) : (
-					<Button
-						key={p}
-						variant={p === current ? "default" : "outline"}
-						size="icon"
-						className="h-8 w-8 rounded-lg font-mono text-xs"
-						onClick={() => onChange(p)}
-					>
-						{p}
-					</Button>
-				),
-			)}
-
-			<Button
-				variant="outline"
-				size="icon"
-				className="h-8 w-8 rounded-lg"
-				disabled={current === total}
-				onClick={() => onChange(current + 1)}
-			>
-				<ChevronRight className="h-3.5 w-3.5" />
-			</Button>
-		</div>
+				{pages.map((p, i) =>
+					p === "…" ? (
+						<PaginationItem key={`e${i}`}>
+							<PaginationEllipsis />
+						</PaginationItem>
+					) : (
+						<PaginationItem key={p} onClick={() => onChange(p)}>
+							<PaginationLink isActive={p === current} href={"#"}>{p}</PaginationLink>
+						</PaginationItem>
+					),
+				)}
+				<PaginationItem onClick={() => current < total && onChange(current + 1)}>
+					<PaginationNext href={"#"} aria-disabled={current === total} />
+				</PaginationItem>
+			</PaginationContent>
+		</Pagination>
 	);
 }
 
@@ -365,15 +363,24 @@ export default function BlogListPage({
 									{t("filterLabel")}
 								</Button>
 							</SheetTrigger>
-							<SheetContent side="top" className="h-screen w-screen max-w-none p-0 overflow-y-auto">
+							<SheetContent
+								side="top"
+								className="h-screen w-screen max-w-none p-0 overflow-y-auto"
+							>
 								<SheetTitle className="sr-only">{t("filterLabel")}</SheetTitle>
-								<SheetDescription className="sr-only">{t("filterLabel")}</SheetDescription>
+								<SheetDescription className="sr-only">
+									{t("filterLabel")}
+								</SheetDescription>
 								<div className="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-background/95 px-4 py-4 backdrop-blur supports-backdrop-filter:bg-background/75">
 									<p className="font-mono text-xs uppercase tracking-[0.14em] text-foreground/90">
 										{t("filterLabel")}
 									</p>
 									<SheetClose asChild>
-										<Button variant="ghost" size="icon" aria-label="Close filters">
+										<Button
+											variant="ghost"
+											size="icon"
+											aria-label="Close filters"
+										>
 											<X className="h-4 w-4" />
 										</Button>
 									</SheetClose>
@@ -433,13 +440,16 @@ export default function BlogListPage({
 							<SmallCard key={post.slug} post={post} />
 						))}
 
-						<Pagination
+						<PaginationContainer
 							current={safePage}
 							total={totalPages}
 							onChange={setPage}
 						/>
 					</div>
-					<Separator orientation="vertical" className="hidden self-stretch h-auto lg:block" />
+					<Separator
+						orientation="vertical"
+						className="hidden self-stretch h-auto lg:block"
+					/>
 					{/* Filters sidebar (desktop) */}
 					<div className="hidden lg:block lg:sticky lg:top-24 lg:self-start">
 						<BlogFilter

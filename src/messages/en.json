@@ -20,22 +20,22 @@
         },
         "about": {
             "title": "Learn more",
-            "subtitle": "About Me"
+            "subtitle": "About"
         },
         "projects": {
             "title": "Things I've built",
             "subtitle": "Projects"
         },
         "blog": {
-            "title": "Thought and Thinkings",
+            "title": "Notes and reflections",
             "subtitle": "Blog"
         },
         "mbti": {
-            "title": "What type are you?",
-            "subtitle": "MBTI Test"
+            "title": "What type are you",
+            "subtitle": "Personality Test"
         },
         "interaction": {
-            "title": "Leave your mark",
+            "title": "Leave your trace",
             "subtitle": "Interaction"
         },
         "sheetTitle": "Site navigation",
@@ -44,7 +44,7 @@
             "account": "Profile",
             "dashboard": "Dashboard",
             "notifications": "Notifications",
-            "logout": "Logout"
+            "logout": "Log out"
         }
     },
     "home": {
@@ -52,20 +52,20 @@
         "motto": "Constantly responding, constantly still, always pure and still.",
         "mottoZh": "常应常静，常清静矣。",
         "mottoEn": "Constantly responding, constantly still, always pure and still.",
-        "heroTitle": "Hi, I'm Anthony",
-        "heroSubtitle": "Full-stack developer",
-        "aboutMeButton": "Who I am",
+        "heroTitle": "Hi, I'm Anthony Zhang",
+        "heroSubtitle": "Full-stack Developer",
+        "aboutMeButton": "About Me",
         "blogButton": "Read Blog",
-        "contactLabel": "CONTACT",
-        "contactTitle": "Let's connect",
-        "contactBody": "If you want to discuss collaboration, projects, or just say hi, I'd love to hear from you.",
-        "contactReplyEta": "Typically replies within 24 hours.",
-        "archiveLabel": "ARCHIVE",
+        "contactLabel": "Contact Me",
+        "contactTitle": "Get in touch",
+        "contactBody": "If you'd like to talk about collaboration, projects, or just say hello, I'll reply thoughtfully.",
+        "contactReplyEta": "Usually replies within 24 hours.",
+        "archiveLabel": "Archive",
         "oldWebsiteButton": "Visit Old Website",
         "introTitle": "About Me",
         "introTitleLine1": "Building",
-        "introTitleLine2": "the web.",
-        "introBody": "I'm a full-stack developer specializing in building web applications with Next.js, TypeScript, and Tailwind CSS. With 3 years of web application development experience and full-stack capabilities, I've led small teams in delivering AI-integrated B2B SaaS products and am passionate about real-time systems and scalable architecture design. In my spare time, I enjoy exploring obscure knowledge, listening to music, and tinkering with new technologies. ",
+        "introTitleLine2": "for the web.",
+        "introBody": "I'm a full-stack developer specializing in building web applications with Next.js, TypeScript, and Tailwind CSS. With 3 years of web application development experience and full-stack capabilities, I've led small teams in delivering AI-integrated B2B SaaS products and am passionate about real-time systems and scalable architecture design. In my spare time, I enjoy exploring obscure knowledge, listening to music, and tinkering with new technologies.",
         "introRole": "Full-stack Developer",
         "introLocation": "New York City",
         "introStack": "Next.js · TypeScript · React · Tailwind",
@@ -74,52 +74,75 @@
     "about": {
         "me": {
             "title": "About Me",
-            "subtitle": "A full-stack developer who enjoys building thoughtful products, telling stories through code, and turning ideas into reliable user experiences.",
+            "emptyStateEn": "Add your self-description in the Sanity Studio under \u201cAbout Me\u201d and it will appear here.",
+            "emptyStateZh": "在 Sanity Studio 的「About Me」里填写中文内容后，这里会自动展示。",
+            "lastUpdated": "Last updated:",
+            "contactTitle": "Let's Connect",
+            "contactDescription": "Feel free to reach out. Whether it's about a project, collaboration, or just a chat—I'd love to hear from you.",
+            "contactIntentHint": "Please include your purpose when reaching out.",
+            "contactEmail": "Email",
+            "contactGithub": "GitHub",
+                "contactWechat": "WeChat",
+                "contactActionEmail": "Opens email",
+                "contactActionExternal": "External link",
+                "contactActionQr": "Opens QR code",
+                "contactEmailHint": "Clicking this opens your default mail app.",
+                "contactGithubHint": "Clicking this opens my GitHub in a new tab.",
+                "contactWechatHint": "Click to open a QR card and view my WeChat ID.",
+                "wechatDialogTitle": "Scan to find me on WeChat",
+                "wechatDialogDescription": "This QR code contains my WeChat ID for quick lookup.",
+                "wechatDialogFootnote": "If scanning does not jump directly, search for Noobita220 in WeChat.",
+                "contactCV": "My CV",
+                "contactActionCV": "View CV",
+                "contactCVHint": "View my CV directly on the site.",
+                "contactDialogClose": "Close"
+        },
+        "profile": {
+            "title": "Profile",
+            "subtitle": "I build product-facing web applications with a focus on delivery, reliability, and long-term maintainability.",
             "chips": {
-                "role": "Full-stack Developer",
+                "role": "Full-Stack Developer",
                 "stack": "Next.js / TypeScript / React",
-                "location": "NYC"
+                "location": "New York"
             },
             "intro": {
-                "title": "How I Work",
-                "paragraph1": "I care about both product quality and implementation details. I enjoy translating real user needs into clear interface flows, maintainable architecture, and measurable outcomes.",
-                "paragraph2": "Outside of coding, I write, take photos, and reflect on what I learn while building. These habits help me keep a practical and long-term view of engineering growth."
+                "title": "How I work?",
+                "paragraph1": "I start by clarifying goals and constraints, then break work into deliverable iterations. During implementation, I prioritize readability, clear boundaries, and testability to keep systems maintainable.",
+                "paragraph2": "For release quality, I focus on performance baselines, error visibility, and regression control so production behavior stays predictable and issues are easy to trace."
             },
             "focus": {
-                "frontend": "Building fast, responsive, and intuitive interfaces",
-                "fullstack": "Connecting frontend experience with dependable backend logic",
-                "product": "Balancing engineering quality with product delivery"
+                "frontend": "Crafting fast, responsive, easy-to-understand frontend experiences",
+                "fullstack": "Connecting frontend experience with backend reliability",
+                "product": "Balancing engineering quality with delivery speed"
             },
             "sections": {
                 "me": {
-                    "title": "Who is Anthony?",
-                    "content": "I am a frontend-leaning full-stack engineer with around three years of experience. I have built with React, TypeScript, C#, and modern web tooling, and I enjoy creating experiences that feel simple for users and maintainable for teams."
+                    "title": "Who Am I?",
+                    "content": "I am a frontend-leaning full-stack engineer with around three years of development experience. I mainly work with React, TypeScript, C#, and modern web stacks, with a steady focus on interaction quality, performance, and maintainability."
                 },
                 "background": {
-                    "title": "About my background",
-                    "content": "I did not come from a Computer Science background. I studied Mathematics at NYU, and that training shaped how I think about logic, abstraction, and problem decomposition in software."
+                    "title": "About My Background",
+                    "content": "I did not come from a traditional computer science background. At 18, while still figuring out direction, I chose to study mathematics at New York University. That training gave me strong logical decomposition skills, and it still shapes the way I think about abstraction and system design in software engineering."
                 },
                 "blog": {
-                    "title": "About my blog",
-                    "content": "I use this blog to document technical lessons, project retrospectives, and occasional life notes. If something resonates with you, feel free to share your thoughts."
+                    "title": "About My Blog",
+                    "content": "I use this space to share technical articles, project reflections, and observations from daily life. If something resonates with you, feel free to leave a comment."
                 }
             },
             "values": {
-                "title": "What I Value",
-                "ownership": "Ownership: if I build it, I maintain and improve it.",
-                "consistency": "Consistency: small engineering decisions compound over time.",
-                "learning": "Learning: staying curious is part of the job."
+                "title": "Working Principles",
+                "ownership": "Own outcomes: delivery includes monitoring, fixes, and continuous improvement.",
+                "consistency": "Keep consistency: shared naming and structure reduce team friction and maintenance cost.",
+                "learning": "Iterate deliberately: each release should produce reusable lessons for the next cycle."
             },
             "next": {
-                "title": "Explore More",
-                "description": "If you want to know how I think and build, the best way is to browse my projects and writing.",
+                "title": "Keep Exploring",
+                "description": "If you'd like a broader sense of how I think and build, continue with my projects and blog.",
                 "actions": {
                     "blog": "Read Blog",
                     "projects": "View Projects"
                 }
-            },
-            "emptyStateEn": "Add your self-description in the Sanity Studio under \u201cAbout Me\u201d and it will appear here.",
-            "emptyStateZh": "在 Sanity Studio 的「About Me」里填写中文内容后，这里会自动展示。"
+            }
         },
         "cv": {
             "title": "My CV",
@@ -188,6 +211,7 @@
                         "HTML",
                         "CSS",
                         "SASS",
+                        "Tailwind CSS",
                         "Material UI"
                     ]
                 },
@@ -203,6 +227,7 @@
                 "cloud": {
                     "label": "Cloud & Database",
                     "items": [
+                        "Cloudflare",
                         "Azure",
                         "Firebase",
                         "MongoDB",
@@ -536,6 +561,11 @@
         "callback": {
             "title": "Completing sign-in",
             "description": "We are finalizing your account session and redirecting you now."
+        },
+        "coverPhoto": {
+            "photoBy": "Photo by",
+            "location": "Location",
+            "viewOriginal": "View Original"
         }
     },
     "hearme": {

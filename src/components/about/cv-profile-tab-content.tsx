@@ -2,17 +2,18 @@
 
 import { motion } from "motion/react";
 import Link from "next/link";
-import { Github, Linkedin, Mail } from "lucide-react";
+import { Linkedin, Mail } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+	Accordion,
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+} from "@/components/ui/accordion";
 import { Separator } from "@/components/ui/separator";
-
-type ProfileSection = {
-	key: string;
-	title: string;
-	content: string;
-};
+import { GitHubIcon } from "../shared/github-icon";
 
 type CVProfileTabContentProps = {
 	chips: {
@@ -23,7 +24,6 @@ type CVProfileTabContentProps = {
 	focusItems: string[];
 	introTitle: string;
 	introParagraphs: string[];
-	profileSections: ProfileSection[];
 	valuesTitle: string;
 	valueItems: string[];
 	contactTitle: string;
@@ -40,7 +40,6 @@ export function CVProfileTabContent({
 	focusItems,
 	introTitle,
 	introParagraphs,
-	profileSections,
 	valuesTitle,
 	valueItems,
 	contactTitle,
@@ -70,7 +69,7 @@ export function CVProfileTabContent({
 						<Badge variant="outline">{chips.location}</Badge>
 					</motion.div>
 				</div>
-				<div className="relative mt-5 grid gap-3 sm:grid-cols-3">
+				<div className="relative mt-5 flex flex-wrap gap-2">
 					{focusItems.map((item, index) => (
 						<motion.div
 							key={item}
@@ -78,8 +77,8 @@ export function CVProfileTabContent({
 							whileInView={{ opacity: 1, y: 0 }}
 							viewport={{ once: true, amount: 0.3 }}
 							transition={{ duration: 0.35, delay: index * 0.06 }}
-							whileHover={{ y: -4, scale: 1.01 }}
-							className="rounded-xl border border-cyan-200/70 bg-white/80 p-3 text-sm shadow-sm backdrop-blur-sm dark:border-cyan-900/60 dark:bg-slate-900/70"
+							whileHover={{ y: -2 }}
+							className="rounded-full border border-cyan-200/70 bg-white/80 px-3 py-1.5 text-xs shadow-sm backdrop-blur-sm dark:border-cyan-900/60 dark:bg-slate-900/70 sm:text-sm"
 						>
 							{item}
 						</motion.div>
@@ -99,60 +98,45 @@ export function CVProfileTabContent({
 							<CardHeader>
 								<CardTitle>{introTitle}</CardTitle>
 							</CardHeader>
-							<CardContent className="space-y-4 text-sm leading-7 text-muted-foreground sm:text-base">
-								{introParagraphs.map((paragraph) => (
-									<p key={paragraph}>{paragraph}</p>
-								))}
+							<CardContent className="space-y-4">
+								<Accordion
+									type="single"
+									collapsible
+									className="rounded-lg border border-slate-200/70 bg-background/70 px-3 dark:border-slate-700/70"
+								>
+									<AccordionItem value="intro">
+										<AccordionTrigger className="text-sm font-semibold tracking-wide text-foreground sm:text-base">
+											{introTitle}
+										</AccordionTrigger>
+										<AccordionContent>
+											<ul className="space-y-2 text-sm leading-6 text-muted-foreground sm:text-base">
+												{introParagraphs.map((paragraph, idx) => (
+													<li key={`${paragraph.slice(0, 24)}-${idx}`}>
+														{paragraph}
+													</li>
+												))}
+											</ul>
+										</AccordionContent>
+									</AccordionItem>
+									<AccordionItem value="principles">
+										<AccordionTrigger className="text-sm font-semibold tracking-wide text-foreground sm:text-base">
+											{valuesTitle}
+										</AccordionTrigger>
+										<AccordionContent>
+											<ul className="space-y-2 text-sm leading-6 text-muted-foreground sm:text-base">
+												{valueItems.map((item) => (
+													<li key={item}>{item}</li>
+												))}
+											</ul>
+										</AccordionContent>
+									</AccordionItem>
+								</Accordion>
 							</CardContent>
 						</Card>
 					</motion.div>
-
-					<div className="grid gap-4 sm:grid-cols-3">
-						{profileSections.map((section, index) => (
-							<motion.div
-								key={section.key}
-								initial={{ opacity: 0, y: 16 }}
-								whileInView={{ opacity: 1, y: 0 }}
-								viewport={{ once: true, amount: 0.25 }}
-								transition={{ duration: 0.34, delay: index * 0.07 }}
-								whileHover={{ y: -6 }}
-							>
-								<Card className="rounded-2xl border-slate-200 shadow-sm transition-shadow hover:shadow-md dark:border-slate-700">
-									<CardHeader>
-										<CardTitle className="text-lg">{section.title}</CardTitle>
-									</CardHeader>
-									<CardContent className="text-sm leading-6 text-muted-foreground">
-										{section.content}
-									</CardContent>
-								</Card>
-							</motion.div>
-						))}
-					</div>
 				</div>
 
 				<div className="space-y-4 lg:col-span-4">
-					<motion.div
-						initial={{ opacity: 0, x: 18 }}
-						whileInView={{ opacity: 1, x: 0 }}
-						viewport={{ once: true, amount: 0.2 }}
-						transition={{ duration: 0.38 }}
-					>
-						<Card className="rounded-2xl border-slate-200/90 shadow-sm dark:border-slate-700">
-							<CardHeader>
-								<CardTitle>{valuesTitle}</CardTitle>
-							</CardHeader>
-							<CardContent>
-								<ul className="space-y-2 text-sm leading-6 text-muted-foreground">
-									{valueItems.map((item) => (
-										<motion.li key={item} whileHover={{ x: 4 }}>
-											{item}
-										</motion.li>
-									))}
-								</ul>
-							</CardContent>
-						</Card>
-					</motion.div>
-
 					<motion.div
 						initial={{ opacity: 0, x: 18 }}
 						whileInView={{ opacity: 1, x: 0 }}
@@ -164,25 +148,67 @@ export function CVProfileTabContent({
 								<CardTitle>{contactTitle}</CardTitle>
 							</CardHeader>
 							<CardContent className="space-y-4">
-								<p className="text-sm leading-6 text-muted-foreground">{contactDescription}</p>
+								<p className="text-sm leading-6 text-muted-foreground">
+									{contactDescription}
+								</p>
 								<div className="grid gap-2">
-									<Button asChild size="sm" variant="outline" className="justify-start transition-transform hover:-translate-y-0.5">
-										<Link href="mailto:hi@antxz.com"><Mail className="mr-2 h-4 w-4" /> hi@antxz.com</Link>
+									<Button
+										asChild
+										size="sm"
+										variant="outline"
+										className="justify-start transition-transform hover:-translate-y-0.5"
+									>
+										<Link href="mailto:hi@antxz.com">
+											<Mail className="mr-2 h-4 w-4" /> hi@antxz.com
+										</Link>
 									</Button>
-									<Button asChild size="sm" variant="outline" className="justify-start transition-transform hover:-translate-y-0.5">
-										<Link href="https://github.com/AnthonyZhang220" target="_blank" rel="noopener noreferrer"><Github className="mr-2 h-4 w-4" /> GitHub</Link>
+									<Button
+										asChild
+										size="sm"
+										variant="outline"
+										className="justify-start transition-transform hover:-translate-y-0.5"
+									>
+										<Link
+											href="https://github.com/AnthonyZhang220"
+											target="_blank"
+											rel="noopener noreferrer"
+										>
+											<GitHubIcon className="mr-2 h-4 w-4" /> GitHub
+										</Link>
 									</Button>
-									<Button asChild size="sm" variant="outline" className="justify-start transition-transform hover:-translate-y-0.5">
-										<Link href="https://www.linkedin.com/in/anthony-xiangyu-zhang/" target="_blank" rel="noopener noreferrer"><Linkedin className="mr-2 h-4 w-4" /> LinkedIn</Link>
+									<Button
+										asChild
+										size="sm"
+										variant="outline"
+										className="justify-start transition-transform hover:-translate-y-0.5"
+									>
+										<Link
+											href="https://www.linkedin.com/in/anthony-xiangyu-zhang/"
+											target="_blank"
+											rel="noopener noreferrer"
+										>
+											<Linkedin className="mr-2 h-4 w-4" /> LinkedIn
+										</Link>
 									</Button>
 								</div>
 								<Separator />
 								<div className="flex flex-wrap gap-2">
-									<Button asChild size="sm" className="transition-transform hover:-translate-y-0.5">
+									<Button
+										asChild
+										size="sm"
+										className="transition-transform hover:-translate-y-0.5"
+									>
 										<Link href={`/${locale}/blog`}>{nextActions.blog}</Link>
 									</Button>
-									<Button asChild size="sm" variant="outline" className="transition-transform hover:-translate-y-0.5">
-										<Link href={`/${locale}/projects`}>{nextActions.projects}</Link>
+									<Button
+										asChild
+										size="sm"
+										variant="outline"
+										className="transition-transform hover:-translate-y-0.5"
+									>
+										<Link href={`/${locale}/projects`}>
+											{nextActions.projects}
+										</Link>
 									</Button>
 								</div>
 							</CardContent>

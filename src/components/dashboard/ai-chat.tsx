@@ -6,7 +6,7 @@ import { Bot, Construction, SendHorizontal, Sparkles, Trash2, User } from "lucid
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/shared/utils";
+import { cn } from "@/lib/utils";
 
 type MessageRole = "user" | "assistant";
 

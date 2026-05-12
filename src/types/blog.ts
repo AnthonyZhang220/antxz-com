@@ -69,6 +69,7 @@ export interface BlogPost {
 	hasZh?: boolean;
 	languageType?: BlogLanguageType;
 	// 如果 Sanity schema 里用了双语字段，原始数据里会有这两个
+	originalLanguage?: "en" | "zh";
 	titleLocales?: {
 		en: string;
 		zh: string;

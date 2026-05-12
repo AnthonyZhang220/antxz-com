@@ -3,8 +3,8 @@
 export const navigationConfig = [
   { key: "home",        href: "/" },
   { key: "about",       href: "/about/me" },
-  { key: "projects",    href: "/projects" },
   { key: "blog",        href: "/blog" },
+  { key: "projects",    href: "/projects" },
   { key: "mbti",        href: "/mbti" },
   { key: "interaction", href: "/interaction" },
 ] as const;
