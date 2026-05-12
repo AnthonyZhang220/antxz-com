@@ -2,10 +2,3 @@ name = "antxz-com"
 compatibility_date = "2024-09-23"
 compatibility_flags = ["nodejs_compat"]
 pages_build_output_dir = ".open-next"
-
-[build]
-command = "npm run build"
-
-[[routes]]
-pattern = "antxz.com/*"
-zone_name = "antxz.com"
