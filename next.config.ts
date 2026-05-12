@@ -35,7 +35,6 @@ const nextConfig: NextConfig = {
 		"next-sanity",
 		"styled-components",
 		// 纯客户端库
-		"recharts",
 		"motion",
 	],
 };
