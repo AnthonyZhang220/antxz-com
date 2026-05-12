@@ -7,6 +7,8 @@ type LocaleLayoutProps = Readonly<{
 	children: React.ReactNode;
 }>;
 
+export const dynamic = "force-dynamic"; // 强制动态渲染，确保每次请求都能获取最新的用户偏好设置和翻译文本
+
 export async function generateMetadata({
 	params,
 }: {
