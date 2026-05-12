@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { setCookie } from "@/lib/shared/cookies";
 import { saveThemePreference } from "@/lib/actions/user-preferences";
+import { AppTheme } from "@/lib/user/preferences";
 
 const subscribe = () => () => undefined;
 const getServerMountedSnapshot = () => false;
@@ -31,7 +32,7 @@ export default function ThemeModeButton() {
 	const resolvedTheme = mounted ? (theme ?? "system") : "system";
 	const resolvedSystemTheme = mounted ? (systemTheme ?? "light") : "light";
 
-	const handleTheme = (value: string) => {
+	const handleTheme = (value: AppTheme) => {
 		setCookie("preferred_theme", value); // 保存一年
 		setTheme(value);
 		startTransition(() => {
@@ -70,7 +71,7 @@ export default function ThemeModeButton() {
 				<DropdownMenuGroup>
 					<DropdownMenuRadioGroup
 						value={resolvedTheme}
-						onValueChange={handleTheme}
+						onValueChange={(value) => handleTheme(value as AppTheme)}
 					>
 						<DropdownMenuRadioItem value="light">
 							<Sun />
