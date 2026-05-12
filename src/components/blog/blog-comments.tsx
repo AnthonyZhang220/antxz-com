@@ -50,11 +50,8 @@ import {
 	Heart,
 	Italic,
 	LogIn,
-	MessageSquare,
 	Trash2,
 	AlertCircle,
-	MessageCircle,
-	MessageCircleReply,
 	MessageCircleMore,
 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";

@@ -7,7 +7,7 @@ import { urlFor } from "@/sanity/lib/image";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { BlogPost } from "@/types/blog";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function Blogs({
 	posts = [],

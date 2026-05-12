@@ -30,8 +30,6 @@ import {
 	Heart,
 	MessageCircle,
 	Link2,
-	ChevronLeft,
-	ChevronRight,
 	SlidersHorizontal,
 	X,
 } from "lucide-react";
