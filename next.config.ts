@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 
+/** @type {import('next').NextConfig} */
 const nextConfig: NextConfig = {
 	/* config options here */
 	reactCompiler: true,
@@ -19,6 +20,10 @@ const nextConfig: NextConfig = {
 				hostname: "cdn.sanity.io",
 			},
 		],
+	},
+	env: {
+		NEXT_PUBLIC_SANITY_DATASET: "production",
+		NEXT_PUBLIC_SANITY_PROJECT_ID: "r4gq7ce2",
 	},
 };
 
