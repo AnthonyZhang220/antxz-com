@@ -21,7 +21,7 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { getCookie } from "@/lib/shared/cookies";
-import { savePreferences } from "@/components/preferences/actions";
+import { savePreferences } from "@/lib/actions/user-preferences";
 import {
 	finishLoadingError,
 	finishLoadingSuccess,
@@ -53,7 +53,11 @@ export default function PreferencesForm() {
 	function getRedirectPath(nextLocale: string) {
 		const redirectParam = searchParams.get("redirect");
 
-		if (!redirectParam || !redirectParam.startsWith("/") || redirectParam.startsWith("//")) {
+		if (
+			!redirectParam ||
+			!redirectParam.startsWith("/") ||
+			redirectParam.startsWith("//")
+		) {
 			return `/${nextLocale}`;
 		}
 
@@ -66,7 +70,10 @@ export default function PreferencesForm() {
 		const loadingToastId = startLoading(tt("toast.preferences.saving"));
 
 		try {
-			const result = await savePreferences(locale as AppLocale, region as AppRegion);
+			const result = await savePreferences(
+				locale as AppLocale,
+				region as AppRegion,
+			);
 
 			if (!result.success) {
 				finishLoadingError(loadingToastId, result.error || saveErrorMessage);
@@ -79,7 +86,9 @@ export default function PreferencesForm() {
 			router.push(getRedirectPath(locale));
 		} catch (error) {
 			const message =
-				error instanceof Error && error.message ? error.message : saveErrorMessage;
+				error instanceof Error && error.message
+					? error.message
+					: saveErrorMessage;
 			finishLoadingError(loadingToastId, message);
 		} finally {
 			setIsLoading(false);
