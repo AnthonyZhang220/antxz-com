@@ -11,7 +11,7 @@ interface BlogPostProps {
 }
 
 // export async function generateStaticParams() {
-// 	const slugs = await client.fetch(allPostSlugsQuery);
+// 	const slugs = await client.fetch<Array<{ slug: string }>>(allPostSlugsQuery);
 // 	return slugs.map(({ slug }: { slug: string }) => ({ slug }));
 // }
 
@@ -45,7 +45,10 @@ export default async function Page({ params, searchParams }: BlogPostProps) {
 				contentLang={contentLang}
 				post={postWithEngagement}
 			/>
-			<div id="comments" className="mx-auto max-w-4xl scroll-mt-24 px-5 sm:px-8">
+			<div
+				id="comments"
+				className="mx-auto max-w-4xl scroll-mt-24 px-5 sm:px-8"
+			>
 				<BlogComments articleKey={`blog:${slug}`} />
 			</div>
 		</>

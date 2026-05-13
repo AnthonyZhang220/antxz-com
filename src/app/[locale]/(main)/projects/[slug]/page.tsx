@@ -11,10 +11,10 @@ interface ProjectDetailPageProps {
 	params: Promise<{ locale: string; slug: string }>;
 }
 
-export async function generateStaticParams() {
-	const slugs = await client.fetch<Array<{ slug: string }>>(allProjectSlugsQuery);
-	return slugs.map(({ slug }) => ({ slug }));
-}
+// export async function generateStaticParams() {
+// 	const slugs = await client.fetch<Array<{ slug: string }>>(allProjectSlugsQuery);
+// 	return slugs.map(({ slug }) => ({ slug }));
+// }
 
 export default async function ProjectDetailPage({ params }: ProjectDetailPageProps) {
 	const { locale, slug } = await params;

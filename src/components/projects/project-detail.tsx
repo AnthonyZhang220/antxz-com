@@ -5,9 +5,9 @@ import {
 	ArrowLeft,
 	Calendar,
 	ExternalLink,
-	Github,
 	Sparkles,
 } from "lucide-react";
+import { GitHubIcon } from "../shared/github-icon";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -73,7 +73,7 @@ export function ProjectDetail({ project, locale, labels }: ProjectDetailProps) {
 							<Button variant="outline" asChild>
 								<Link href={project.githubUrl} target="_blank" rel="noopener noreferrer">
 									{labels.sourceCode}
-									<Github className="ml-1 h-4 w-4" />
+									<GitHubIcon className="ml-1 h-4 w-4" />
 								</Link>
 							</Button>
 						) : null}
