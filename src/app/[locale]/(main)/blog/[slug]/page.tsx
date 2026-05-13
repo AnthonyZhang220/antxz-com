@@ -5,17 +5,17 @@ import { notFound } from "next/navigation";
 import BlogPostPage from "@/components/blog/blog-post";
 import BlogComments from "@/components/blog/blog-comments";
 
-interface Props {
+interface BlogPostProps {
 	params: Promise<{ slug: string; locale: string }>;
 	searchParams?: Promise<{ lang?: string }>;
 }
 
-export async function generateStaticParams() {
-	const slugs = await client.fetch(allPostSlugsQuery);
-	return slugs.map(({ slug }: { slug: string }) => ({ slug }));
-}
+// export async function generateStaticParams() {
+// 	const slugs = await client.fetch(allPostSlugsQuery);
+// 	return slugs.map(({ slug }: { slug: string }) => ({ slug }));
+// }
 
-export default async function Page({ params, searchParams }: Props) {
+export default async function Page({ params, searchParams }: BlogPostProps) {
 	const { slug, locale } = await params;
 	const resolvedSearchParams = (await searchParams) ?? {};
 	const requestedLang = resolvedSearchParams.lang;
