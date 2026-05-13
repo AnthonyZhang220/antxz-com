@@ -44,7 +44,7 @@ function detectRegion(request: NextRequest): Region {
 // 1. Detecting the user's region and adding it to the request headers
 // 2. Running the Supabase session logic to ensure auth cookies are set
 // 3. Running the next-intl middleware to handle locale redirects
-export async function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
 	const detectedRegion = detectRegion(request);
 	const preferredLocale = request.cookies.get("preferred_locale")?.value;
 
