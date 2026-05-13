@@ -115,6 +115,7 @@ export async function saveUserPreferences(
 	settings: Partial<UserSettings>,
 	options: { requireAuth?: boolean } = {},
 ): Promise<PreferencesResult<UserSettings>> {
+	console.log("saveUserPreferences called with:", settings, new Error().stack);
 	const validation = validateUserSettingsPatch(settings);
 	if (!validation.success) {
 		return validation;
@@ -133,6 +134,11 @@ export async function saveUserPreferences(
 		}
 
 		const cookieSettings = await readUserSettingsFromCookies();
+		console.log(
+			"cookieSettings after readUserSettingsFromCookies in saveUserPreferences:",
+			cookieSettings,
+			new Error().stack,
+		);
 		return {
 			success: true,
 			data: {

@@ -13,6 +13,12 @@ import {
 
 export async function readUserSettingsFromCookies(): Promise<UserSettings> {
 	const cookieStore = await cookies();
+	console.log(
+		"cookieStore from readUserSettingsFromCookies:",
+		cookieStore,
+		new Error().stack,
+	);
+
 	const locale = cookieStore.get("preferred_locale")?.value;
 	const region = cookieStore.get("preferred_region")?.value;
 	const theme = cookieStore.get("preferred_theme")?.value;
@@ -53,6 +59,9 @@ export async function ensureUserSettingsFromCookies(userId: string) {
 	});
 
 	if (insertError) {
-		console.error("Failed to bootstrap user settings from cookies:", insertError);
+		console.error(
+			"Failed to bootstrap user settings from cookies:",
+			insertError,
+		);
 	}
 }

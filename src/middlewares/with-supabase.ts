@@ -75,6 +75,7 @@ export async function updateSession(
 				error,
 			);
 		}
+		
 
 		if (settings?.locale && settings?.region) {
 			serverSettings = {
