@@ -20,7 +20,7 @@ type PreferencesResult<T = void> =
 	| { success: false; error: string };
 
 function validateUserSettingsPatch(
-	settings: Partial<UserSettings>
+	settings: Partial<UserSettings>,
 ): PreferencesResult {
 	if (settings.locale && !isAppLocale(settings.locale)) {
 		return { success: false, error: "Invalid locale" };
@@ -38,14 +38,23 @@ function validateUserSettingsPatch(
 }
 
 async function syncPreferenceCookies(settings: Partial<UserSettings>) {
+	console.log("syncPreferenceCookies called with:", settings); // 加这行
 	const cookieStore = await cookies();
 
 	if (settings.locale) {
-		cookieStore.set("preferred_locale", settings.locale, preferenceCookieOptions);
+		cookieStore.set(
+			"preferred_locale",
+			settings.locale,
+			preferenceCookieOptions,
+		);
 	}
 
 	if (settings.region) {
-		cookieStore.set("preferred_region", settings.region, preferenceCookieOptions);
+		cookieStore.set(
+			"preferred_region",
+			settings.region,
+			preferenceCookieOptions,
+		);
 	}
 
 	if (settings.theme) {
@@ -87,11 +96,11 @@ export async function getAuthenticatedUserSettings(): Promise<
 				region: data.region,
 				theme: data.theme,
 				notifications_enabled: data.notifications_enabled,
-		  }
+			}
 		: {
 				...cookieSettings,
 				notifications_enabled: defaultUserSettings.notifications_enabled,
-		  };
+			};
 
 	await syncPreferenceCookies(resolvedSettings);
 
@@ -100,7 +109,7 @@ export async function getAuthenticatedUserSettings(): Promise<
 
 export async function saveUserPreferences(
 	settings: Partial<UserSettings>,
-	options: { requireAuth?: boolean } = {}
+	options: { requireAuth?: boolean } = {},
 ): Promise<PreferencesResult<UserSettings>> {
 	const validation = validateUserSettingsPatch(settings);
 	if (!validation.success) {
@@ -167,7 +176,7 @@ export async function saveUserPreferences(
 			...resolvedSettings,
 			updated_at: new Date().toISOString(),
 		},
-		{ onConflict: "user_id" }
+		{ onConflict: "user_id" },
 	);
 
 	if (upsertError) {
