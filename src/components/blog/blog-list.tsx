@@ -36,7 +36,6 @@ import {
 import BlogFilter from "@/components/blog/blog-filter";
 import { useBlogFilter } from "@/hooks/useBlogFilter";
 import { Separator } from "@/components/ui/separator";
-import { useEffect } from "react";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const PAGE_SIZE = 5;

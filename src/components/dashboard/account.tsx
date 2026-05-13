@@ -27,7 +27,7 @@ import {
 	getAccountProfile,
 	saveAccountProfile,
 	type AccountProfile,
-} from "./account-actions";
+} from "@/lib/actions/account-actions";
 
 const emptyForm: AccountProfile = {
 	id: "",

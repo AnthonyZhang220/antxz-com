@@ -4,7 +4,7 @@ import { useSelectedLayoutSegment } from "next/navigation";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 
-import { getDashboardTitleKey } from "./navigation";
+import { getDashboardTitleKey } from "@/lib/actions/navigation";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";

@@ -28,14 +28,6 @@ function detectRegion(request: NextRequest): Region {
 		return preferredRegion;
 	}
 
-	if (process.env.NEXT_PUBLIC_REGION) {
-		const region = process.env.NEXT_PUBLIC_REGION.toLowerCase();
-
-		if (isRegion(region)) {
-			return region;
-		}
-	}
-
 	const country = request.headers.get("cf-ipcountry") || "US";
 	if (["CN", "HK", "TW", "MO"].includes(country)) {
 		return "cn";
@@ -52,7 +44,7 @@ function detectRegion(request: NextRequest): Region {
 // 1. Detecting the user's region and adding it to the request headers
 // 2. Running the Supabase session logic to ensure auth cookies are set
 // 3. Running the next-intl middleware to handle locale redirects
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
 	const detectedRegion = detectRegion(request);
 	const preferredLocale = request.cookies.get("preferred_locale")?.value;
 

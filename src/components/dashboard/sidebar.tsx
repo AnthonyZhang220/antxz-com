@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import type { User } from "@supabase/supabase-js";
 
-import { getDashboardNavigation } from "./navigation";
+import { getDashboardNavigation } from "@/lib/actions/navigation";
 import { NavMain } from "@/components/dashboard/nav-main";
 import { NavSecondary } from "@/components/dashboard/nav-secondary";
 import { NavUser } from "@/components/dashboard/nav-user";

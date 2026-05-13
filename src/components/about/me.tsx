@@ -1,15 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { PortableText } from "next-sanity";
 import type { PortableTextBlock } from "@portabletext/types";
 import { Calendar, ExternalLink, FileUser, Mail, QrCode } from "lucide-react";
 import { createPortableTextComponents } from "@/components/shared/portable-text-components";
-import { client } from "@/sanity/lib/client";
 import { urlFor } from "@/sanity/lib/image";
-import { aboutMeQuery } from "@/sanity/lib/queries";
 import BlogComments from "@/components/blog/blog-comments";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -27,6 +24,7 @@ import { useTranslations } from "next-intl";
 
 type AboutMeProps = {
 	locale: string;
+	doc: AboutMeDoc | null;
 };
 
 type LocalizedText = {
@@ -65,24 +63,14 @@ function localizedBody(
 	return preferred ?? field.en ?? field.zh ?? [];
 }
 
-export default function Me({ locale }: AboutMeProps) {
+export default function Me({ locale, doc}: AboutMeProps) {
 	const t = useTranslations("blog");
 	const tAbout = useTranslations("about.me");
-	const [doc, setDoc] = useState<AboutMeDoc | null>(null);
 	const wechatId = "Noobita220";
 	const portableTextComponents = createPortableTextComponents({
 		t,
 		imageWidth: 1400,
 	});
-
-	useEffect(() => {
-		document.documentElement.lang = locale;
-		const fetchData = async () => {
-			const doc = await client.fetch<AboutMeDoc | null>(aboutMeQuery);
-			setDoc(doc);
-		};
-		fetchData();
-	}, [locale]);
 
 	const headline = localized(doc?.headline, locale) || tAbout("title");
 	const body = localizedBody(doc?.body, locale);

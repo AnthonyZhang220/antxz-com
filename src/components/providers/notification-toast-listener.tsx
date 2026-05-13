@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import {
 	getNotificationById,
 	type DashboardNotification,
-} from "@/components/dashboard/notifications-actions";
+} from "@/lib/actions/notifications-actions";
 import { createClient } from "@/lib/supabase/client";
 
 function getNotificationPlainMessage(

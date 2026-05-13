@@ -18,7 +18,7 @@ import {
 	markNotificationAsRead,
 	type DashboardNotification,
 	type DashboardNotificationType,
-} from "@/components/dashboard/notifications-actions";
+} from "@/lib/actions/notifications-actions";
 import { useNotificationData } from "@/hooks/use-notifications";
 import { ErrorState } from "@/components/shared/error-state";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";

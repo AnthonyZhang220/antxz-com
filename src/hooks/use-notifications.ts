@@ -12,7 +12,7 @@ import {
 	getNotifications,
 	getNotificationById,
 	type DashboardNotification,
-} from "@/components/dashboard/notifications-actions";
+} from "@/lib/actions/notifications-actions";
 import { createClient as createSupabaseClient } from "@/lib/supabase/client";
 
 /**

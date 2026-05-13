@@ -15,7 +15,9 @@ type SessionSyncResult = {
 	serverSettings?: Pick<UserSettings, "locale" | "region">;
 };
 
-export async function updateSession(request: NextRequest): Promise<SessionSyncResult> {
+export async function updateSession(
+	request: NextRequest,
+): Promise<SessionSyncResult> {
 	let supabaseResponse = NextResponse.next({
 		request,
 	});
@@ -63,8 +65,15 @@ export async function updateSession(request: NextRequest): Promise<SessionSyncRe
 			.eq("user_id", userId)
 			.single();
 
-		if (error && !isMissingUserSettingsRowError(error) && !isMissingUserSettingsTableError(error)) {
-			console.error("Failed to fetch server user settings in middleware:", error);
+		if (
+			error &&
+			!isMissingUserSettingsRowError(error) &&
+			!isMissingUserSettingsTableError(error)
+		) {
+			console.error(
+				"Failed to fetch server user settings in middleware:",
+				error,
+			);
 		}
 
 		if (settings?.locale && settings?.region) {
@@ -73,8 +82,16 @@ export async function updateSession(request: NextRequest): Promise<SessionSyncRe
 				region: settings.region as AppRegion,
 			};
 
-			supabaseResponse.cookies.set("preferred_locale", settings.locale, preferenceCookieOptions);
-			supabaseResponse.cookies.set("preferred_region", settings.region, preferenceCookieOptions);
+			supabaseResponse.cookies.set(
+				"preferred_locale",
+				settings.locale,
+				preferenceCookieOptions,
+			);
+			supabaseResponse.cookies.set(
+				"preferred_region",
+				settings.region,
+				preferenceCookieOptions,
+			);
 		}
 	}
 

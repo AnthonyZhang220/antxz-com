@@ -31,7 +31,7 @@ import {
 	finishLoadingSuccess,
 	startLoading,
 } from "@/lib/errors/error-utils";
-import { getUserSettings, saveUserSettings } from "./settings-actions";
+import { getUserSettings, saveUserSettings } from "@/lib/actions/settings-actions";
 import type { UserSettings } from "@/lib/user/preferences";
 import { Skeleton } from "../ui/skeleton";
 
