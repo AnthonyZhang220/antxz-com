@@ -38,7 +38,11 @@ function validateUserSettingsPatch(
 }
 
 async function syncPreferenceCookies(settings: Partial<UserSettings>) {
-	console.log("syncPreferenceCookies called with:", settings); // 加这行
+	console.log(
+		"syncPreferenceCookies called with:",
+		settings,
+		new Error().stack,
+	);
 	const cookieStore = await cookies();
 
 	if (settings.locale) {

@@ -8,12 +8,12 @@ import { AppLocale, AppRegion } from "@/lib/user/preferences";
  * Sync theme selection to cookies and user settings.
  */
 export async function saveThemePreference(theme: AppTheme) {
-	return saveUserPreferences({ theme });
+	return await saveUserPreferences({ theme });
 }
 
 /**
  * Save user locale/region preferences.
  */
 export async function savePreferences(locale: AppLocale, region: AppRegion) {
-	return saveUserPreferences({ locale, region });
+	return await saveUserPreferences({ locale, region });
 }

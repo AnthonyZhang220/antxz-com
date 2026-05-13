@@ -82,7 +82,7 @@ export default function PreferencesForm() {
 
 			finishLoadingSuccess(loadingToastId, saveSuccessMessage);
 			// 延迟重定向，让用户看到成功提示
-			await new Promise((resolve) => setTimeout(resolve, 500));
+			await new Promise((resolve) => setTimeout(resolve, 2000));
 			router.push(getRedirectPath(locale));
 		} catch (error) {
 			const message =
