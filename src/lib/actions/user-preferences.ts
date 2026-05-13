@@ -1,6 +1,6 @@
 "use server";
 
-import { saveUserPreferences } from "@/lib/user/preferences-service";
+import { saveUserPreferences } from "@/lib/user/preferences-actions";
 import { AppTheme } from "@/lib/user/preferences";
 import { AppLocale, AppRegion } from "@/lib/user/preferences";
 

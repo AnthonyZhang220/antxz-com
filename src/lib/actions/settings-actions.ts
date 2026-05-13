@@ -3,7 +3,7 @@
 import {
 	getAuthenticatedUserSettings,
 	saveUserPreferences,
-} from "@/lib/user/preferences-service";
+} from "@/lib/user/preferences-actions";
 import type { UserSettings } from "@/lib/user/preferences";
 
 /**
