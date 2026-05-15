@@ -8,33 +8,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import type { ProjectItem } from "@/types/project";
+import type { ProjectItem } from "@/lib/types/project";
 import { useTranslations } from "next-intl";
+import { ProjectLabels } from "@/lib/i18n/project-labels";
 
-export interface ProjectLabels {
-	title: string;
-	subtitle: string;
-	viewDetails: string;
-	overview: string;
-	keyFeatures: string;
-	roles: string;
-	libraries: string;
-	process: string;
-	challenges: string;
-	results: string;
-	screenshots: string;
-	allProjects: string;
-	details: string;
-	liveSite: string;
-	sourceCode: string;
-	featured: string;
-	new: string;
-	emptyTitle: string;
-	emptyDescription: string;
-	openStudio: string;
-}
-
-type ProjectsShowcaseProps = {
+export type ProjectsShowcaseProps = {
 	projects: ProjectItem[];
 	locale: string;
 	labels: ProjectLabels;

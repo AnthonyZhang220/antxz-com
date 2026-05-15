@@ -1,16 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import {
-	Fragment,
-	useCallback,
-	useEffect,
-	useMemo,
-	useRef,
-	useState,
-} from "react";
+import { useMemo, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { createClient } from "@/lib/supabase/client";
 import {
 	submitComment as submitCommentAction,
 	deleteComment as deleteCommentAction,
@@ -55,83 +47,80 @@ import {
 	MessageCircleMore,
 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { User } from "@supabase/supabase-js";
+import {
+	renderCommentContent,
+	getInitials,
+	buildTree,
+} from "./blog-comments-render";
+import { getCommentErrorMessageKey } from "@/lib/i18n/comment-labels";
+import { CommentItem } from "@/lib/actions/comments";
 
-interface LikerInfo {
-	user_id: string;
-	avatar_url: string;
-	author_name: string;
-}
-
-interface CommentItem {
-	id: string;
-	article_key: string;
-	user_id: string;
-	author_name: string;
-	avatar_url: string;
-	content: string;
-	created_at: string;
-	status?: "published" | "quarantine" | "spam" | "blocked";
-	parent_id: string | null;
-	like_count: number;
-	user_liked: boolean;
-	likers: LikerInfo[];
-}
-
-interface TreeCommentItem extends CommentItem {
-	replies: TreeCommentItem[];
-}
-
-interface BlogCommentsProps {
+export type ErrorState = {
+	message: string | null;
+	reasons: string[];
+};
+export interface BlogCommentsProps {
 	articleKey: string;
+	initialUser: User | null;
+	initialComments: CommentItem[];
 }
 
-function buildTree(comments: CommentItem[]): TreeCommentItem[] {
-	const map = new Map<string, TreeCommentItem>();
-	for (const c of comments) {
-		map.set(c.id, { ...c, replies: [] });
-	}
-	const roots: TreeCommentItem[] = [];
-	for (const c of map.values()) {
-		if (c.parent_id && map.has(c.parent_id)) {
-			map.get(c.parent_id)!.replies.push(c);
-		} else {
-			roots.push(c);
-		}
-	}
-	return roots;
-}
-
-export default function BlogComments({ articleKey }: BlogCommentsProps) {
+export default function BlogComments({
+	articleKey,
+	initialUser,
+	initialComments,
+}: BlogCommentsProps) {
 	const t = useTranslations("blog");
 	const locale = useLocale();
-	const supabase = useMemo(() => createClient(), []);
 	const textareaRef = useRef<HTMLTextAreaElement | null>(null);
-	const [comments, setComments] = useState<CommentItem[]>([]);
-	const [isLoading, setIsLoading] = useState(true);
+
+	//comments state
+	const [isLoading, setIsLoading] = useState(false);
 	const [isSubmitting, setIsSubmitting] = useState(false);
-	const [isLoggedIn, setIsLoggedIn] = useState(false);
+	const [comments, setComments] = useState<CommentItem[]>(initialComments);
 	const commentTree = useMemo(() => buildTree(comments), [comments]);
+
 	const [message, setMessage] = useState("");
 	const [replyMessage, setReplyMessage] = useState("");
 	const [replyingToId, setReplyingToId] = useState<string | null>(null);
 	const [replyingToName, setReplyingToName] = useState("");
-	const [mainError, setMainError] = useState<string | null>(null);
-	const [mainErrorReasons, setMainErrorReasons] = useState<string[]>([]);
-	const [replyError, setReplyError] = useState<string | null>(null);
-	const [replyErrorReasons, setReplyErrorReasons] = useState<string[]>([]);
-	const [notice, setNotice] = useState<string | null>(null);
+
+	//error and notice state
+	const [mainError, setMainError] = useState<ErrorState>({
+		message: null,
+		reasons: [],
+	});
+	const [replyError, setReplyError] = useState<ErrorState>({
+		message: null,
+		reasons: [],
+	});
 	const [likingId, setLikingId] = useState<string | null>(null);
 	const [deletingId, setDeletingId] = useState<string | null>(null);
-	const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 	const [deleteDialogCommentId, setDeleteDialogCommentId] = useState<
 		string | null
 	>(null);
-	const currentUserProfileRef = useRef<{
-		avatar_url: string;
-		display_name: string;
-	} | null>(null);
 
-	const commentsLoadErrorMessage = t("commentsLoadError");
+	const currentUserProfile = useMemo(() => {
+		if (!initialUser) return null;
+		return {
+			avatar_url: String(
+				initialUser.user_metadata?.avatar_url ||
+					initialUser.user_metadata?.picture ||
+					"",
+			),
+			display_name: String(
+				initialUser.user_metadata?.full_name ||
+					initialUser.user_metadata?.name ||
+					initialUser.email ||
+					"User",
+			),
+		};
+	}, [initialUser]);
+
+	//user state
+	const isLoggedIn = !!initialUser;
+	const currentUserId = initialUser?.id ?? null;
 
 	const applyWrap = (prefix: string, suffix = prefix) => {
 		const textarea = textareaRef.current;
@@ -151,198 +140,50 @@ export default function BlogComments({ articleKey }: BlogCommentsProps) {
 		});
 	};
 
-	const renderInline = (input: string) => {
-		const tokenRegex = /(\*\*[^*]+\*\*|\*[^*]+\*|`[^`]+`)/g;
-		const parts = input.split(tokenRegex).filter(Boolean);
-
-		return parts.map((part, idx) => {
-			if (part.startsWith("**") && part.endsWith("**")) {
-				return (
-					<strong key={idx} className="font-semibold text-foreground">
-						{part.slice(2, -2)}
-					</strong>
-				);
-			}
-			if (part.startsWith("*") && part.endsWith("*")) {
-				return (
-					<em key={idx} className="italic">
-						{part.slice(1, -1)}
-					</em>
-				);
-			}
-			if (part.startsWith("`") && part.endsWith("`")) {
-				return (
-					<code
-						key={idx}
-						className="rounded bg-zinc-100 px-1.5 py-0.5 font-mono text-[0.85em] text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200"
-					>
-						{part.slice(1, -1)}
-					</code>
-				);
-			}
-			return <Fragment key={idx}>{part}</Fragment>;
-		});
-	};
-
-	const renderCommentContent = (content: string) => {
-		return content.split("\n").map((line, idx) => (
-			<p
-				key={idx}
-				className="text-sm leading-6 text-zinc-700 dark:text-zinc-300"
-			>
-				{line.length === 0 ? (
-					<span className="inline-block h-4" />
-				) : (
-					renderInline(line)
-				)}
-			</p>
-		));
-	};
-
-	const getInitials = (name: string) => {
-		const tokens = name.trim().split(/\s+/).filter(Boolean);
-		if (tokens.length === 0) return "U";
-		return (
-			tokens
-				.slice(0, 2)
-				.map((w) => w[0]?.toUpperCase() ?? "")
-				.join("") || "U"
-		);
-	};
-
-	const getErrorMessageKey = (reason: string): string => {
-		const reasonMap: Record<string, string> = {
-			blocked_user: "commentsErrorBlocked",
-			too_short: "commentsErrorTooShort",
-			too_long: "commentsErrorTooLong",
-			emoji_only: "commentsErrorEmojiOnly",
-			too_many_links: "commentsErrorTooManyLinks",
-			blacklist_terms: "commentsErrorBlacklistTerms",
-			repeated_characters: "commentsErrorRepeatedCharacters",
-			repeated_sentences: "commentsErrorRepeatedSentences",
-			high_frequency: "commentsErrorHighFrequency",
-			duplicate_recent_comment: "commentsErrorDuplicateRecent",
-		};
-
-		return reasonMap[reason] ?? "commentsSubmitError";
-	};
-
-	const loadComments = useCallback(async () => {
-		setIsLoading(true);
-		setMainError(null);
-		setMainErrorReasons([]);
-		setReplyError(null);
-		setReplyErrorReasons([]);
-		setNotice(null);
-		try {
-			const response = await fetch(
-				`/api/comments?articleKey=${encodeURIComponent(articleKey)}`,
-				{ cache: "no-store" },
-			);
-			if (!response.ok) {
-				throw new Error("Failed to load comments");
-			}
-			const payload = await response.json();
-			const freshUserId: string | null = payload.currentUserId ?? null;
-			setCurrentUserId(freshUserId);
-			const rawComments: CommentItem[] = payload.comments ?? [];
-			const profile = currentUserProfileRef.current;
-			if (freshUserId && profile) {
-				setComments(
-					rawComments.map((c) =>
-						c.user_id === freshUserId
-							? {
-									...c,
-									author_name: profile.display_name,
-									avatar_url: profile.avatar_url,
-								}
-							: c,
-					),
-				);
-			} else {
-				setComments(rawComments);
-			}
-		} catch {
-			setMainError(commentsLoadErrorMessage);
-		} finally {
-			setIsLoading(false);
-		}
-	}, [articleKey, commentsLoadErrorMessage]);
-
-	useEffect(() => {
-		let mounted = true;
-
-		const bootstrap = async () => {
-			const {
-				data: { user },
-			} = await supabase.auth.getUser();
-			if (mounted) {
-				setIsLoggedIn(Boolean(user));
-				if (user) {
-					currentUserProfileRef.current = {
-						avatar_url:
-							(user.user_metadata?.avatar_url as string | undefined) ||
-							(user.user_metadata?.picture as string | undefined) ||
-							"",
-						display_name:
-							(user.user_metadata?.full_name as string | undefined) ||
-							(user.user_metadata?.name as string | undefined) ||
-							user.email ||
-							"User",
-					};
-				}
-			}
-			await loadComments();
-		};
-
-		bootstrap();
-
-		return () => {
-			mounted = false;
-		};
-	}, [articleKey, supabase, loadComments]);
-
-
-
+	// 1. 提交评论
 	const submitComment = async (content: string, parentId?: string) => {
 		setIsSubmitting(true);
-		if (parentId) {
-			setReplyError(null);
-			setReplyErrorReasons([]);
-		} else {
-			setMainError(null);
-			setMainErrorReasons([]);
-		}
-		setNotice(null);
+
+		const setError = parentId ? setReplyError : setMainError;
+		setError({ message: null, reasons: [] });
+
 		try {
 			const result = await submitCommentAction(articleKey, content, parentId);
 			if (!result.ok) {
-				if (parentId) {
-					setReplyError(result.message);
-					setReplyErrorReasons(result.reasons);
-				} else {
-					setMainError(result.message);
-					setMainErrorReasons(result.reasons);
-				}
+				setError({
+					message: result.message,
+					reasons: result.reasons ?? [],
+				});
 				return;
+			}
+
+			if (result.comment) {
+				const newComment: CommentItem = {
+					...result.comment,
+					parent_id: parentId ?? null,
+					user_id: currentUserId ?? result.comment.user_id,
+					author_name: currentUserProfile?.display_name ?? "Anonymous",
+					avatar_url: currentUserProfile?.avatar_url ?? "",
+					user_liked: false,
+					like_count: 0,
+					likers: [],
+				};
+
+				setComments((prev) => [newComment, ...prev]);
 			}
 
 			if (parentId) {
 				setReplyMessage("");
 				setReplyingToId(null);
-				setReplyingToName("");
 			} else {
 				setMessage("");
 			}
-			await loadComments();
 		} catch (err) {
 			const message = getActionErrorMessage(err, t("commentsSubmitError"));
 			if (parentId) {
-				setReplyError(message);
-				setReplyErrorReasons([]);
+				setReplyError({ message, reasons: [] });
 			} else {
-				setMainError(message);
-				setMainErrorReasons([]);
+				setMainError({ message, reasons: [] });
 			}
 		} finally {
 			setIsSubmitting(false);
@@ -351,15 +192,14 @@ export default function BlogComments({ articleKey }: BlogCommentsProps) {
 
 	const onDeleteComment = async (commentId: string) => {
 		if (!isLoggedIn) {
-			setMainError(t("commentsLoginRequired"));
-			setMainErrorReasons([]);
+			setMainError({ message: t("commentsLoginRequired"), reasons: [] });
 			return;
 		}
 
+		const previousComment = [...comments];
+		setComments((prev) => prev.filter((comment) => comment.id !== commentId));
 		setDeletingId(commentId);
-		setMainError(null);
-		setMainErrorReasons([]);
-		setNotice(null);
+		setMainError({ message: null, reasons: [] });
 
 		try {
 			await deleteCommentAction(commentId);
@@ -369,55 +209,55 @@ export default function BlogComments({ articleKey }: BlogCommentsProps) {
 				setReplyingToName("");
 				setReplyMessage("");
 			}
-
-			await loadComments();
 		} catch (err) {
-			setMainError(getActionErrorMessage(err, t("commentsDeleteError")));
-			setMainErrorReasons([]);
+			// Revert optimistic update
+			setComments(previousComment);
+			setMainError({
+				message: getActionErrorMessage(err, t("commentsDeleteError")),
+				reasons: [],
+			});
 		} finally {
 			setDeletingId(null);
 		}
 	};
 
-	const onSubmit = async () => {
-		const content = message.trim();
-		if (!content) return;
-		await submitComment(content);
-	};
-
-	const onSubmitReply = async (parentId: string) => {
-		const content = replyMessage.trim();
-		if (!content) return;
-		await submitComment(content, parentId);
-	};
+	const onSubmit = () => message.trim() && void submitComment(message.trim());
+	const onSubmitReply = (parentId: string) =>
+		replyMessage.trim() && void submitComment(replyMessage.trim(), parentId);
 
 	const onStartReply = (comment: CommentItem) => {
+		setReplyError({ message: null, reasons: [] });
 		if (replyingToId === comment.id) {
 			setReplyingToId(null);
 			setReplyingToName("");
 			setReplyMessage("");
-			setReplyError(null);
-			setReplyErrorReasons([]);
 		} else {
 			setReplyingToId(comment.id);
 			setReplyingToName(comment.author_name || "User");
 			setReplyMessage("");
-			setReplyError(null);
-			setReplyErrorReasons([]);
 		}
 	};
 
 	const onToggleLike = async (commentId: string, liked: boolean) => {
 		if (!isLoggedIn) {
-			setMainError(t("commentsLoginRequired"));
-			setMainErrorReasons([]);
+			setMainError({ message: t("commentsLoginRequired"), reasons: [] });
 			return;
 		}
 
 		setLikingId(commentId);
-		setMainError(null);
-		setMainErrorReasons([]);
-		setNotice(null);
+		setComments((prev) =>
+			prev.map((comment) =>
+				comment.id === commentId
+					? {
+							...comment,
+							user_liked: !liked,
+							like_count: Math.max(0, comment.like_count + (liked ? -1 : 1)),
+						}
+					: comment,
+			),
+		);
+
+		setMainError({ message: null, reasons: [] });
 
 		try {
 			if (liked) {
@@ -425,21 +265,22 @@ export default function BlogComments({ articleKey }: BlogCommentsProps) {
 			} else {
 				await likeCommentAction(commentId);
 			}
-
+		} catch (err) {
 			setComments((prev) =>
 				prev.map((comment) =>
 					comment.id === commentId
 						? {
 								...comment,
-								user_liked: !liked,
-								like_count: Math.max(0, comment.like_count + (liked ? -1 : 1)),
+								user_liked: liked,
+								like_count: Math.max(0, comment.like_count + (liked ? 1 : -1)),
 							}
 						: comment,
 				),
 			);
-		} catch (err) {
-			setMainError(getActionErrorMessage(err, t("commentsLikeError")));
-			setMainErrorReasons([]);
+			setMainError({
+				message: getActionErrorMessage(err, t("commentsLikeError")),
+				reasons: [],
+			});
 		} finally {
 			setLikingId(null);
 		}
@@ -471,7 +312,7 @@ export default function BlogComments({ articleKey }: BlogCommentsProps) {
 						}
 					/>
 					{comment.like_count}
-					{comment.likers.length > 0 && (
+					{comment.likers && comment.likers.length > 0 && (
 						<div className="mr-1 flex items-center -space-x-1.5">
 							<Separator orientation="vertical" className="mx-1 h-4" />
 							<AvatarGroup>
@@ -537,16 +378,16 @@ export default function BlogComments({ articleKey }: BlogCommentsProps) {
 				disabled={!isLoggedIn || isSubmitting}
 				className={textareaClass}
 			/>
-			{replyError && (
+			{replyError && replyError.reasons.length > 0 && (
 				<Alert variant="destructive" className="text-sm">
 					<AlertCircle className="h-4 w-4" />
 					<div className="flex-1">
-						<AlertTitle className="text-sm">{replyError}</AlertTitle>
-						{replyErrorReasons.length > 0 && (
+						<AlertTitle className="text-sm">{replyError.message}</AlertTitle>
+						{replyError.reasons.length > 0 && (
 							<AlertDescription className="mt-1.5 text-xs text-destructive">
 								<ul className="list-inside list-disc space-y-0.5">
-									{replyErrorReasons.map((reason) => (
-										<li key={reason}>{t(getErrorMessageKey(reason))}</li>
+									{replyError.reasons.map((reason) => (
+										<li key={reason}>{t(getCommentErrorMessageKey(reason))}</li>
 									))}
 								</ul>
 							</AlertDescription>
@@ -570,8 +411,7 @@ export default function BlogComments({ articleKey }: BlogCommentsProps) {
 					onClick={() => {
 						setReplyingToId(null);
 						setReplyMessage("");
-						setReplyError(null);
-						setReplyErrorReasons([]);
+						setReplyError({ message: null, reasons: [] });
 					}}
 				>
 					{t("commentsCancel")}
@@ -643,17 +483,17 @@ export default function BlogComments({ articleKey }: BlogCommentsProps) {
 							</Button>
 						</div>
 					)}
-					{mainError && (
+					{mainError && mainError.reasons.length > 0 && (
 						<Alert variant="destructive">
 							<AlertCircle className="h-4 w-4" />
 							<div className="flex-1">
-								<AlertTitle>{mainError}</AlertTitle>
-								{mainErrorReasons.length > 0 && (
+								<AlertTitle>{mainError.message}</AlertTitle>
+								{mainError.reasons.length > 0 && (
 									<AlertDescription className="mt-2 text-destructive">
 										<ul className="list-inside list-disc space-y-1">
-											{mainErrorReasons.map((reason) => (
+											{mainError.reasons.map((reason) => (
 												<li key={reason} className="text-xs">
-													{t(getErrorMessageKey(reason))}
+													{t(getCommentErrorMessageKey(reason))}
 												</li>
 											))}
 										</ul>
@@ -661,11 +501,6 @@ export default function BlogComments({ articleKey }: BlogCommentsProps) {
 								)}
 							</div>
 						</Alert>
-					)}
-					{notice && (
-						<p className="text-sm text-amber-600 dark:text-amber-400">
-							{notice}
-						</p>
 					)}
 
 					<div className="flex justify-end">
@@ -695,7 +530,7 @@ export default function BlogComments({ articleKey }: BlogCommentsProps) {
 							</p>
 						)}
 						{commentTree.map((comment) => (
-							<div key={comment.id}>
+							<article key={comment.id}>
 								<div className="rounded-lg border border-border/60 px-4 py-3">
 									<div className="flex gap-3">
 										<Avatar className="mt-0.5 h-9 w-9 shrink-0">
@@ -735,7 +570,7 @@ export default function BlogComments({ articleKey }: BlogCommentsProps) {
 								{comment.replies.length > 0 && (
 									<div className="ml-6 mt-2 space-y-2 border-l-2 border-border/30 pl-4">
 										{comment.replies.map((reply) => (
-											<div
+											<article
 												key={reply.id}
 												className="rounded-lg border border-border/40 bg-muted/10 px-4 py-3"
 											>
@@ -771,11 +606,11 @@ export default function BlogComments({ articleKey }: BlogCommentsProps) {
 														</div>
 													</div>
 												</div>
-											</div>
+											</article>
 										))}
 									</div>
 								)}
-							</div>
+							</article>
 						))}
 					</div>
 				</CardContent>

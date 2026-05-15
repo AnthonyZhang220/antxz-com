@@ -1,11 +1,15 @@
 "use server";
 
 import { getTranslations } from "next-intl/server";
-import { createActionError } from "@/lib/errors/action-error";
-
 import { createClient } from "@/lib/supabase/server";
+import { type ActionResult, ok, err } from "@/lib/actions/action-result";
 
-function formatSupabaseErrorMessage(error: { code?: string; message?: string } | null) {
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+function formatSupabaseErrorMessage(
+	error: { code?: string; message?: string } | null,
+) {
 	if (!error) return "Unknown database error";
 	if (error.code === "42P01") {
 		return "Required engagement table is missing. Please run Supabase migrations.";
@@ -13,10 +17,14 @@ function formatSupabaseErrorMessage(error: { code?: string; message?: string } |
 	return error.message || "Unknown database error";
 }
 
-export async function getArticleLikeState(articleKey: string): Promise<{ likeCount: number; userLiked: boolean }> {
+// ─── Like ─────────────────────────────────────────────────────────────────────
+
+export async function getArticleLikeState(
+	articleKey: string,
+): Promise<ActionResult<{ likeCount: number; userLiked: boolean }>> {
 	const trimmedArticleKey = String(articleKey ?? "").trim();
 	if (!trimmedArticleKey) {
-		return { likeCount: 0, userLiked: false };
+		return ok({ likeCount: 0, userLiked: false });
 	}
 
 	const supabase = await createClient();
@@ -30,10 +38,10 @@ export async function getArticleLikeState(articleKey: string): Promise<{ likeCou
 		.eq("article_key", trimmedArticleKey);
 
 	if (countError) {
-		throw createActionError(
+		return err(
 			"ARTICLE_LIKE_STATE_LOAD_FAILED",
 			formatSupabaseErrorMessage(countError),
-			{ status: 500 },
+			500,
 		);
 	}
 
@@ -48,13 +56,10 @@ export async function getArticleLikeState(articleKey: string): Promise<{ likeCou
 		userLiked = Boolean(row);
 	}
 
-	return {
-		likeCount: count ?? 0,
-		userLiked,
-	};
+	return ok({ likeCount: count ?? 0, userLiked });
 }
 
-export async function likeArticle(articleKey: string): Promise<void> {
+export async function likeArticle(articleKey: string): Promise<ActionResult> {
 	const t = await getTranslations("blog");
 	const supabase = await createClient();
 	const {
@@ -63,12 +68,16 @@ export async function likeArticle(articleKey: string): Promise<void> {
 	} = await supabase.auth.getUser();
 
 	if (authError || !user) {
-		throw createActionError("ARTICLE_LIKE_LOGIN_REQUIRED", t("articleLikeLoginRequired"), { status: 401 });
+		return err(
+			"ARTICLE_LIKE_LOGIN_REQUIRED",
+			t("articleLikeLoginRequired"),
+			401,
+		);
 	}
 
 	const trimmedArticleKey = String(articleKey ?? "").trim();
 	if (!trimmedArticleKey) {
-		throw createActionError("ARTICLE_LIKE_INVALID_KEY", t("articleLikeError"), { status: 400 });
+		return err("ARTICLE_LIKE_INVALID_KEY", t("articleLikeError"), 400);
 	}
 
 	const { error } = await supabase.from("article_likes").insert({
@@ -77,11 +86,13 @@ export async function likeArticle(articleKey: string): Promise<void> {
 	});
 
 	if (error && error.code !== "23505") {
-		throw createActionError("ARTICLE_LIKE_FAILED", formatSupabaseErrorMessage(error), { status: 500 });
+		return err("ARTICLE_LIKE_FAILED", formatSupabaseErrorMessage(error), 500);
 	}
+
+	return ok();
 }
 
-export async function unlikeArticle(articleKey: string): Promise<void> {
+export async function unlikeArticle(articleKey: string): Promise<ActionResult> {
 	const t = await getTranslations("blog");
 	const supabase = await createClient();
 	const {
@@ -90,12 +101,16 @@ export async function unlikeArticle(articleKey: string): Promise<void> {
 	} = await supabase.auth.getUser();
 
 	if (authError || !user) {
-		throw createActionError("ARTICLE_LIKE_LOGIN_REQUIRED", t("articleLikeLoginRequired"), { status: 401 });
+		return err(
+			"ARTICLE_LIKE_LOGIN_REQUIRED",
+			t("articleLikeLoginRequired"),
+			401,
+		);
 	}
 
 	const trimmedArticleKey = String(articleKey ?? "").trim();
 	if (!trimmedArticleKey) {
-		throw createActionError("ARTICLE_UNLIKE_INVALID_KEY", t("articleLikeError"), { status: 400 });
+		return err("ARTICLE_UNLIKE_INVALID_KEY", t("articleLikeError"), 400);
 	}
 
 	const { error } = await supabase
@@ -105,14 +120,20 @@ export async function unlikeArticle(articleKey: string): Promise<void> {
 		.eq("user_id", user.id);
 
 	if (error) {
-		throw createActionError("ARTICLE_UNLIKE_FAILED", formatSupabaseErrorMessage(error), { status: 500 });
+		return err("ARTICLE_UNLIKE_FAILED", formatSupabaseErrorMessage(error), 500);
 	}
+
+	return ok();
 }
 
-export async function getArticleBookmarkState(articleKey: string): Promise<{ userBookmarked: boolean }> {
+// ─── Bookmark ─────────────────────────────────────────────────────────────────
+
+export async function getArticleBookmarkState(
+	articleKey: string,
+): Promise<ActionResult<{ userBookmarked: boolean }>> {
 	const trimmedArticleKey = String(articleKey ?? "").trim();
 	if (!trimmedArticleKey) {
-		return { userBookmarked: false };
+		return ok({ userBookmarked: false });
 	}
 
 	const supabase = await createClient();
@@ -121,7 +142,7 @@ export async function getArticleBookmarkState(articleKey: string): Promise<{ use
 	} = await supabase.auth.getUser();
 
 	if (!user?.id) {
-		return { userBookmarked: false };
+		return ok({ userBookmarked: false });
 	}
 
 	const { data: row, error } = await supabase
@@ -132,19 +153,19 @@ export async function getArticleBookmarkState(articleKey: string): Promise<{ use
 		.maybeSingle();
 
 	if (error) {
-		throw createActionError(
+		return err(
 			"ARTICLE_BOOKMARK_STATE_LOAD_FAILED",
 			formatSupabaseErrorMessage(error),
-			{ status: 500 },
+			500,
 		);
 	}
 
-	return {
-		userBookmarked: Boolean(row),
-	};
+	return ok({ userBookmarked: Boolean(row) });
 }
 
-export async function bookmarkArticle(articleKey: string): Promise<void> {
+export async function bookmarkArticle(
+	articleKey: string,
+): Promise<ActionResult> {
 	const t = await getTranslations("blog");
 	const supabase = await createClient();
 	const {
@@ -153,12 +174,16 @@ export async function bookmarkArticle(articleKey: string): Promise<void> {
 	} = await supabase.auth.getUser();
 
 	if (authError || !user) {
-		throw createActionError("ARTICLE_BOOKMARK_LOGIN_REQUIRED", t("articleBookmarkLoginRequired"), { status: 401 });
+		return err(
+			"ARTICLE_BOOKMARK_LOGIN_REQUIRED",
+			t("articleBookmarkLoginRequired"),
+			401,
+		);
 	}
 
 	const trimmedArticleKey = String(articleKey ?? "").trim();
 	if (!trimmedArticleKey) {
-		throw createActionError("ARTICLE_BOOKMARK_INVALID_KEY", t("articleBookmarkError"), { status: 400 });
+		return err("ARTICLE_BOOKMARK_INVALID_KEY", t("articleBookmarkError"), 400);
 	}
 
 	const { error } = await supabase.from("article_bookmarks").insert({
@@ -167,11 +192,19 @@ export async function bookmarkArticle(articleKey: string): Promise<void> {
 	});
 
 	if (error && error.code !== "23505") {
-		throw createActionError("ARTICLE_BOOKMARK_FAILED", formatSupabaseErrorMessage(error), { status: 500 });
+		return err(
+			"ARTICLE_BOOKMARK_FAILED",
+			formatSupabaseErrorMessage(error),
+			500,
+		);
 	}
+
+	return ok();
 }
 
-export async function unbookmarkArticle(articleKey: string): Promise<void> {
+export async function unbookmarkArticle(
+	articleKey: string,
+): Promise<ActionResult> {
 	const t = await getTranslations("blog");
 	const supabase = await createClient();
 	const {
@@ -180,12 +213,20 @@ export async function unbookmarkArticle(articleKey: string): Promise<void> {
 	} = await supabase.auth.getUser();
 
 	if (authError || !user) {
-		throw createActionError("ARTICLE_BOOKMARK_LOGIN_REQUIRED", t("articleBookmarkLoginRequired"), { status: 401 });
+		return err(
+			"ARTICLE_BOOKMARK_LOGIN_REQUIRED",
+			t("articleBookmarkLoginRequired"),
+			401,
+		);
 	}
 
 	const trimmedArticleKey = String(articleKey ?? "").trim();
 	if (!trimmedArticleKey) {
-		throw createActionError("ARTICLE_UNBOOKMARK_INVALID_KEY", t("articleBookmarkError"), { status: 400 });
+		return err(
+			"ARTICLE_UNBOOKMARK_INVALID_KEY",
+			t("articleBookmarkError"),
+			400,
+		);
 	}
 
 	const { error } = await supabase
@@ -195,6 +236,12 @@ export async function unbookmarkArticle(articleKey: string): Promise<void> {
 		.eq("user_id", user.id);
 
 	if (error) {
-		throw createActionError("ARTICLE_UNBOOKMARK_FAILED", formatSupabaseErrorMessage(error), { status: 500 });
+		return err(
+			"ARTICLE_UNBOOKMARK_FAILED",
+			formatSupabaseErrorMessage(error),
+			500,
+		);
 	}
+
+	return ok();
 }

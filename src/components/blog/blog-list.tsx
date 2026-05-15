@@ -4,7 +4,7 @@ import { useFormatter, useTranslations } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
 import { urlFor } from "@/sanity/lib/image";
-import { BlogPost } from "@/types/blog";
+import { BlogPost } from "@/lib/types/blog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -36,6 +36,7 @@ import {
 import BlogFilter from "@/components/blog/blog-filter";
 import { useBlogFilter } from "@/hooks/useBlogFilter";
 import { Separator } from "@/components/ui/separator";
+import { User } from "@supabase/supabase-js";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const PAGE_SIZE = 5;
@@ -158,7 +159,7 @@ export function SmallCard({ post }: { post: BlogPost }) {
 			href={`/blog/${post.slug}`}
 			className="group flex gap-4 py-4.5 border-b border-border/50 last:border-0"
 		>
-			<div className="w-36 shrink-0 aspect-3/2 rounded-lg overflow-hidden bg-muted relative">
+			<div className="w-36 shrink-0 aspect-3/2 rounded-lg overflow-hidden bg-muted relative hidden sm:block">
 				{coverSrc ? (
 					<Image
 						src={coverSrc}
@@ -253,7 +254,6 @@ function PaginationContainer({
 		else if (pages[pages.length - 1] !== "…") pages.push("…");
 	}
 
-
 	return (
 		<Pagination className="flex items-center justify-center gap-1 mt-10 pt-7 border-t border-border/50">
 			<PaginationContent>
@@ -268,11 +268,15 @@ function PaginationContainer({
 						</PaginationItem>
 					) : (
 						<PaginationItem key={p} onClick={() => onChange(p)}>
-							<PaginationLink isActive={p === current} href={"#"}>{p}</PaginationLink>
+							<PaginationLink isActive={p === current} href={"#"}>
+								{p}
+							</PaginationLink>
 						</PaginationItem>
 					),
 				)}
-				<PaginationItem onClick={() => current < total && onChange(current + 1)}>
+				<PaginationItem
+					onClick={() => current < total && onChange(current + 1)}
+				>
 					<PaginationNext href={"#"} aria-disabled={current === total} />
 				</PaginationItem>
 			</PaginationContent>

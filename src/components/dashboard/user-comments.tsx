@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Heart, MessageSquare } from "lucide-react";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import {
 	Card,
@@ -53,10 +52,7 @@ function getArticleSlug(articleKey: string): string {
 	return articleKey;
 }
 
-function getInitials(name: string): string {
-	const parts = name.trim().split(/\s+/);
-	return (parts[0]?.[0] || "U").toUpperCase();
-}
+
 
 export default function UserComments() {
 	const t = useTranslations("dashboard.comments");
@@ -74,7 +70,9 @@ export default function UserComments() {
 			const payload = await res.json();
 			setComments(payload.comments ?? []);
 		} catch (err) {
-			setLoadError(err instanceof Error ? err.message : t("myCommentsLoadError"));
+			setLoadError(
+				err instanceof Error ? err.message : t("myCommentsLoadError"),
+			);
 		} finally {
 			setIsLoading(false);
 		}
@@ -115,14 +113,6 @@ export default function UserComments() {
 							className="rounded-lg border border-border/60 px-4 py-3"
 						>
 							<div className="flex gap-3">
-								<Avatar className="mt-0.5 h-8 w-8 shrink-0">
-									{comment.avatar_url ? (
-										<AvatarImage src={comment.avatar_url} alt={comment.author_name} />
-									) : null}
-									<AvatarFallback className="text-xs font-semibold">
-										{getInitials(comment.author_name)}
-									</AvatarFallback>
-								</Avatar>
 								<div className="min-w-0 flex-1 space-y-1.5">
 									<div className="flex flex-wrap items-center gap-2">
 										<Link
@@ -137,14 +127,19 @@ export default function UserComments() {
 												{t("replyLabel")}
 											</Badge>
 										) : null}
-										<Badge variant={statusVariants[comment.status]} className="text-[10px]">
+										<Badge
+											variant={statusVariants[comment.status]}
+											className="text-[10px]"
+										>
 											{comment.status}
 										</Badge>
 										<span className="ml-auto text-xs text-muted-foreground">
 											{new Date(comment.created_at).toLocaleString()}
 										</span>
 									</div>
-									<p className="line-clamp-2 text-sm text-foreground/80">{comment.content}</p>
+									<p className="line-clamp-2 text-sm text-foreground/80">
+										{comment.content}
+									</p>
 									{comment.like_count > 0 ? (
 										<div className="flex items-center gap-1 text-xs text-muted-foreground">
 											<Heart className="size-3 fill-red-500 text-red-500" />

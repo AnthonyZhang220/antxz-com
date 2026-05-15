@@ -3,7 +3,7 @@
 import { FormEvent, useCallback, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
-import { Bell, Globe, Sun } from "lucide-react";
+import { Bell, Globe, LoaderIcon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 
 import { Button } from "@/components/ui/button";
@@ -23,7 +23,6 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 import { Toggle } from "@/components/ui/toggle";
 import { ErrorState } from "@/components/shared/error-state";
 import {
@@ -31,9 +30,12 @@ import {
 	finishLoadingSuccess,
 	startLoading,
 } from "@/lib/errors/error-utils";
-import { getUserSettings, saveUserSettings } from "@/lib/actions/settings-actions";
+import {
+	getUserSettings,
+	saveUserSettings,
+} from "@/lib/actions/settings-actions";
 import type { UserSettings } from "@/lib/user/preferences";
-import { Skeleton } from "../ui/skeleton";
+import { Spinner } from "../ui/spinner";
 
 export default function DashboardSettings() {
 	const t = useTranslations("dashboard.settings");
@@ -176,9 +178,11 @@ export default function DashboardSettings() {
 									handleSettingChange("locale", value as "en" | "zh")
 								}
 								disabled={isSaving || isLoading}
+								defaultValue=""
 							>
 								<SelectTrigger id="locale" className="w-full">
-									{isLoading ? <Skeleton /> : <SelectValue />}
+									{isLoading ? <Spinner /> : <SelectValue />}
+									<SelectValue />
 								</SelectTrigger>
 								<SelectContent>
 									<SelectItem value="en">English</SelectItem>
@@ -197,9 +201,10 @@ export default function DashboardSettings() {
 									handleSettingChange("region", value as "cn" | "us" | "global")
 								}
 								disabled={isSaving || isLoading}
+								defaultValue=""
 							>
 								<SelectTrigger id="region" className="w-full">
-									{isLoading ? <Skeleton /> : <SelectValue />}
+									{isLoading ? <Spinner /> : <SelectValue />}
 								</SelectTrigger>
 								<SelectContent>
 									{locale === "zh" ? (
@@ -219,12 +224,6 @@ export default function DashboardSettings() {
 							</Select>
 						</div>
 					</CardContent>
-				</Card>
-
-				<Separator />
-
-				{/* 主题设置 */}
-				<Card>
 					<CardHeader>
 						<CardTitle className="flex items-center gap-2">
 							<Sun className="size-5" />
@@ -236,6 +235,7 @@ export default function DashboardSettings() {
 								: "Choose your preferred appearance"}
 						</CardDescription>
 					</CardHeader>
+					{/* 主题设置 */}
 					<CardContent className="space-y-5">
 						<div className="space-y-2">
 							<Label htmlFor="theme">
@@ -252,7 +252,7 @@ export default function DashboardSettings() {
 								disabled={isSaving || isLoading}
 							>
 								<SelectTrigger id="theme" className="w-full">
-									{isLoading ? <Skeleton /> : <SelectValue />}
+									{isLoading ? <Spinner /> : <SelectValue />}
 								</SelectTrigger>
 								<SelectContent>
 									<SelectItem value="light">
@@ -268,12 +268,7 @@ export default function DashboardSettings() {
 							</Select>
 						</div>
 					</CardContent>
-				</Card>
-
-				<Separator />
-
-				{/* 通知设置 */}
-				<Card>
+					{/* 通知设置 */}
 					<CardHeader>
 						<CardTitle className="flex items-center gap-2">
 							<Bell className="size-5" />
@@ -304,7 +299,9 @@ export default function DashboardSettings() {
 								aria-label="Toggle notifications"
 								className="size-10"
 							>
-								{settings.notifications_enabled ? (
+								{isLoading ? (
+									<Spinner />
+								) : settings.notifications_enabled ? (
 									<Bell className="size-5 fill-current" />
 								) : (
 									<Bell className="size-5 opacity-50" />
@@ -312,26 +309,17 @@ export default function DashboardSettings() {
 							</Toggle>
 						</div>
 					</CardContent>
+					{/* 保存按钮 */}
+					<CardFooter className="justify-end">
+						<Button
+							type="submit"
+							disabled={isSaving || isLoading || !hasChanges}
+							size="lg"
+						>
+							{isSaving ? t("buttons.saving") : t("buttons.save")}
+						</Button>
+					</CardFooter>
 				</Card>
-
-				<Separator />
-
-				{/* 保存按钮 */}
-				<CardFooter className="justify-end">
-					<Button
-						type="submit"
-						disabled={isSaving || isLoading || !hasChanges}
-						size="lg"
-					>
-						{isSaving
-							? locale === "zh"
-								? "保存中..."
-								: "Saving..."
-							: locale === "zh"
-								? "保存设置"
-								: "Save Settings"}
-					</Button>
-				</CardFooter>
 			</form>
 		</div>
 	);

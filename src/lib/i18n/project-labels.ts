@@ -1,6 +1,27 @@
 import { getTranslations } from "next-intl/server";
 
-import type { ProjectLabels } from "@/components/projects/projects-showcase";
+export interface ProjectLabels {
+	title: string;
+	subtitle: string;
+	viewDetails: string;
+	overview: string;
+	keyFeatures: string;
+	roles: string;
+	libraries: string;
+	process: string;
+	challenges: string;
+	results: string;
+	screenshots: string;
+	allProjects: string;
+	details: string;
+	liveSite: string;
+	sourceCode: string;
+	featured: string;
+	new: string;
+	emptyTitle: string;
+	emptyDescription: string;
+	openStudio: string;
+}
 
 export function mapProjectLabels(
 	t: Awaited<ReturnType<typeof getTranslations>>,

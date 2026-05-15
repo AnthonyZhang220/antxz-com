@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { BlogPost } from "@/types/blog";
+import { BlogPost } from "@/lib/types/blog";
 
 const READ_DEFS = [
   { key: "short", label: "< 5 min", test: (r: number) => r < 5 },

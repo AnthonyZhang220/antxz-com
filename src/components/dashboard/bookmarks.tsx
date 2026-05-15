@@ -3,7 +3,7 @@ import { getBlogEngagementBySlugs } from "@/lib/blog/engagement";
 import { createClient as createSupabaseClient } from "@/lib/supabase/server";
 import { client } from "@/sanity/lib/client";
 import { postsBySlugsQuery } from "@/sanity/lib/queries";
-import type { BlogPost } from "@/types/blog";
+import type { BlogPost } from "@/lib/types/blog";
 import { getTranslations } from "next-intl/server";
 
 type DashboardBookmarksProps = {
@@ -18,7 +18,9 @@ function toSlugFromArticleKey(articleKey: string): string | null {
 	return slug ? slug : null;
 }
 
-export default async function DashboardBookmarks({ locale }: DashboardBookmarksProps) {
+export default async function DashboardBookmarks({
+	locale,
+}: DashboardBookmarksProps) {
 	const t = await getTranslations("dashboard.bookmarks");
 
 	const supabase = await createSupabaseClient();
@@ -137,10 +139,6 @@ export default async function DashboardBookmarks({ locale }: DashboardBookmarksP
 
 	return (
 		<div className="space-y-4 p-4 lg:p-6">
-			<div>
-				<h2 className="text-lg font-semibold">{t("title")}</h2>
-				<p className="text-sm text-muted-foreground">{t("description")}</p>
-			</div>
 			<div className="rounded-xl border border-border/60 bg-card p-3 md:p-4">
 				<div className="px-1 md:px-2">
 					{orderedBookmarkedPosts.map((post) => (

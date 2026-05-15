@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useLocale } from "next-intl";
 import { CirclePlus, LucideIcon, Mail } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -26,6 +27,7 @@ export function NavMain({
 	}[];
 }) {
 	const pathname = usePathname();
+	const locale = useLocale();
 	const { isMobile, setOpenMobile } = useSidebar();
 
 	const handleLinkClick = () => {
@@ -58,32 +60,31 @@ export function NavMain({
 				</SidebarMenu>
 				<SidebarMenu>
 					{items.map((item) => {
-						// For dashboard root (overview), only match exact path
-						// For other items, match exact or when it's a sub-route
-						const isDashboardRoot = item.url.endsWith("/dashboard");
-						const isActive = isDashboardRoot
-							? pathname === item.url
-							: pathname === item.url ||
-								pathname?.startsWith(`${item.url}/`);
+						const normalizedPath = pathname.replace(/\/$/, "");
+						const isOverview = item.url === `/${locale}/dashboard`;
+
+						const isActive = isOverview
+							? normalizedPath === item.url
+							: normalizedPath.startsWith(item.url);
 
 						return (
-						<SidebarMenuItem key={item.title}>
-							<SidebarMenuButton
-								asChild
-								tooltip={item.title}
-								isActive={isActive}
-							>
-								<Link href={item.url} onClick={handleLinkClick}>
-									{item.icon && <item.icon />}
-									<span>{item.title}</span>
-									{item.badge != null && item.badge > 0 && (
-										<Badge variant="destructive" className="ml-auto">
-											{item.badge > 99 ? "99+" : item.badge}
-										</Badge>
-									)}
-								</Link>
-							</SidebarMenuButton>
-						</SidebarMenuItem>
+							<SidebarMenuItem key={item.title}>
+								<SidebarMenuButton
+									asChild
+									tooltip={item.title}
+									isActive={isActive}
+								>
+									<Link href={item.url} onClick={handleLinkClick}>
+										{item.icon && <item.icon />}
+										<span>{item.title}</span>
+										{item.badge != null && item.badge > 0 && (
+											<Badge variant="destructive" className="ml-auto">
+												{item.badge > 99 ? "99+" : item.badge}
+											</Badge>
+										)}
+									</Link>
+								</SidebarMenuButton>
+							</SidebarMenuItem>
 						);
 					})}
 				</SidebarMenu>

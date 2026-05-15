@@ -1,14 +1,15 @@
-import { SectionCards } from "@/components/dashboard/section-cards";
+import notFound from "@/app/not-found";
+import { Overview } from "@/components/dashboard/overview";
+import { getAccountProfile } from "@/lib/actions/account-actions";
 
-export default function DashboardPage() {
-	return (
-		<div className="flex flex-1 flex-col min-h-0">
-			<div className="@container/main flex flex-1 flex-col min-h-0 gap-2">
-				<div className="flex flex-col min-h-0 overflow-hidden gap-4 py-4 md:gap-6 md:py-6">
-					<SectionCards />
-					<div className="px-4 lg:px-6"></div>
-				</div>
-			</div>
-		</div>
-	);
+export default async function DashboardPage() {
+	const profile = await getAccountProfile();
+
+	const initialUser = profile.success && profile.data ? profile.data : null;
+
+	if (!initialUser || !profile.success || !profile.data) {
+		notFound();
+	} else {
+		return <Overview user={initialUser} />;
+	}
 }

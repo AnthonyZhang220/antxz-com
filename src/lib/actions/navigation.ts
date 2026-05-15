@@ -6,6 +6,7 @@ import {
 	MessageCircleQuestionMark,
 	Sparkles,
 	Settings,
+	CircleUserRound,
 	type LucideIcon,
 } from "lucide-react";
 
@@ -19,6 +20,7 @@ export type DashboardNavItem = {
 type DashboardNavigation = {
 	navMain: DashboardNavItem[];
 	navSecondary: DashboardNavItem[];
+	navMobile: DashboardNavItem[];
 };
 
 const dashboardNavDefinitions = {
@@ -28,21 +30,21 @@ const dashboardNavDefinitions = {
 			slug: "",
 			icon: LayoutDashboard,
 		},
-			{
-				titleKey: "dashboard.navigation.bookmarks",
-				slug: "bookmarks",
-				icon: Bookmark,
-			},
+		{
+			titleKey: "dashboard.navigation.bookmarks",
+			slug: "bookmarks",
+			icon: Bookmark,
+		},
 		{
 			titleKey: "dashboard.navigation.comments",
 			slug: "comments",
 			icon: MessageCircleMore,
 		},
-			{
-				titleKey: "dashboard.navigation.notifications",
-				slug: "notifications",
-				icon: Bell,
-			},
+		{
+			titleKey: "dashboard.navigation.notifications",
+			slug: "notifications",
+			icon: Bell,
+		},
 	],
 	navSecondary: [
 		{
@@ -61,9 +63,37 @@ const dashboardNavDefinitions = {
 			icon: Sparkles,
 		},
 	],
+	navMobile: [
+		{
+			titleKey: "dashboard.navigation.overview",
+			slug: "",
+			icon: LayoutDashboard,
+		},
+		{
+			titleKey: "dashboard.navigation.bookmarks",
+			slug: "bookmarks",
+			icon: Bookmark,
+		},
+		{
+			titleKey: "dashboard.navigation.comments",
+			slug: "comments",
+			icon: MessageCircleMore,
+		},
+		{
+			titleKey: "dashboard.navigation.notifications",
+			slug: "notifications",
+			icon: Bell,
+		},
+		{
+			titleKey: "dashboard.navigation.account",
+			slug: "account",
+			icon: CircleUserRound,
+		},
+	],
 } satisfies {
 	navMain: Array<Omit<DashboardNavItem, "url"> & { titleKey: string }>;
 	navSecondary: Array<Omit<DashboardNavItem, "url"> & { titleKey: string }>;
+	navMobile: Array<Omit<DashboardNavItem, "url"> & { titleKey: string }>;
 };
 
 // Get nav items with labels for server-side use
@@ -80,6 +110,7 @@ const slugToTitleKey: Record<string, string> = {
 	settings: dashboardNavDefinitions.navSecondary[0].titleKey,
 	help: dashboardNavDefinitions.navSecondary[1].titleKey,
 	search: dashboardNavDefinitions.navSecondary[2].titleKey,
+	account: dashboardNavDefinitions.navMobile[4].titleKey,
 };
 
 export function getDashboardTitleKey(segment: string | null): string {
@@ -99,6 +130,12 @@ export function getDashboardNavigation(locale: string): DashboardNavigation {
 			url: item.slug ? `${baseUrl}/${item.slug}` : baseUrl,
 		})),
 		navSecondary: dashboardNavDefinitions.navSecondary.map((item) => ({
+			titleKey: item.titleKey,
+			slug: item.slug,
+			icon: item.icon,
+			url: item.slug ? `${baseUrl}/${item.slug}` : baseUrl,
+		})),
+		navMobile: dashboardNavDefinitions.navMobile.map((item) => ({
 			titleKey: item.titleKey,
 			slug: item.slug,
 			icon: item.icon,

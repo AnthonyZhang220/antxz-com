@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import {
 	Bell,
+	BrushCleaning,
 	Globe,
 	Heart,
 	MessageCircleReply,
@@ -25,13 +26,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
-import {
 	HoverCard,
 	HoverCardContent,
 	HoverCardTrigger,
@@ -39,6 +33,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { handleError, handleSuccess } from "@/lib/errors/error-utils";
 import { getInitials, getRelativeTime } from "@/lib/shared/format";
+import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
 
 type FilterKey = "all" | "unread" | DashboardNotificationType;
 
@@ -278,205 +273,171 @@ export default function DashboardNotifications() {
 	// ── render ───────────────────────────────────────────────────────────────
 	return (
 		<div className="space-y-6 p-4 lg:p-6 h-[calc(100dvh-var(--header-height))]">
-			<Card className="h-full flex flex-col">
-				<CardHeader className="gap-3 shrink-0">
-					<div className="flex flex-wrap items-start justify-between gap-3">
-						<div className="space-y-1">
-							<CardTitle>{t("title")}</CardTitle>
-							<CardDescription>{t("description")}</CardDescription>
-						</div>
-						<div className="flex items-center gap-2">
-							<Badge variant="outline">
-								{t("unreadCount", { count: unreadCount })}
-							</Badge>
-							<Button
-								variant="outline"
-								size="sm"
-								onClick={() => void reload(true)}
-								disabled={isMutating || isLoading}
-							>
-								<RefreshCw className="size-4" />
-								{t("actions.refresh")}
-							</Button>
-							<Button
-								variant="default"
-								size="sm"
-								onClick={onMarkAllRead}
-								disabled={isMutating || isLoading || unreadCount === 0}
-							>
-								{t("actions.markAllRead")}
-							</Button>
-						</div>
-					</div>
-
-					<div className="flex flex-wrap gap-2">
+			<div className="flex flex-wrap gap-2">
+				<Tabs defaultValue={filterOrder[0]}>
+					<TabsList className="**:data-[slot=badge]:size-5 **:data-[slot=badge]:rounded-full **:data-[slot=badge]:bg-muted-foreground/30 **:data-[slot=badge]:px-1 @4xl/main:flex">
 						{filterOrder.map((filter) => (
-							<Button
+							<TabsTrigger
 								key={filter}
-								variant={activeFilter === filter ? "default" : "outline"}
-								size="sm"
+								value={filter}
 								onClick={() => setActiveFilter(filter)}
 							>
 								{t(`filters.${filter}`)}
-							</Button>
+								{filter === "unread" && unreadCount > 0 && (
+									<Badge variant="secondary">{unreadCount}</Badge>
+								)}
+							</TabsTrigger>
 						))}
-					</div>
-				</CardHeader>
-				<CardContent className="space-y-3 overflow-y-auto overscroll-contain">
-					{isLoading ? (
-						<div className="space-y-3">
-							{Array.from({ length: 4 }).map((_, idx) => (
-								<Skeleton key={idx} className="h-24 w-full rounded-lg" />
-							))}
-						</div>
-					) : loadError ? (
-						<ErrorState
-							title={t("title")}
-							description={loadError}
-							onRetry={() => void reload(true)}
-							retryLabel={t("actions.refresh")}
-						/>
-					) : filteredNotifications.length === 0 ? (
-						<div className="rounded-lg border border-dashed p-8 text-center">
-							<p className="text-sm font-medium">{t("empty.title")}</p>
-							<p className="mt-1 text-sm text-muted-foreground">
-								{t("empty.description")}
-							</p>
-						</div>
-					) : (
-						<div className="space-y-3">
-							{filteredNotifications.map((notification) => {
-								const Icon = getTypeIcon(notification.type);
-								const actorName = notification.actor.name || userFallback;
-								const articleTitle = getArticleTitle(notification);
+					</TabsList>
+				</Tabs>
+				<div className="flex items-center gap-2">
+					<Button
+						variant="default"
+						size="sm"
+						onClick={onMarkAllRead}
+						disabled={isMutating || isLoading || unreadCount === 0}
+					>
+						{t("actions.markAllRead")}
+						<BrushCleaning className="size-4" />
+					</Button>
+				</div>
+			</div>
+			{isLoading ? (
+				<div className="space-y-3">
+					{Array.from({ length: 4 }).map((_, idx) => (
+						<Skeleton key={idx} className="h-24 w-full rounded-lg" />
+					))}
+				</div>
+			) : loadError ? (
+				<ErrorState
+					title={t("title")}
+					description={loadError}
+					onRetry={() => void reload(true)}
+					retryLabel={t("actions.refresh")}
+				/>
+			) : filteredNotifications.length === 0 ? (
+				<div className="rounded-lg border border-dashed p-8 text-center">
+					<p className="text-sm font-medium">{t("empty.title")}</p>
+					<p className="mt-1 text-sm text-muted-foreground">
+						{t("empty.description")}
+					</p>
+				</div>
+			) : (
+				<div className="space-y-3">
+					{filteredNotifications.map((notification) => {
+						const Icon = getTypeIcon(notification.type);
+						const actorName = notification.actor.name || userFallback;
+						const articleTitle = getArticleTitle(notification);
 
-								const message =
-									notification.type === "reply" || notification.type === "like"
-										? t.rich(
-												notification.type === "reply"
-													? "content.replyMessageRich"
-													: "content.likeMessageRich",
-												{
-													actorName,
-													articleTitle,
-													actor: (chunks) => (
-														<UserHoverCard
-															notification={notification}
-															bioEmptyLabel={userBioEmpty}
-															websiteLabel={userWebsiteLabel}
-														>
-															{chunks}
-														</UserHoverCard>
-													),
-													article: (chunks) => (
-														<ArticleHoverCard
-															notification={notification}
-															articleLabel={articleLabel}
-															missingLabel={articleMissing}
-														>
-															{chunks}
-														</ArticleHoverCard>
-													),
-												},
-											)
-										: getNotificationPlainMessage(notification);
+						const message =
+							notification.type === "reply" || notification.type === "like"
+								? t.rich(
+										notification.type === "reply"
+											? "content.replyMessageRich"
+											: "content.likeMessageRich",
+										{
+											actorName,
+											articleTitle,
+											actor: (chunks) => (
+												<UserHoverCard
+													notification={notification}
+													bioEmptyLabel={userBioEmpty}
+													websiteLabel={userWebsiteLabel}
+												>
+													{chunks}
+												</UserHoverCard>
+											),
+											article: (chunks) => (
+												<ArticleHoverCard
+													notification={notification}
+													articleLabel={articleLabel}
+													missingLabel={articleMissing}
+												>
+													{chunks}
+												</ArticleHoverCard>
+											),
+										},
+									)
+								: getNotificationPlainMessage(notification);
 
-								return (
-									<div
-										key={notification.id}
-										className="rounded-lg border bg-card p-4 shadow-xs transition-colors hover:bg-muted/40"
-									>
-										<div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-											<div className="flex min-w-0 flex-1 gap-3">
-												<Avatar size="lg" className="mt-0.5">
-													{notification.actor_avatar_url ? (
-														<AvatarImage
-															src={notification.actor_avatar_url}
-															alt={notification.actor_name}
-														/>
-													) : null}
-													<AvatarFallback>
-														{getInitials(notification.actor_name)}
-													</AvatarFallback>
-												</Avatar>
-
-												<div className="min-w-0 space-y-2">
-													{!notification.is_read ? (
-														<Badge variant="secondary">
-															{t("status.unread")}
-														</Badge>
-													) : null}
-													<p className="text-sm leading-6 text-muted-foreground">
-														{message}
+						return (
+							<div
+								key={notification.id}
+								className="rounded-lg border bg-card p-4 shadow-xs transition-colors hover:bg-muted/40"
+							>
+								<div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+									<div className="flex min-w-0 flex-1 gap-3">
+										<div className="min-w-0 space-y-2">
+											{!notification.is_read ? (
+												<Badge variant="secondary">{t("status.unread")}</Badge>
+											) : null}
+											<p className="text-sm leading-6 text-muted-foreground">
+												{message}
+											</p>
+											{notification.type === "reply" &&
+											notification.metadata.comment_preview ? (
+												<div className="rounded-md border bg-muted/40 px-3 py-2 text-sm text-muted-foreground">
+													<p className="mb-1 text-xs font-medium uppercase tracking-wide">
+														{commentPreviewLabel}
 													</p>
-													{notification.type === "reply" &&
-													notification.metadata.comment_preview ? (
-														<div className="rounded-md border bg-muted/40 px-3 py-2 text-sm text-muted-foreground">
-															<p className="mb-1 text-xs font-medium uppercase tracking-wide">
-																{commentPreviewLabel}
-															</p>
-															<p className="line-clamp-3">
-																{notification.metadata.comment_preview}
-															</p>
-														</div>
-													) : null}
-													<div className="flex items-center gap-2 text-xs text-muted-foreground">
-														<Badge
-															variant={
-																notification.is_read ? "outline" : "default"
-															}
-														>
-															<Icon className="size-3" />
-															{t(`types.${notification.type}`)}
-														</Badge>
-														<span className="text-xs text-muted-foreground">
-															{getRelativeTime(locale, notification.created_at)}
-														</span>
-													</div>
+													<p className="line-clamp-3">
+														{notification.metadata.comment_preview}
+													</p>
 												</div>
-											</div>
-
-											<div className="flex shrink-0 flex-wrap items-center gap-2 md:justify-end">
-												{notification.target_url ? (
-													<Button variant="outline" size="sm" asChild>
-														<Link href={notification.target_url}>
-															{t("actions.view")}
-														</Link>
-													</Button>
-												) : null}
-												{notification.type === "reply" ? (
-													<Button variant="outline" size="sm" asChild>
-														<Link href={notification.target_url || "#"}>
-															{t("actions.reply")}
-														</Link>
-													</Button>
-												) : null}
-												{notification.type === "like" ? (
-													<Button variant="outline" size="sm" asChild>
-														<Link href={notification.target_url || "#"}>
-															{t("actions.likeBack")}
-														</Link>
-													</Button>
-												) : null}
-												{!notification.is_read ? (
-													<Button
-														variant="default"
-														size="sm"
-														onClick={() => void onMarkRead(notification.id)}
-														disabled={isMutating}
-													>
-														{t("actions.markRead")}
-													</Button>
-												) : null}
+											) : null}
+											<div className="flex items-center gap-2 text-xs text-muted-foreground">
+												<Badge
+													variant={notification.is_read ? "outline" : "default"}
+												>
+													<Icon className="size-3" />
+													{t(`types.${notification.type}`)}
+												</Badge>
+												<span className="text-xs text-muted-foreground">
+													{getRelativeTime(locale, notification.created_at)}
+												</span>
 											</div>
 										</div>
 									</div>
-								);
-							})}
-						</div>
-					)}
-				</CardContent>
-			</Card>
+
+									<div className="flex shrink-0 flex-wrap items-center gap-2 md:justify-end">
+										{notification.target_url ? (
+											<Button variant="outline" size="sm" asChild>
+												<Link href={notification.target_url}>
+													{t("actions.view")}
+												</Link>
+											</Button>
+										) : null}
+										{notification.type === "reply" ? (
+											<Button variant="outline" size="sm" asChild>
+												<Link href={notification.target_url || "#"}>
+													{t("actions.reply")}
+												</Link>
+											</Button>
+										) : null}
+										{notification.type === "like" ? (
+											<Button variant="outline" size="sm" asChild>
+												<Link href={notification.target_url || "#"}>
+													{t("actions.likeBack")}
+												</Link>
+											</Button>
+										) : null}
+										{!notification.is_read ? (
+											<Button
+												variant="default"
+												size="sm"
+												onClick={() => void onMarkRead(notification.id)}
+												disabled={isMutating}
+											>
+												{t("actions.markRead")}
+											</Button>
+										) : null}
+									</div>
+								</div>
+							</div>
+						);
+					})}
+				</div>
+			)}
 		</div>
 	);
 }

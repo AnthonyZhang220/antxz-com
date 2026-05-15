@@ -82,20 +82,20 @@
             "contactIntentHint": "联系时请备注来意。",
             "contactEmail": "邮箱",
             "contactGithub": "GitHub",
-                "contactWechat": "微信",
-                "contactActionEmail": "打开邮箱",
-                "contactActionExternal": "外部链接",
-                "contactActionQr": "打开二维码",
-                "contactEmailHint": "点击后会调用你的默认邮箱客户端。",
-                "contactGithubHint": "点击后会在新标签页打开我的 GitHub。",
-                "contactWechatHint": "点击后会打开二维码卡片，并显示我的微信号。",
-                "wechatDialogTitle": "扫码查看我的微信",
-                "wechatDialogDescription": "这个二维码编码的是我的微信号，方便你扫码后搜索。",
-                "wechatDialogFootnote": "如果扫码后没有直接跳转，也可以在微信里搜索 Noobita220。",
-                "contactCV": "我的简历",
-                "contactActionCV": "查看简历",
-                "contactCVHint": "直接在站内查看我的简历。",
-                "contactDialogClose": "关闭"
+            "contactWechat": "微信",
+            "contactActionEmail": "打开邮箱",
+            "contactActionExternal": "外部链接",
+            "contactActionQr": "打开二维码",
+            "contactEmailHint": "点击后会调用你的默认邮箱客户端。",
+            "contactGithubHint": "点击后会在新标签页打开我的 GitHub。",
+            "contactWechatHint": "点击后会打开二维码卡片，并显示我的微信号。",
+            "wechatDialogTitle": "扫码查看我的微信",
+            "wechatDialogDescription": "这个二维码编码的是我的微信号，方便你扫码后搜索。",
+            "wechatDialogFootnote": "如果扫码后没有直接跳转，也可以在微信里搜索 Noobita220。",
+            "contactCV": "我的简历",
+            "contactActionCV": "查看简历",
+            "contactCVHint": "直接在站内查看我的简历。",
+            "contactDialogClose": "关闭"
         },
         "profile": {
             "title": "个人侧写",
@@ -417,15 +417,15 @@
         "commentsLike": "点赞",
         "commentsUnlike": "已点赞",
         "commentsLikeCount": "{count} 个赞",
-            "commentsReply": "回复",
-            "commentsCancel": "取消",
-            "commentsReplyTo": "回复 {name}",
-            "commentsReplyPlaceholder": "写下你的回复...",
-            "commentsDelete": "删除",
-            "commentsDeleting": "删除中...",
-            "commentsDeleteConfirm": "确认删除这条评论吗？此操作无法撤销。",
-            "commentsDeleteForbidden": "你只能删除自己的评论。",
-            "commentsDeleteError": "删除评论失败。",
+        "commentsReply": "回复",
+        "commentsCancel": "取消",
+        "commentsReplyTo": "回复 {name}",
+        "commentsReplyPlaceholder": "写下你的回复...",
+        "commentsDelete": "删除",
+        "commentsDeleting": "删除中...",
+        "commentsDeleteConfirm": "确认删除这条评论吗？此操作无法撤销。",
+        "commentsDeleteForbidden": "你只能删除自己的评论。",
+        "commentsDeleteError": "删除评论失败。",
         "commentsErrorBlocked": "您的账户无法发表评论。",
         "commentsErrorSpam": "您的评论违反了我们的规则。",
         "commentsErrorQuarantine": "您的评论需要修改后才能发布。",
@@ -621,6 +621,17 @@
             "account": "账户",
             "brand": "AntXZ.com"
         },
+        "mobileNavigation": {
+            "overview": "概览",
+            "bookmarks": "收藏",
+            "comments": "评论",
+            "notifications": "通知",
+            "settings": "设置",
+            "help": "帮助",
+            "search": "搜索",
+            "account": "账户",
+            "brand": "AntXZ.com"
+        },
         "bookmarks": {
             "title": "已收藏",
             "description": "你收藏后准备稍后阅读的文章。",
@@ -630,6 +641,20 @@
         },
         "overview": {
             "title": "概览",
+            "account": {
+                "title": "账户",
+                "description": "查看你的账户信息，并管理公开展示的个人资料。",
+                "fields": {
+                    "noName": "暂未设置显示名称",
+                    "provider": "登录方式",
+                    "memberSince": "注册时间",
+                    "lastSignIn": "最近登录",
+                    "fullName": "显示名称",
+                    "avatarUrl": "头像地址",
+                    "website": "个人网站",
+                    "bio": "个人简介"
+                }
+            },
             "cards": {
                 "totalComments": {
                     "label": "发表评论",
@@ -743,8 +768,6 @@
             "wipBanner": "此功能正在开发中，回复内容暂时为模拟数据。"
         },
         "account": {
-            "title": "账户",
-            "description": "查看你的账户信息，并管理公开展示的个人资料。",
             "fields": {
                 "noName": "暂未设置显示名称",
                 "provider": "登录方式",
@@ -874,6 +897,15 @@
             "tryAgain": "重试",
             "goHome": "返回首页",
             "errorId": "错误 ID: {id}"
+        },
+        "auth": {
+            "invalidCredentials": "无效的登录凭据。",
+            "userExists": "账户已存在，请直接登录。",
+            "userNotFound": "未找到账户",
+            "weakPassword": "密码过于简单，请使用至少 8 个字符的密码。",
+            "passwordMismatch": "密码不匹配，请检查后重试。",
+            "oauthFailed": "第三方登录失败，请重试。",
+            "authRequired": "你需要登录才能执行此操作。"
         }
     },
     "toast": {

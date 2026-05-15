@@ -6,6 +6,7 @@ import { DashboardSidebar } from "@/components/dashboard/sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { createClient } from "@/lib/supabase/server";
 import { ensureUserSettingsFromCookies } from "@/lib/user/preferences-server";
+import DashboardMobileNav from "@/components/dashboard/mobile-nav";
 
 type DashboardLayoutProps = {
 	children: ReactNode;
@@ -45,7 +46,8 @@ export default async function DashboardLayout({
 			<DashboardSidebar initialUser={user} variant="inset" />
 			<SidebarInset>
 				<DashboardHeader />
-				{children}
+				<main className="flex-1 overflow-y-auto pb-20 md:pb-0">{children}</main>
+				<DashboardMobileNav />
 			</SidebarInset>
 		</SidebarProvider>
 	);

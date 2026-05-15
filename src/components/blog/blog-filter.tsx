@@ -5,7 +5,7 @@ import { Toggle } from "@/components/ui/toggle";
 import { Slider } from "@/components/ui/slider";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import type { BlogPost } from "@/types/blog";
+import type { BlogPost } from "@/lib/types/blog";
 
 const TAG_COLLAPSED_LIMIT = 4;
 

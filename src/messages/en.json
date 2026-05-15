@@ -82,20 +82,20 @@
             "contactIntentHint": "Please include your purpose when reaching out.",
             "contactEmail": "Email",
             "contactGithub": "GitHub",
-                "contactWechat": "WeChat",
-                "contactActionEmail": "Opens email",
-                "contactActionExternal": "External link",
-                "contactActionQr": "Opens QR code",
-                "contactEmailHint": "Clicking this opens your default mail app.",
-                "contactGithubHint": "Clicking this opens my GitHub in a new tab.",
-                "contactWechatHint": "Click to open a QR card and view my WeChat ID.",
-                "wechatDialogTitle": "Scan to find me on WeChat",
-                "wechatDialogDescription": "This QR code contains my WeChat ID for quick lookup.",
-                "wechatDialogFootnote": "If scanning does not jump directly, search for Noobita220 in WeChat.",
-                "contactCV": "My CV",
-                "contactActionCV": "View CV",
-                "contactCVHint": "View my CV directly on the site.",
-                "contactDialogClose": "Close"
+            "contactWechat": "WeChat",
+            "contactActionEmail": "Opens email",
+            "contactActionExternal": "External link",
+            "contactActionQr": "Opens QR code",
+            "contactEmailHint": "Clicking this opens your default mail app.",
+            "contactGithubHint": "Clicking this opens my GitHub in a new tab.",
+            "contactWechatHint": "Click to open a QR card and view my WeChat ID.",
+            "wechatDialogTitle": "Scan to find me on WeChat",
+            "wechatDialogDescription": "This QR code contains my WeChat ID for quick lookup.",
+            "wechatDialogFootnote": "If scanning does not jump directly, search for Noobita220 in WeChat.",
+            "contactCV": "My CV",
+            "contactActionCV": "View CV",
+            "contactCVHint": "View my CV directly on the site.",
+            "contactDialogClose": "Close"
         },
         "profile": {
             "title": "Profile",
@@ -621,6 +621,17 @@
             "account": "Account",
             "brand": "AntXZ.com"
         },
+        "mobileNavigation": {
+            "overview": "Overview",
+            "bookmarks": "Bookmarks",
+            "comments": "Comments",
+            "notifications": "Notifications",
+            "settings": "Settings",
+            "help": "Get Help",
+            "search": "AI Search",
+            "account": "Account",
+            "brand": "AntXZ.com"
+        },
         "bookmarks": {
             "title": "Saved Posts",
             "description": "Articles you bookmarked for later reading.",
@@ -630,6 +641,20 @@
         },
         "overview": {
             "title": "Overview",
+            "account": {
+                "title": "Account",
+                "description": "View your account overview and manage your public profile information.",
+                "fields": {
+                    "noName": "No display name yet",
+                    "provider": "Sign-in provider",
+                    "memberSince": "Member since",
+                    "lastSignIn": "Last sign in",
+                    "fullName": "Display name",
+                    "avatarUrl": "Avatar URL",
+                    "website": "Website",
+                    "bio": "Bio"
+                }
+            },
             "cards": {
                 "totalComments": {
                     "label": "Total Comments",
@@ -743,8 +768,6 @@
             "wipBanner": "This feature is currently under development. Responses are not real yet."
         },
         "account": {
-            "title": "Account",
-            "description": "View your account overview and manage your public profile information.",
             "fields": {
                 "noName": "No display name yet",
                 "provider": "Sign-in provider",
@@ -874,6 +897,15 @@
             "tryAgain": "Try again",
             "goHome": "Go to home",
             "errorId": "Error ID: {id}"
+        },
+        "auth": {
+            "invalidCredentials": "Invalid email or password.",
+            "userExists": "An account with this email already exists.",
+            "userNotFound": "No account found with this email.",
+            "weakPassword": "Password must be at least 8 characters long.",
+            "passwordMismatch": "Passwords do not match.",
+            "oauthFailed": "OAuth login failed. Please try again.",
+            "authRequired": "Please log in to perform this action."
         }
     },
     "toast": {

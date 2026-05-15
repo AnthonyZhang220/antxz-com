@@ -1,27 +1,24 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { PortableText } from "next-sanity";
-import {
-	ArrowLeft,
-	Calendar,
-	ExternalLink,
-	Sparkles,
-} from "lucide-react";
+import { ArrowLeft, Calendar, ExternalLink, Sparkles } from "lucide-react";
 import { GitHubIcon } from "../shared/github-icon";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { ProjectItem } from "@/types/project";
-import type { ProjectLabels } from "@/components/projects/projects-showcase";
+import type { ProjectItem } from "@/lib/types/project";
+import { useTranslations } from "next-intl";
 
 type ProjectDetailProps = {
 	project: ProjectItem;
 	locale: string;
-	labels: ProjectLabels;
 };
 
-export function ProjectDetail({ project, locale, labels }: ProjectDetailProps) {
+export function ProjectDetail({ project, locale }: ProjectDetailProps) {
+	const tProject = useTranslations("project");
 	const backPath = `/${locale}/projects`;
 	const firstScreenshot = project.screenshots?.[0];
 	const remainingScreenshots = project.screenshots?.slice(1) ?? [];
@@ -32,7 +29,7 @@ export function ProjectDetail({ project, locale, labels }: ProjectDetailProps) {
 				<Button variant="ghost" size="sm" asChild className="-ml-2">
 					<Link href={backPath}>
 						<ArrowLeft className="mr-1 h-4 w-4" />
-						{labels.allProjects}
+						{tProject("allProjects")}
 					</Link>
 				</Button>
 			</div>
@@ -40,8 +37,10 @@ export function ProjectDetail({ project, locale, labels }: ProjectDetailProps) {
 			<div className="space-y-8">
 				<div className="space-y-4">
 					<div className="flex flex-wrap items-center gap-2">
-						{project.featured ? <Badge>{labels.featured}</Badge> : null}
-						{project.isNew ? <Badge variant="secondary">{labels.new}</Badge> : null}
+						{project.featured ? <Badge>{tProject("featured")}</Badge> : null}
+						{project.isNew ? (
+							<Badge variant="secondary">{tProject("new")}</Badge>
+						) : null}
 						{project.publishedAt ? (
 							<Badge variant="outline" className="gap-1">
 								<Calendar className="h-3.5 w-3.5" />
@@ -57,22 +56,32 @@ export function ProjectDetail({ project, locale, labels }: ProjectDetailProps) {
 						<p className="text-lg text-muted-foreground">{project.subtitle}</p>
 					) : null}
 					{project.introduction ? (
-						<p className="text-base text-muted-foreground">{project.introduction}</p>
+						<p className="text-base text-muted-foreground">
+							{project.introduction}
+						</p>
 					) : null}
 
 					<div className="flex flex-wrap gap-2 pt-1">
 						{project.websiteUrl ? (
 							<Button asChild>
-								<Link href={project.websiteUrl} target="_blank" rel="noopener noreferrer">
-									{labels.liveSite}
+								<Link
+									href={project.websiteUrl}
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									{tProject("liveSite")}
 									<ExternalLink className="ml-1 h-4 w-4" />
 								</Link>
 							</Button>
 						) : null}
 						{project.githubUrl ? (
 							<Button variant="outline" asChild>
-								<Link href={project.githubUrl} target="_blank" rel="noopener noreferrer">
-									{labels.sourceCode}
+								<Link
+									href={project.githubUrl}
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									{tProject("sourceCode")}
 									<GitHubIcon className="ml-1 h-4 w-4" />
 								</Link>
 							</Button>
@@ -94,7 +103,9 @@ export function ProjectDetail({ project, locale, labels }: ProjectDetailProps) {
 
 				{project.screenshots?.length ? (
 					<div>
-						<h2 className="mb-3 text-xl font-semibold">{labels.screenshots}</h2>
+						<h2 className="mb-3 text-xl font-semibold">
+							{tProject("screenshots")}
+						</h2>
 						<div className="space-y-3">
 							{firstScreenshot?.url ? (
 								<div className="relative aspect-video w-full overflow-hidden rounded-xl border bg-muted">
@@ -117,7 +128,10 @@ export function ProjectDetail({ project, locale, labels }: ProjectDetailProps) {
 											{image.url ? (
 												<Image
 													src={image.url}
-													alt={image.alt || `${project.title} screenshot ${index + 2}`}
+													alt={
+														image.alt ||
+														`${project.title} screenshot ${index + 2}`
+													}
 													fill
 													className="object-cover"
 												/>
@@ -134,21 +148,26 @@ export function ProjectDetail({ project, locale, labels }: ProjectDetailProps) {
 					<div className="space-y-6 lg:col-span-8">
 						<Card>
 							<CardHeader>
-								<CardTitle>{labels.overview}</CardTitle>
+								<CardTitle>{tProject("overview")}</CardTitle>
 							</CardHeader>
 							<CardContent>
-								<p className="leading-7 text-muted-foreground">{project.overview}</p>
+								<p className="leading-7 text-muted-foreground">
+									{project.overview}
+								</p>
 							</CardContent>
 						</Card>
 
 						{project.features?.length ? (
 							<Card>
 								<CardHeader>
-									<CardTitle>{labels.keyFeatures}</CardTitle>
+									<CardTitle>{tProject("keyFeatures")}</CardTitle>
 								</CardHeader>
 								<CardContent className="space-y-4">
 									{project.features.map((feature) => (
-										<div key={`${project.slug}-${feature.name}`} className="space-y-1">
+										<div
+											key={`${project.slug}-${feature.name}`}
+											className="space-y-1"
+										>
 											<p className="font-medium">{feature.name}</p>
 											<p className="text-sm leading-6 text-muted-foreground">
 												{feature.detail}
@@ -164,24 +183,27 @@ export function ProjectDetail({ project, locale, labels }: ProjectDetailProps) {
 								<CardHeader>
 									<CardTitle>
 										<Sparkles className="mr-2 inline h-5 w-5" />
-										{labels.details}
+										{tProject("details")}
 									</CardTitle>
 								</CardHeader>
 								<CardContent className="prose prose-zinc max-w-none dark:prose-invert">
 									<PortableText
-										value={project.body as Parameters<typeof PortableText>[0]["value"]}
+										value={
+											project.body as Parameters<
+												typeof PortableText
+											>[0]["value"]
+										}
 									/>
 								</CardContent>
 							</Card>
 						) : null}
-
 					</div>
 
 					<div className="space-y-4 lg:col-span-4">
 						{project.roles?.length ? (
 							<Card>
 								<CardHeader>
-									<CardTitle>{labels.roles}</CardTitle>
+									<CardTitle>{tProject("roles")}</CardTitle>
 								</CardHeader>
 								<CardContent className="flex flex-wrap gap-2">
 									{project.roles.map((role) => (
@@ -196,7 +218,7 @@ export function ProjectDetail({ project, locale, labels }: ProjectDetailProps) {
 						{project.libraries?.length ? (
 							<Card>
 								<CardHeader>
-									<CardTitle>{labels.libraries}</CardTitle>
+									<CardTitle>{tProject("libraries")}</CardTitle>
 								</CardHeader>
 								<CardContent className="flex flex-wrap gap-2">
 									{project.libraries.map((item) => (
@@ -211,10 +233,12 @@ export function ProjectDetail({ project, locale, labels }: ProjectDetailProps) {
 						{project.process ? (
 							<Card>
 								<CardHeader>
-									<CardTitle>{labels.process}</CardTitle>
+									<CardTitle>{tProject("process")}</CardTitle>
 								</CardHeader>
 								<CardContent>
-									<p className="text-sm leading-6 text-muted-foreground">{project.process}</p>
+									<p className="text-sm leading-6 text-muted-foreground">
+										{project.process}
+									</p>
 								</CardContent>
 							</Card>
 						) : null}
@@ -222,10 +246,12 @@ export function ProjectDetail({ project, locale, labels }: ProjectDetailProps) {
 						{project.challenges ? (
 							<Card>
 								<CardHeader>
-									<CardTitle>{labels.challenges}</CardTitle>
+									<CardTitle>{tProject("challenges")}</CardTitle>
 								</CardHeader>
 								<CardContent>
-									<p className="text-sm leading-6 text-muted-foreground">{project.challenges}</p>
+									<p className="text-sm leading-6 text-muted-foreground">
+										{project.challenges}
+									</p>
 								</CardContent>
 							</Card>
 						) : null}
@@ -233,10 +259,12 @@ export function ProjectDetail({ project, locale, labels }: ProjectDetailProps) {
 						{project.results ? (
 							<Card>
 								<CardHeader>
-									<CardTitle>{labels.results}</CardTitle>
+									<CardTitle>{tProject("results")}</CardTitle>
 								</CardHeader>
 								<CardContent>
-									<p className="text-sm leading-6 text-muted-foreground">{project.results}</p>
+									<p className="text-sm leading-6 text-muted-foreground">
+										{project.results}
+									</p>
 								</CardContent>
 							</Card>
 						) : null}

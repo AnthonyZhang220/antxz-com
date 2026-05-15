@@ -60,9 +60,12 @@ export default function CommentModeration() {
 		setIsLoading(true);
 		setLoadError(null);
 		try {
-			const payload = await getCommentModerationQueue();
-			setIsForbidden(Boolean(payload.forbidden));
-			setComments(payload.comments ?? []);
+			const result = await getCommentModerationQueue();
+			if (result.success) {
+				setIsForbidden(Boolean(result.data.forbidden));
+				setComments(result.data.comments);
+				return;
+			}
 		} catch (error) {
 			setLoadError(getActionErrorMessage(error, loadErrorMessage));
 		} finally {
@@ -88,7 +91,7 @@ export default function CommentModeration() {
 			} else if (payload.action === "delete-comment") {
 				await deleteCommentAsAdmin(String(payload.commentId));
 			} else {
-				throw new Error(updateErrorMessage);
+				handleError(new Error("Unknown action"), updateErrorMessage);
 			}
 
 			handleSuccess(updateSuccessMessage);

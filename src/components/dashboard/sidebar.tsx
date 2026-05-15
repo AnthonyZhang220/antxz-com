@@ -10,7 +10,7 @@ import type { User } from "@supabase/supabase-js";
 import { getDashboardNavigation } from "@/lib/actions/navigation";
 import { NavMain } from "@/components/dashboard/nav-main";
 import { NavSecondary } from "@/components/dashboard/nav-secondary";
-import { NavUser } from "@/components/dashboard/nav-user";
+import NavUser from "./nav-user";
 import {
 	Sidebar,
 	SidebarContent,
@@ -20,7 +20,7 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { useAuthNavigation, useUserState } from "@/hooks";
+import { useUserState } from "@/hooks";
 import { useSidebar } from "@/components/ui/sidebar";
 import { createClient } from "@/lib/supabase/client";
 
@@ -37,9 +37,7 @@ export function DashboardSidebar({
 	const baseUrl = `/${locale}`;
 	const rawNavigation = getDashboardNavigation(locale);
 	const { isMobile } = useSidebar();
-	const { user, displayName, isLoading, initials, signOut } =
-		useUserState(initialUser);
-	const { handleLogout } = useAuthNavigation(signOut);
+	const { user, displayName, isLoading, initials } = useUserState(initialUser);
 	const supabase = useMemo(() => createClient(), []);
 	const [unreadCount, setUnreadCount] = useState(0);
 
@@ -60,7 +58,18 @@ export function DashboardSidebar({
 
 		const channel = supabase
 			.channel(`sidebar-notifications-${user.id}`)
-			.on("postgres_changes", { event: "*", schema: "public", table: "notifications", filter: `user_id=eq.${user.id}` }, () => { void loadUnread(); })
+			.on(
+				"postgres_changes",
+				{
+					event: "*",
+					schema: "public",
+					table: "notifications",
+					filter: `user_id=eq.${user.id}`,
+				},
+				() => {
+					void loadUnread();
+				},
+			)
 			.subscribe();
 
 		return () => {
@@ -109,7 +118,9 @@ export function DashboardSidebar({
 									height={672}
 									className="h-8 w-auto shrink-0 object-contain dark:invert group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:scale-[1.35]"
 								/>
-								<span className="text-base font-semibold group-data-[collapsible=icon]:hidden">AntXZ.com</span>
+								<span className="text-base font-semibold group-data-[collapsible=icon]:hidden">
+									AntXZ.com
+								</span>
 							</Link>
 						</SidebarMenuButton>
 					</SidebarMenuItem>
@@ -125,7 +136,6 @@ export function DashboardSidebar({
 					displayName={displayName}
 					isLoading={isLoading}
 					initials={initials}
-					onLogout={handleLogout}
 				/>
 			</SidebarFooter>
 		</Sidebar>

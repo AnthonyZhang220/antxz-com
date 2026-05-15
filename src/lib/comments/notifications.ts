@@ -26,10 +26,10 @@ export function getActorProfile(user: User) {
 					user.user_metadata?.name ||
 					user.user_metadata?.user_name ||
 					user.email?.split("@")[0] ||
-					"User"
+					"User",
 			) || "User",
 		avatarUrl: String(
-			user.user_metadata?.avatar_url || user.user_metadata?.picture || ""
+			user.user_metadata?.avatar_url || user.user_metadata?.picture || "",
 		),
 		bio: String(user.user_metadata?.bio || ""),
 		website: String(user.user_metadata?.website || ""),
@@ -60,39 +60,54 @@ export async function getArticleNotificationTarget(articleKey: string) {
 }
 
 export async function createNotification(input: CreateNotificationInput) {
-	const supabase = await createClient();
+	try {
+		const supabase = await createClient();
 
-	const { data: userSettings, error: userSettingsError } = await supabase
-		.from("user_settings")
-		.select("notifications_enabled")
-		.eq("user_id", input.userId)
-		.maybeSingle();
+		const { data: userSettings, error: userSettingsError } = await supabase
+			.from("user_settings")
+			.select("notifications_enabled")
+			.eq("user_id", input.userId)
+			.maybeSingle();
 
-	if (
-		userSettingsError &&
-		!isMissingUserSettingsRowError(userSettingsError) &&
-		!isMissingUserSettingsTableError(userSettingsError)
-	) {
-		console.error("Failed to read notification settings:", userSettingsError);
-	}
+		if (
+			userSettingsError &&
+			!isMissingUserSettingsRowError(userSettingsError) &&
+			!isMissingUserSettingsTableError(userSettingsError)
+		) {
+			console.error("Failed to read notification settings:", userSettingsError);
+		}
 
-	if (userSettings?.notifications_enabled === false) {
-		return;
-	}
+		if (userSettings?.notifications_enabled === false) {
+			return { success: true, error: "User has disabled notifications" };
+		}
 
-	const { error } = await supabase.rpc("create_notification", {
-		p_user_id: input.userId,
-		p_actor_user_id: input.actorUserId ?? null,
-		p_type: input.type,
-		p_title: input.title,
-		p_message: input.message,
-		p_actor_name: input.actorName ?? "System",
-		p_actor_avatar_url: input.actorAvatarUrl ?? "",
-		p_target_url: input.targetUrl ?? null,
-		p_metadata: input.metadata ?? {},
-	});
+		const { error: rpcError } = await supabase.rpc("create_notification", {
+			p_user_id: input.userId,
+			p_actor_user_id: input.actorUserId ?? null,
+			p_type: input.type,
+			p_title: input.title,
+			p_message: input.message,
+			p_actor_name: input.actorName ?? "System",
+			p_actor_avatar_url: input.actorAvatarUrl ?? "",
+			p_target_url: input.targetUrl ?? null,
+			p_metadata: input.metadata ?? {},
+		});
 
-	if (error) {
-		throw new Error(error.message || "Failed to create notification");
+		if (rpcError) {
+			console.error("RPC Error:", rpcError);
+			return {
+				success: false,
+				error: "Internal server error while creating notification",
+			};
+		}
+
+		return { success: true };
+	} catch (error) {
+		console.error("Failed to create notification:", error);
+
+		return {
+			success: false,
+			error: error instanceof Error ? error.message : "Unknown error",
+		};
 	}
 }

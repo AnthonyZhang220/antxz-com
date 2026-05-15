@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import { urlFor } from "@/sanity/lib/image";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { BlogPost } from "@/types/blog";
+import { BlogPost } from "@/lib/types/blog";
 import { useEffect, useRef, useState } from "react";
 
 export default function Blogs({

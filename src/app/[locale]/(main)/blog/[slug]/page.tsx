@@ -4,18 +4,28 @@ import { getBlogEngagementBySlug } from "@/lib/blog/engagement";
 import { notFound } from "next/navigation";
 import BlogPostPage from "@/components/blog/blog-post";
 import BlogComments from "@/components/blog/blog-comments";
+import { createClient as createSupabaseClient } from "@/lib/supabase/server";
+import { getCommentsByArticleKey } from "@/lib/actions/comments";
 
 interface BlogPostProps {
 	params: Promise<{ slug: string; locale: string }>;
 	searchParams?: Promise<{ lang?: string }>;
 }
 
-// export async function generateStaticParams() {
-// 	const slugs = await client.fetch<Array<{ slug: string }>>(allPostSlugsQuery);
-// 	return slugs.map(({ slug }: { slug: string }) => ({ slug }));
-// }
+export async function generateStaticParams() {
+	const slugs = await client.fetch<Array<{ slug: string }>>(allPostSlugsQuery);
+	const locales = ["en", "zh"];
+	return locales.flatMap((locale) =>
+		slugs.map(({ slug }) => ({ slug, locale })),
+	);
+}
 
 export default async function Page({ params, searchParams }: BlogPostProps) {
+	const supabase = await createSupabaseClient();
+	const {
+		data: { user },
+	} = await supabase.auth.getUser();
+
 	const { slug, locale } = await params;
 	const resolvedSearchParams = (await searchParams) ?? {};
 	const requestedLang = resolvedSearchParams.lang;
@@ -25,18 +35,33 @@ export default async function Page({ params, searchParams }: BlogPostProps) {
 			: locale === "zh"
 				? "zh"
 				: "en";
-	const post = await client.fetch(postBySlugQuery, {
-		slug,
-		locale,
-		contentLang,
-	});
+
+	const articleKeys = `blog:${slug}`;
+
+	const [post, engagement] = await Promise.all([
+		client.fetch(postBySlugQuery, {
+			slug,
+			locale,
+			contentLang,
+		}),
+		getBlogEngagementBySlug(slug),
+	]);
+
 	if (!post) notFound();
-	const engagement = await getBlogEngagementBySlug(slug);
+
 	const postWithEngagement = {
 		...post,
 		commentCount: engagement.commentCount,
 		likeCount: engagement.likeCount,
 	};
+
+	const commentResult = await getCommentsByArticleKey(
+		articleKeys,
+		user?.id ?? null,
+	);
+	console.error("Comment fetch result:", commentResult);
+
+	const comments = commentResult.success ? commentResult.data : [];
 
 	return (
 		<>
@@ -49,7 +74,11 @@ export default async function Page({ params, searchParams }: BlogPostProps) {
 				id="comments"
 				className="mx-auto max-w-4xl scroll-mt-24 px-5 sm:px-8"
 			>
-				<BlogComments articleKey={`blog:${slug}`} />
+				<BlogComments
+					initialUser={user}
+					articleKey={articleKeys}
+					initialComments={comments}
+				/>
 			</div>
 		</>
 	);
