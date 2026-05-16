@@ -57,11 +57,12 @@ export async function middleware(request: NextRequest) {
 	// =========================
 	const urlLocale = request.nextUrl.pathname.split("/")[1];
 	const expectedLocale = serverSettings?.locale ?? locale;
+	const expectedTheme = serverSettings?.theme ?? "system";
 
 	if (
 		(urlLocale === "en" || urlLocale === "zh") &&
 		urlLocale !== expectedLocale &&
-		!cookieLocale
+		(serverSettings?.locale || !cookieLocale)
 	) {
 		const newPath = request.nextUrl.pathname.replace(
 			`/${urlLocale}`,
@@ -80,6 +81,12 @@ export async function middleware(request: NextRequest) {
 		redirectResponse.cookies.set(
 			"preferred_region",
 			region,
+			preferenceCookieOptions,
+		);
+
+		redirectResponse.cookies.set(
+			"preferred_theme",
+			expectedTheme,
 			preferenceCookieOptions,
 		);
 

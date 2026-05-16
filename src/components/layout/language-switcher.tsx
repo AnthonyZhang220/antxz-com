@@ -3,7 +3,6 @@
 import { usePathname } from "@/i18n/navigation";
 import { useLocale } from "next-intl";
 import { cn } from "@/lib/utils";
-import { Button } from "../ui/button";
 import { LucideIcon } from "lucide-react";
 
 type LanguageItem = {

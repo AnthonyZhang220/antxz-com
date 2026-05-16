@@ -1,7 +1,6 @@
 "use client";
 
-import { Link } from "@/i18n/navigation";
-import { usePathname } from "next/navigation";
+import { Link, usePathname } from "@/i18n/navigation";
 import { CirclePlus, LucideIcon, Mail } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -27,6 +26,7 @@ export function NavMain({
 }) {
 	const pathname = usePathname();
 	const { isMobile, setOpenMobile } = useSidebar();
+
 
 	const handleLinkClick = () => {
 		if (isMobile) {

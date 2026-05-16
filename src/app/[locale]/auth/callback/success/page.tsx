@@ -8,12 +8,13 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { useSearchParams } from "next/navigation";
 import { AuthLanguageSwitcher } from "@/components/layout/language-switcher";
+import { ThemeSync } from "@/components/shared/theme-sync";
 
 function normalizeNextPath(next: string | null) {
-  if (!next || !next.startsWith("/") || next.startsWith("//")) {
-    return "/dashboard"; // next-intl 的 router 会自动加 locale
-  }
-  return next;
+	if (!next || !next.startsWith("/") || next.startsWith("//")) {
+		return "/dashboard"; // next-intl 的 router 会自动加 locale
+	}
+	return next;
 }
 
 export default function AuthCallbackSuccessPage() {
@@ -23,13 +24,18 @@ export default function AuthCallbackSuccessPage() {
 	const nextPath = normalizeNextPath(searchParams.get("next"));
 
 	useEffect(() => {
-		router.replace(nextPath);
+		window.location.href = nextPath;
 	}, [nextPath, router]);
 
 	return (
 		<div className="flex min-h-screen items-center justify-center px-6">
 			<div className="flex w-full max-w-sm flex-col items-center gap-3 text-center">
-				<Link href="/" aria-label="ANTXZ" className="mb-1 inline-flex items-center gap-3">
+				<ThemeSync />
+				<Link
+					href="/"
+					aria-label="ANTXZ"
+					className="mb-1 inline-flex items-center gap-3"
+				>
 					<Image
 						src="/logo.svg"
 						alt="ANTXZ"

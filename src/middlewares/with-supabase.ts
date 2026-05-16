@@ -2,6 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 import {
+	AppTheme,
 	isMissingUserSettingsRowError,
 	isMissingUserSettingsTableError,
 	preferenceCookieOptions,
@@ -12,7 +13,7 @@ import {
 
 type SessionSyncResult = {
 	supabaseResponse: NextResponse;
-	serverSettings?: Pick<UserSettings, "locale" | "region">;
+	serverSettings?: Pick<UserSettings, "locale" | "region" | "theme">;
 };
 
 export async function updateSession(
@@ -61,7 +62,7 @@ export async function updateSession(
 	if (userId) {
 		const { data: settings, error } = await supabase
 			.from("user_settings")
-			.select("locale, region")
+			.select("locale, region, theme")
 			.eq("user_id", userId)
 			.single();
 
@@ -75,12 +76,12 @@ export async function updateSession(
 				error,
 			);
 		}
-		
 
-		if (settings?.locale && settings?.region) {
+		if (settings?.locale && settings?.region && settings?.theme) {
 			serverSettings = {
 				locale: settings.locale as AppLocale,
 				region: settings.region as AppRegion,
+				theme: settings.theme as AppTheme, 
 			};
 
 			supabaseResponse.cookies.set(
@@ -91,6 +92,11 @@ export async function updateSession(
 			supabaseResponse.cookies.set(
 				"preferred_region",
 				settings.region,
+				preferenceCookieOptions,
+			);
+			supabaseResponse.cookies.set(
+				"preferred_theme",
+				settings.theme,
 				preferenceCookieOptions,
 			);
 		}

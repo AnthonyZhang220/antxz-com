@@ -1,8 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
-import { usePathname } from "@/i18n/navigation";
+import { Link, usePathname } from "@/i18n/navigation";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { getDashboardNavigation } from "@/lib/actions/navigation";

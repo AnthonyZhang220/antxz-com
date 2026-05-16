@@ -33,8 +33,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { handleError, handleSuccess } from "@/lib/errors/error-utils";
 import { getInitials, getRelativeTime } from "@/lib/shared/format";
 import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
-import { getArticleSlug, getBlogHref } from "@/lib/shared/format";
-import { get } from "http";
 
 type FilterKey = "all" | "unread" | DashboardNotificationType;
 
@@ -330,8 +328,7 @@ export default function DashboardNotifications() {
 						const Icon = getTypeIcon(notification.type);
 						const actorName = notification.actor.name || userFallback;
 						const articleTitle = getArticleTitle(notification);
-						const articleUrl = `/${locale}${notification.target_url || "#"}`;
-						console.log(articleUrl);
+						const articleUrl = `${notification.target_url || "/blog"}`;
 						const message =
 							notification.type === "reply" || notification.type === "like"
 								? t.rich(

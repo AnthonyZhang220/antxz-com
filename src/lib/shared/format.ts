@@ -48,11 +48,11 @@ export function getInitials(name: string): string {
 	return (parts[0]?.[0] || "U").toUpperCase();
 }
 
-export function getBlogHref(articleKey: string, locale: string): string {
+export function getBlogHref(articleKey: string): string {
 	if (articleKey.startsWith("blog:")) {
-		return `/${locale}/blog/${articleKey.slice(5)}#comments`;
+		return `/blog/${articleKey.slice(5)}#comments`;
 	}
-	return "#";
+	return "/blog";
 }
 
 export function getArticleSlug(articleKey: string): string {

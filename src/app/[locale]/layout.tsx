@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { NotificationToastListener } from "@/lib/providers/notification-toast-listener";
-import { PreferencesProvider } from "@/lib/providers/preference-provider";
-import { resolveUserPreferences } from "@/lib/user/preferences-actions";
 
 type LocaleLayoutProps = Readonly<{
 	children: React.ReactNode;
@@ -17,38 +15,64 @@ export async function generateMetadata({
 	const t = await getTranslations({ locale, namespace: "metadata" });
 
 	return {
-		title: t("title"),
+		title: {
+			default: t("title"),
+			template: `%s | ANTXZ`,
+			absolute: t("title"),
+		},
 		description: t("description"),
+		keywords:
+			locale === "zh"
+				? ["个人博客", "技术博客", "项目展示", "前端开发", "全栈开发"]
+				: ["personal blog", "tech blog", "projects", "frontend", "fullstack"],
+		authors: [{ name: "Anthony Zhang", url: "https://antxz.com" }],
+		creator: "Anthony Zhang",
+		icons: {
+			icon: "/favicon.svg",
+			shortcut: "/favicon.svg",
+			apple: "/apple-icon.png",
+		},
+		alternates: {
+			canonical: `https://antxz.com/${locale}`,
+			languages: {
+				en: "https://antxz.com/en",
+				zh: "https://antxz.com/zh",
+			},
+		},
 		openGraph: {
 			title: t("title"),
 			description: t("description"),
 			type: "website",
-			siteName: "AntXZ",
+			url: `https://antxz.com/${locale}`,
+			siteName: "ANTXZ",
 			locale: locale === "zh" ? "zh_CN" : "en_US",
+			images: [
+				{
+					url: "https://antxz.com/og-image.png", // 1200x630
+					width: 1200,
+					height: 630,
+					alt: t("title"),
+				},
+			],
 		},
-		twitter: {
-			card: "summary",
-			title: t("title"),
-			description: t("description"),
+		robots: {
+			index: true,
+			follow: true,
+			googleBot: {
+				index: true,
+				follow: true,
+				"max-image-preview": "large",
+				"max-snippet": -1,
+			},
 		},
 	};
 }
 
 export default async function LocaleLayout({ children }: LocaleLayoutProps) {
-	const result = await resolveUserPreferences();
-
-	const serverSettings = result.success ? result.data : null;
-	const preferenceSettings = {
-		locale: serverSettings?.locale ?? "en",
-		region: serverSettings?.region ?? "global",
-		theme: serverSettings?.theme ?? "system",
-		notifications_enabled: serverSettings?.notifications_enabled ?? true,
-	};
-
 	return (
-		<PreferencesProvider initials={preferenceSettings}>
+		<>
 			<NotificationToastListener />
 			{children}
-		</PreferencesProvider>
+		</>
 	);
 }

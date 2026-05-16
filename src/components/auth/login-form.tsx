@@ -80,7 +80,8 @@ export function LoginForm({
 		try {
 			const callbackUrl = new URL(`${window.location.origin}/auth/callback`);
 			callbackUrl.searchParams.set("next", `/dashboard`);
-
+			console.log("callbackurl", callbackUrl.toString());
+			
 			const { data, error } = await supabase.auth.signInWithOAuth({
 				provider: provider,
 				options: {

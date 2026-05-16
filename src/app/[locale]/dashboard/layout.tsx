@@ -7,6 +7,12 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { createClient } from "@/lib/supabase/server";
 import { ensureUserSettingsFromCookies } from "@/lib/user/preferences-server";
 import DashboardMobileNav from "@/components/dashboard/mobile-nav";
+import { Metadata } from "next";
+
+// prevent search engines from indexing dashboard pages
+export const metadata: Metadata = {
+	robots: { index: false, follow: false } ,
+};
 
 type DashboardLayoutProps = {
 	children: ReactNode;

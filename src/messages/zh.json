@@ -1,7 +1,8 @@
 {
     "metadata": {
-        "title": "小花的世界 - ANTXZ | 混沌观测站",
-        "description": "此处记录着对熵增世界的微小干预，与一场永不谢幕的思想实验。"
+        "title": "ANTXZ | 小花的观测站",
+        "description": "此处记录着对熵增世界的微小干预，与一场永不谢幕的思想实验。",
+        "absolute": "ANTXZ | 小花的观测站"
     },
     "wip": {
         "description": "该页面正在建设中，敬请期待！",
@@ -344,7 +345,7 @@
         "resultTitle": "你的性格类型是"
     },
     "footer": {
-        "name": "小花的世界",
+        "name": "小花的观测站",
         "tagline": "在互联网上写一些不痛不痒的东西",
         "blog": "博客",
         "projects": "项目",

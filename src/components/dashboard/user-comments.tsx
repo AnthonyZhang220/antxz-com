@@ -41,7 +41,6 @@ const statusVariants: Record<
 
 export default function UserComments() {
 	const t = useTranslations("dashboard.comments");
-	const locale = useLocale();
 	const [comments, setComments] = useState<UserComment[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [loadError, setLoadError] = useState<string | null>(null);
@@ -101,7 +100,7 @@ export default function UserComments() {
 								<div className="min-w-0 flex-1 space-y-1.5">
 									<div className="flex flex-wrap items-center gap-2">
 										<Link
-											href={getBlogHref(comment.article_key, locale)}
+											href={getBlogHref(comment.article_key)}
 											className="text-xs font-medium text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
 										>
 											{getArticleSlug(comment.article_key)}

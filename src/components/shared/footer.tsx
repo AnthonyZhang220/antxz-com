@@ -92,7 +92,7 @@ export default function Footer() {
 				</div>
 			)}
 			<Separator />
-			<div className="w-full px-2 py-5 sm:px-4 sm:py-6">
+			<div className="w-full max-w-7xl mx-auto px-2 py-5 sm:px-4 sm:py-6">
 				<div className="grid gap-6 pb-8 md:grid-cols-3 md:items-start md:gap-6 md:pb-10">
 					<div className="space-y-1">
 						<p className="font-mono text-sm text-zinc-600 dark:text-zinc-300">
