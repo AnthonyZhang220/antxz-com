@@ -1,8 +1,8 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
-import { useRouter } from "next/navigation";
-import { useLocale, useTranslations } from "next-intl";
+import { useCallback } from "react";
+import { useTranslations } from "next-intl";
+import { useRouter } from "@/i18n/navigation";
 import {
 	finishLoadingError,
 	finishLoadingSuccess,
@@ -10,25 +10,25 @@ import {
 } from "@/lib/errors/error-utils";
 
 export type UseAuthNavigationResult = {
-	locale: string;
 	authHref: string;
 	homeHref: string;
 	accountHref: string;
 	dashboardHref: string;
+	notificationsHref: string;
 	handleLogout: () => Promise<void>;
 };
 
 export function useAuthNavigation(
-	signOut: () => Promise<void>
+	signOut: () => Promise<void>,
 ): UseAuthNavigationResult {
 	const router = useRouter();
-	const locale = useLocale();
 	const t = useTranslations();
 
-	const authHref = useMemo(() => `/${locale}/auth/login`, [locale]);
-	const homeHref = useMemo(() => `/${locale}`, [locale]);
-	const accountHref = useMemo(() => `/${locale}/dashboard/account`, [locale]);
-	const dashboardHref = useMemo(() => `/${locale}/dashboard`, [locale]);
+	const authHref = "/auth/login";
+	const homeHref = "/";
+	const accountHref = "/dashboard/account";
+	const dashboardHref = "/dashboard";
+	const notificationsHref = "/dashboard/notifications";
 
 	const handleLogout = useCallback(async () => {
 		const toastId = startLoading(t("toast.auth.logout.loading"));
@@ -41,17 +41,17 @@ export function useAuthNavigation(
 				toastId,
 				error instanceof Error && error.message
 					? error.message
-					: t("toast.auth.logout.error")
+					: t("toast.auth.logout.error"),
 			);
 		}
 	}, [homeHref, router, signOut, t]);
 
 	return {
-		locale,
 		authHref,
 		homeHref,
 		accountHref,
 		dashboardHref,
 		handleLogout,
+		notificationsHref,
 	};
 }

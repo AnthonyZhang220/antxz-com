@@ -3,8 +3,8 @@
 import * as React from "react";
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
-import { useLocale, useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import type { User } from "@supabase/supabase-js";
 
 import { getDashboardNavigation } from "@/lib/actions/navigation";
@@ -32,10 +32,8 @@ export function DashboardSidebar({
 	initialUser,
 	...props
 }: DashboardSidebarProps) {
-	const locale = useLocale();
 	const t = useTranslations();
-	const baseUrl = `/${locale}`;
-	const rawNavigation = getDashboardNavigation(locale);
+	const rawNavigation = getDashboardNavigation();
 	const { isMobile } = useSidebar();
 	const { user, displayName, isLoading, initials } = useUserState(initialUser);
 	const supabase = useMemo(() => createClient(), []);
@@ -110,7 +108,7 @@ export function DashboardSidebar({
 							asChild
 							className="data-[slot=sidebar-menu-button]:p-1.5!"
 						>
-							<Link href={baseUrl} aria-label={t("dashboard.navigation.brand")}>
+							<Link href="/" aria-label={t("dashboard.navigation.brand")}>
 								<Image
 									src="/logo.svg"
 									alt={t("dashboard.navigation.brand")}

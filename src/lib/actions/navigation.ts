@@ -119,8 +119,8 @@ export function getDashboardTitleKey(segment: string | null): string {
 	);
 }
 
-export function getDashboardNavigation(locale: string): DashboardNavigation {
-	const baseUrl = `/${locale}/dashboard`;
+export function getDashboardNavigation(): DashboardNavigation {
+	const baseUrl = `/dashboard`;
 
 	return {
 		navMain: dashboardNavDefinitions.navMain.map((item) => ({

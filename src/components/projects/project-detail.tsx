@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { PortableText } from "next-sanity";
 import { ArrowLeft, Calendar, ExternalLink, Sparkles } from "lucide-react";
 import { GitHubIcon } from "../shared/github-icon";
@@ -19,7 +19,6 @@ type ProjectDetailProps = {
 
 export function ProjectDetail({ project, locale }: ProjectDetailProps) {
 	const tProject = useTranslations("project");
-	const backPath = `/${locale}/projects`;
 	const firstScreenshot = project.screenshots?.[0];
 	const remainingScreenshots = project.screenshots?.slice(1) ?? [];
 
@@ -27,7 +26,7 @@ export function ProjectDetail({ project, locale }: ProjectDetailProps) {
 		<main className="mx-auto w-full max-w-5xl px-5 py-12 sm:px-8 lg:px-10">
 			<div className="mb-8">
 				<Button variant="ghost" size="sm" asChild className="-ml-2">
-					<Link href={backPath}>
+					<Link href="/projects">
 						<ArrowLeft className="mr-1 h-4 w-4" />
 						{tProject("allProjects")}
 					</Link>

@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { getCookie } from "@/lib/shared/cookies";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { toast } from "sonner";
 import { startLoading, finishLoadingSuccess, finishLoadingError } from "@/lib/errors/error-utils";
 
@@ -179,7 +179,7 @@ export function SignUpForm({
 			</FieldGroup>
 			<FieldDescription className="text-center text-sm">
 				{t("haveAccount")}{" "}
-				<Link href={`/${locale}/auth/login`} className="underline underline-offset-4">
+				<Link href={`/auth/login`} className="underline underline-offset-4">
 					{t("loginLink")}
 				</Link>
 			</FieldDescription>

@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { Linkedin, Mail } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -198,7 +198,7 @@ export function CVProfileTabContent({
 										size="sm"
 										className="transition-transform hover:-translate-y-0.5"
 									>
-										<Link href={`/${locale}/blog`}>{nextActions.blog}</Link>
+										<Link href={`/blog`}>{nextActions.blog}</Link>
 									</Button>
 									<Button
 										asChild
@@ -206,7 +206,7 @@ export function CVProfileTabContent({
 										variant="outline"
 										className="transition-transform hover:-translate-y-0.5"
 									>
-										<Link href={`/${locale}/projects`}>
+										<Link href={`/projects`}>
 											{nextActions.projects}
 										</Link>
 									</Button>

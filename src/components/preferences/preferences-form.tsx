@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import {
@@ -32,7 +32,6 @@ import { AppLocale, AppRegion } from "@/lib/user/preferences";
 export default function PreferencesForm() {
 	const t = useTranslations("preferences");
 	const tt = useTranslations();
-	const router = useRouter();
 	const params = useParams<{ locale?: string }>();
 	const searchParams = useSearchParams();
 	const saveErrorMessage = tt("toast.preferences.error");
@@ -49,6 +48,19 @@ export default function PreferencesForm() {
 			: "global";
 	});
 	const [isLoading, setIsLoading] = useState(false);
+
+	const regionLabels = {
+		en: {
+			cn: "China",
+			us: "United States",
+			global: "Global",
+		},
+		zh: {
+			cn: "中国",
+			us: "美国",
+			global: "全球",
+		},
+	};
 
 	function getRedirectPath(nextLocale: string) {
 		const redirectParam = searchParams.get("redirect");
@@ -82,8 +94,8 @@ export default function PreferencesForm() {
 
 			finishLoadingSuccess(loadingToastId, saveSuccessMessage);
 			// 延迟重定向，让用户看到成功提示
-			await new Promise((resolve) => setTimeout(resolve, 2000));
-			router.push(getRedirectPath(locale));
+			await new Promise((resolve) => setTimeout(resolve, 1000));
+			window.location.href = getRedirectPath(locale);
 		} catch (error) {
 			const message =
 				error instanceof Error && error.message

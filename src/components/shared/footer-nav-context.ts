@@ -56,11 +56,10 @@ export function buildFooterNavContext(
 	labels: FooterNavLabels,
 ): FooterNavContext {
 	const pathSegments = pathname.split("/").filter(Boolean);
-	const locale = pathSegments[0] ?? "en";
 	const contentSegments = pathSegments.slice(1);
-	const homePath = `/${locale}`;
+	const homePath = `/`;
 
-    // 定义每个路径段对应的标签
+	// 定义每个路径段对应的标签
 	const sectionLabelMap: Record<string, string> = {
 		about: labels.about,
 		projects: labels.projects,
@@ -74,18 +73,19 @@ export function buildFooterNavContext(
 		cv: labels.cv,
 	};
 
-    // 构建面包屑导航的路径和标签
-	const locationTrail =
-		contentSegments.map((segment) => sectionLabelMap[segment] ?? segment);
+	// 构建面包屑导航的路径和标签
+	const locationTrail = contentSegments.map(
+		(segment) => sectionLabelMap[segment] ?? segment,
+	);
 
-    // 构建面包屑导航
+	// 构建面包屑导航
 	const breadcrumbItems = [
 		{ label: labels.home, href: homePath },
 		...locationTrail.map((label, index) => {
 			const isLast = index === locationTrail.length - 1;
 			const href = isLast
 				? undefined
-				: `/${locale}/${contentSegments.slice(0, index + 1).join("/")}`;
+				: `/${contentSegments.slice(0, index + 1).join("/")}`;
 
 			return {
 				label,

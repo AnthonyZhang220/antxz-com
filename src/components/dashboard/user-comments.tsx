@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Heart, MessageSquare } from "lucide-react";
@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/shared/error-state";
+import { getArticleSlug, getBlogHref } from "@/lib/shared/format";
 
 type UserComment = {
 	id: string;
@@ -37,22 +38,6 @@ const statusVariants: Record<
 	spam: "destructive",
 	blocked: "outline",
 };
-
-function getBlogHref(articleKey: string, locale: string): string {
-	if (articleKey.startsWith("blog:")) {
-		return `/${locale}/blog/${articleKey.slice(5)}#comments`;
-	}
-	return "#";
-}
-
-function getArticleSlug(articleKey: string): string {
-	if (articleKey.startsWith("blog:")) {
-		return articleKey.slice(5);
-	}
-	return articleKey;
-}
-
-
 
 export default function UserComments() {
 	const t = useTranslations("dashboard.comments");

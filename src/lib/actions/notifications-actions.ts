@@ -83,7 +83,9 @@ const notificationPostSummaryQuery = `
 	}
 `;
 
-function parseNotificationMetadata(value: unknown): DashboardNotificationMetadata {
+function parseNotificationMetadata(
+	value: unknown,
+): DashboardNotificationMetadata {
 	if (!value || typeof value !== "object" || Array.isArray(value)) {
 		return {};
 	}
@@ -91,7 +93,9 @@ function parseNotificationMetadata(value: unknown): DashboardNotificationMetadat
 	const metadata = value as Record<string, unknown>;
 	return {
 		article_key:
-			typeof metadata.article_key === "string" ? metadata.article_key : undefined,
+			typeof metadata.article_key === "string"
+				? metadata.article_key
+				: undefined,
 		comment_id:
 			typeof metadata.comment_id === "string" ? metadata.comment_id : undefined,
 		event: typeof metadata.event === "string" ? metadata.event : undefined,
@@ -120,9 +124,9 @@ function getArticleSlug(articleKey?: string): string | null {
 	return null;
 }
 
-export async function getNotifications(locale: string): Promise<
-	NotificationsResult<DashboardNotification[]>
-> {
+export async function getNotifications(
+	locale: string,
+): Promise<NotificationsResult<DashboardNotification[]>> {
 	const supabase = await createClient();
 	const {
 		data: { user },
@@ -136,7 +140,7 @@ export async function getNotifications(locale: string): Promise<
 	const { data, error } = await supabase
 		.from("notifications")
 		.select(
-			"id, type, title, message, actor_user_id, actor_name, actor_avatar_url, target_url, is_read, read_at, created_at, metadata"
+			"id, type, title, message, actor_user_id, actor_name, actor_avatar_url, target_url, is_read, read_at, created_at, metadata",
 		)
 		.eq("user_id", user.id)
 		.order("created_at", { ascending: false })
@@ -152,20 +156,22 @@ export async function getNotifications(locale: string): Promise<
 	const articleSlugs = Array.from(
 		new Set(
 			(data || [])
-				.map((item) => getArticleSlug(parseNotificationMetadata(item.metadata).article_key))
-				.filter((slug): slug is string => Boolean(slug))
-		)
+				.map((item) =>
+					getArticleSlug(parseNotificationMetadata(item.metadata).article_key),
+				)
+				.filter((slug): slug is string => Boolean(slug)),
+		),
 	);
 
 	const articleEntries = await Promise.all(
 		articleSlugs.map(async (slug) => {
 			const post = await sanityClient.fetch<NotificationPostSummary | null>(
 				notificationPostSummaryQuery,
-				{ slug, locale }
+				{ slug, locale },
 			);
 
 			return [slug, post] as const;
-		})
+		}),
 	);
 
 	const articleMap = new Map(articleEntries);
@@ -174,7 +180,6 @@ export async function getNotifications(locale: string): Promise<
 		const metadata = parseNotificationMetadata(item.metadata);
 		const slug = getArticleSlug(metadata.article_key);
 		const articleSummary = slug ? articleMap.get(slug) : null;
-
 		return {
 			id: String(item.id),
 			type: parseType(String(item.type)),
@@ -198,11 +203,13 @@ export async function getNotifications(locale: string): Promise<
 			article:
 				slug && articleSummary
 					? {
-						slug,
-						title: String(articleSummary.title || slug),
-						cover_image_url: String(articleSummary.coverImage?.url || ""),
-						target_url: item.target_url ? String(item.target_url) : `/blog/${slug}`,
-					}
+							slug,
+							title: String(articleSummary.title || slug),
+							cover_image_url: String(articleSummary.coverImage?.url || ""),
+							target_url: item.target_url
+								? String(item.target_url)
+								: `${slug}`,
+						}
 					: null,
 		};
 	});
@@ -215,7 +222,7 @@ export async function getNotifications(locale: string): Promise<
 
 export async function getNotificationById(
 	id: string,
-	locale: string
+	locale: string,
 ): Promise<NotificationsResult<DashboardNotification>> {
 	if (!id.trim()) {
 		return { success: false, error: "Missing notification id" };
@@ -234,14 +241,17 @@ export async function getNotificationById(
 	const { data, error } = await supabase
 		.from("notifications")
 		.select(
-			"id, type, title, message, actor_user_id, actor_name, actor_avatar_url, target_url, is_read, read_at, created_at, metadata"
+			"id, type, title, message, actor_user_id, actor_name, actor_avatar_url, target_url, is_read, read_at, created_at, metadata",
 		)
 		.eq("id", id)
 		.eq("user_id", user.id)
 		.single();
 
 	if (error) {
-		return { success: false, error: error.message || "Failed to load notification" };
+		return {
+			success: false,
+			error: error.message || "Failed to load notification",
+		};
 	}
 
 	const metadata = parseNotificationMetadata(data.metadata);
@@ -251,7 +261,7 @@ export async function getNotificationById(
 	if (slug) {
 		articleSummary = await sanityClient.fetch<NotificationPostSummary | null>(
 			notificationPostSummaryQuery,
-			{ slug, locale }
+			{ slug, locale },
 		);
 	}
 
@@ -278,11 +288,13 @@ export async function getNotificationById(
 		article:
 			slug && articleSummary
 				? {
-					slug,
-					title: String(articleSummary.title || slug),
-					cover_image_url: String(articleSummary.coverImage?.url || ""),
-					target_url: data.target_url ? String(data.target_url) : `/blog/${slug}`,
-				}
+						slug,
+						title: String(articleSummary.title || slug),
+						cover_image_url: String(articleSummary.coverImage?.url || ""),
+						target_url: data.target_url
+							? String(data.target_url)
+							: `/blog/${slug}`,
+					}
 				: null,
 	};
 
@@ -290,7 +302,7 @@ export async function getNotificationById(
 }
 
 export async function markNotificationAsRead(
-	notificationId: string
+	notificationId: string,
 ): Promise<NotificationsResult> {
 	if (!notificationId.trim()) {
 		return { success: false, error: "Missing notification id" };

@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useMemo, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import {
@@ -476,7 +476,7 @@ export default function BlogComments({
 								{t("commentsLoginRequired")}
 							</p>
 							<Button asChild size="sm" variant="outline">
-								<Link href={`/${locale}/auth/login`}>
+								<Link href={`/auth/login`}>
 									<LogIn className="mr-1.5 h-4 w-4" />
 									{t("commentsLoginCta")}
 								</Link>

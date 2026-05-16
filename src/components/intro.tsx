@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useRef } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useScroll, useTransform, motion } from "motion/react";
@@ -151,7 +151,7 @@ export default function Intro() {
                 <div className="pointer-events-none absolute inset-0 -m-2 rounded-full bg-zinc-900/0 shadow-[0_0_20px_rgba(24,24,27,0)] transition-all duration-300 group-hover:shadow-[0_0_20px_rgba(24,24,27,0.3)] dark:shadow-[0_0_20px_rgba(244,244,245,0)] dark:group-hover:shadow-[0_0_20px_rgba(244,244,245,0.2)]" />
                 
                 <Link
-                  href={`/${locale}/about/me`}
+                  href={`//about/me`}
                   className="relative flex items-center justify-center border-2 border-zinc-900 transition-all duration-200 hover:bg-zinc-900 hover:text-white dark:border-zinc-100 dark:hover:bg-white dark:hover:text-zinc-900"
                   style={{
                     width: "clamp(2.5rem, 4.5vw, 4rem)",

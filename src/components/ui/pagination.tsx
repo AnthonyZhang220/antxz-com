@@ -4,7 +4,7 @@ import {
 	ChevronRightIcon,
 	MoreHorizontalIcon,
 } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 
 import { cn } from "@/lib/utils";
 import { buttonVariants, type Button } from "@/components/ui/button";

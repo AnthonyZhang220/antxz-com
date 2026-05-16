@@ -1,125 +1,141 @@
 import { NextRequest, NextResponse } from "next/server";
-
 import { withI18n } from "./middlewares/with-i18n";
 import { updateSession } from "@/middlewares/with-supabase";
 import { preferenceCookieOptions } from "@/lib/user/preferences";
 
-
 type Region = "cn" | "us" | "global";
 type Locale = "en" | "zh";
 
-function isRegion(value: string | undefined): value is Region {
-	return value === "cn" || value === "us" || value === "global";
+function isRegion(v?: string): v is Region {
+	return v === "cn" || v === "us" || v === "global";
 }
 
-function isLocale(value: string | undefined): value is Locale {
-	return value === "en" || value === "zh";
-}
+function detectRegion(req: NextRequest): Region {
+	const cookie = req.cookies.get("preferred_region")?.value;
+	if (isRegion(cookie)) return cookie;
 
-function getLocaleFromPathname(pathname: string): Locale | null {
-	const segment = pathname.split("/")[1];
-	return isLocale(segment) ? segment : null;
-}
+	const country = req.headers.get("cf-ipcountry") || "US";
 
-// detect region based on user preference first, then environment/header fallback
-function detectRegion(request: NextRequest): Region {
-	const preferredRegion = request.cookies.get("preferred_region")?.value;
-	if (isRegion(preferredRegion)) {
-		return preferredRegion;
-	}
-
-	const country = request.headers.get("cf-ipcountry") || "US";
-	if (["CN", "HK", "TW", "MO"].includes(country)) {
-		return "cn";
-	}
-
-	if (country === "US") {
-		return "us";
-	}
+	if (["CN", "HK", "TW", "MO"].includes(country)) return "cn";
+	if (country === "US") return "us";
 
 	return "global";
 }
 
-// This middleware runs on every request and is responsible for:
-// 1. Detecting the user's region and adding it to the request headers
-// 2. Running the Supabase session logic to ensure auth cookies are set
-// 3. Running the next-intl middleware to handle locale redirects
 export async function middleware(request: NextRequest) {
-	const detectedRegion = detectRegion(request);
-	const preferredLocale = request.cookies.get("preferred_locale")?.value;
+	// =========================
+	// 1. Supabase session (logged-in source)
+	// =========================
+	const { supabaseResponse, serverSettings } = await updateSession(request);
 
-	const requestHeaders = new Headers(request.headers);
-	requestHeaders.set("x-region", detectedRegion);
+	const cookieLocale = request.cookies.get("preferred_locale")?.value;
+	const cookieRegion = request.cookies.get("preferred_region")?.value;
 
-	const modifiedRequest = new NextRequest(request.url, {
-		method: request.method,
-		headers: requestHeaders,
-		body: request.body,
-	});
+	// =========================
+	// 2. Region resolution (fallback only)
+	// =========================
+	const region: Region =
+		serverSettings?.region ??
+		(isRegion(cookieRegion) ? cookieRegion : detectRegion(request));
 
-	// run supabase session logic first to ensure cookies are set
-	const { supabaseResponse, serverSettings } = await updateSession(modifiedRequest);
-	const region = serverSettings?.region ?? detectedRegion;
-	const locale = serverSettings?.locale
-		? serverSettings.locale
-		: isLocale(preferredLocale)
-			? preferredLocale
-			: region === "cn"
-				? "zh"
-				: "en";
-	const pathnameLocale = getLocaleFromPathname(request.nextUrl.pathname);
+	// =========================
+	// 3. Locale (ONLY fallback for cookie init)
+	// default locale based on region, but can be overridden by cookie or server settings
+	let locale: Locale;
+	if (serverSettings?.locale) {
+		locale = serverSettings.locale;
+	} else if (cookieLocale === "zh" || cookieLocale === "en") {
+		locale = cookieLocale;
+	} else {
+		// 用户未登录且无 cookie，按 region 设定
+		locale = region === "cn" ? "zh" : "en";
+	}
 
-	if (serverSettings?.locale && pathnameLocale && pathnameLocale !== serverSettings.locale) {
-		const correctedPath = request.nextUrl.pathname.replace(
-			`/${pathnameLocale}`,
-			`/${serverSettings.locale}`
+	// =========================
+	// 4. Redirect if URL locale doesn't match server settings
+	//    Set cookies before redirecting so next request has them
+	// =========================
+	const urlLocale = request.nextUrl.pathname.split("/")[1];
+	const expectedLocale = serverSettings?.locale ?? locale;
+
+	if (
+		(urlLocale === "en" || urlLocale === "zh") &&
+		urlLocale !== expectedLocale &&
+		!cookieLocale
+	) {
+		const newPath = request.nextUrl.pathname.replace(
+			`/${urlLocale}`,
+			`/${expectedLocale}`,
 		);
-		const redirectUrl = new URL(correctedPath, request.url);
-		redirectUrl.search = request.nextUrl.search;
 
-		const redirectResponse = NextResponse.redirect(redirectUrl);
+		const redirectResponse = NextResponse.redirect(
+			new URL(newPath, request.url),
+		);
+
+		redirectResponse.cookies.set(
+			"preferred_locale",
+			expectedLocale,
+			preferenceCookieOptions,
+		);
+		redirectResponse.cookies.set(
+			"preferred_region",
+			region,
+			preferenceCookieOptions,
+		);
+
 		supabaseResponse.cookies.getAll().forEach((cookie) => {
-			redirectResponse.cookies.set(cookie.name, cookie.value, {
-				...cookie,
-			});
+			redirectResponse.cookies.set(cookie.name, cookie.value, cookie);
 		});
-		redirectResponse.cookies.set("preferred_locale", locale, preferenceCookieOptions);
-		redirectResponse.cookies.set("preferred_region", region, preferenceCookieOptions);
+
 		return redirectResponse;
 	}
 
-	if (request.nextUrl.pathname === "/") {
-		const redirectResponse = NextResponse.redirect(new URL(`/${locale}`, request.url));
-		redirectResponse.cookies.set("preferred_locale", locale, preferenceCookieOptions);
-		redirectResponse.cookies.set("preferred_region", region, preferenceCookieOptions);
-		return redirectResponse;
-	}
-
-	if (supabaseResponse.headers.get("location")) {
-		supabaseResponse.cookies.set("preferred_locale", locale, preferenceCookieOptions);
-		supabaseResponse.cookies.set("preferred_region", region, preferenceCookieOptions);
-		return supabaseResponse;
-	}
-
-	// pass through to next-intl for locale handling
+	// =========================
+	// 5. next-intl handles routing
+	// =========================
 	const intlResponse = withI18n(request);
 
-	// copy any cookies that supabaseResponse set onto the intlResponse
+	// =========================
+	// 6. merge supabase cookies
+	// =========================
 	supabaseResponse.cookies.getAll().forEach((cookie) => {
-		intlResponse.cookies.set(cookie.name, cookie.value, {
-			...cookie,
-		});
+		intlResponse.cookies.set(cookie.name, cookie.value, cookie);
 	});
 
-	intlResponse.cookies.set("preferred_locale", locale, preferenceCookieOptions);
-	intlResponse.cookies.set("preferred_region", region, preferenceCookieOptions);
+	// =========================
+	// 7. Sync preference cookies
+	// =========================
+	if (serverSettings?.locale) {
+		intlResponse.cookies.set(
+			"preferred_locale",
+			serverSettings.locale,
+			preferenceCookieOptions,
+		);
+	} else if (!cookieLocale) {
+		intlResponse.cookies.set(
+			"preferred_locale",
+			locale,
+			preferenceCookieOptions,
+		);
+	}
+
+	if (serverSettings?.region) {
+		intlResponse.cookies.set(
+			"preferred_region",
+			serverSettings.region,
+			preferenceCookieOptions,
+		);
+	} else if (!cookieRegion) {
+		intlResponse.cookies.set(
+			"preferred_region",
+			region,
+			preferenceCookieOptions,
+		);
+	}
 
 	return intlResponse;
 }
 
 export const config = {
-	matcher: [
-		// union of both middleware matchers (supabase & next-intl)
-		"/((?!api|studio|_next/static|_next/image|favicon.ico|.*\\..*).*)",
-	],
+	matcher: ["/((?!api|studio|_next/static|_next/image|favicon.ico|.*\\..*).*)"],
 };

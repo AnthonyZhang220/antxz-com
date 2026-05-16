@@ -1,8 +1,8 @@
 "use client";
 
 import { AlertTriangle, RefreshCw } from "lucide-react";
-import Link from "next/link";
-import { useLocale, useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -12,12 +12,8 @@ type DashboardErrorProps = {
 	reset: () => void;
 };
 
-export default function DashboardError({
-	error,
-	reset,
-}: DashboardErrorProps) {
+export default function DashboardError({ error, reset }: DashboardErrorProps) {
 	const t = useTranslations("errors.dashboard");
-	const locale = useLocale();
 
 	return (
 		<div className="flex min-h-[60vh] items-center justify-center p-6">
@@ -40,10 +36,10 @@ export default function DashboardError({
 						{t("tryAgain")}
 					</Button>
 					<Button variant="outline" asChild>
-						<Link href={`/${locale}/dashboard`}>{t("backToDashboard")}</Link>
+						<Link href={`/dashboard`}>{t("backToDashboard")}</Link>
 					</Button>
 					<Button variant="outline" asChild>
-						<Link href={`/${locale}`}>{t("goHome")}</Link>
+						<Link href={`/`}>{t("goHome")}</Link>
 					</Button>
 				</div>
 			</div>

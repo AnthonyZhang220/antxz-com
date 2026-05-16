@@ -1,9 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { navigationConfig } from "@/config/navigation";
 import { useAuthNavigation, useAuthUser } from "@/hooks";
 import { createClient } from "@/lib/supabase/client";
@@ -49,10 +49,8 @@ export default function Navbar({ initialUser }: NavbarProps) {
 	const a = useTranslations("auth.loginForm");
 	const um = useTranslations("navbar.userMenu");
 	const { user, displayName, initials, signOut } = useAuthUser(initialUser);
-	const { authHref, accountHref, dashboardHref, handleLogout } =
+	const { authHref, accountHref, dashboardHref, notificationsHref, handleLogout } =
 		useAuthNavigation(signOut);
-	const locale = useLocale();
-	const notificationsHref = `/${locale}/dashboard/notifications`;
 	const avatarUrl = user?.user_metadata?.avatar_url as string | undefined;
 	const supabase = useMemo(() => createClient(), []);
 	const [unreadCount, setUnreadCount] = useState(0);

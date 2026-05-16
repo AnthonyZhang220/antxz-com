@@ -149,16 +149,16 @@ export function Overview({ user }: { user: AccountProfile }) {
 				<Card>
 					<CardContent className="space-y-6">
 						<div className="flex items-center gap-4">
-							<Skeleton className="h-16 w-16 rounded-full" />
+							<Skeleton className="h-12 w-12 rounded-full" />
 							<div className="space-y-1">
 								<Skeleton className="h-4 w-32" />
 								<Skeleton className="h-3 w-24" />
 							</div>
 						</div>
 						<div className="grid gap-4 md:grid-cols-2">
-							<Skeleton className="h-8 w-full md:col-span-1" />
-							<Skeleton className="h-8 w-full md:col-span-1" />
-							<Skeleton className="h-8 w-full md:col-span-1" />
+							<Skeleton className="h-6 w-full md:col-span-1" />
+							<Skeleton className="h-6 w-full md:col-span-1" />
+							<Skeleton className="h-6 w-full md:col-span-1" />
 						</div>
 					</CardContent>
 				</Card>
@@ -209,7 +209,7 @@ export function Overview({ user }: { user: AccountProfile }) {
 							</CardDescription>
 							<CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
 								{stats === null ? (
-									<Skeleton className="h-8 w-16 rounded" />
+									<Skeleton className="h-6 w-12 rounded" />
 								) : (
 									(value?.toLocaleString() ?? "0")
 								)}

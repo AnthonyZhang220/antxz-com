@@ -2,14 +2,13 @@
 
 import { useMemo, useState, type ReactNode } from "react";
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import {
 	Bell,
 	BrushCleaning,
 	Globe,
 	Heart,
 	MessageCircleReply,
-	RefreshCw,
 	Sparkles,
 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
@@ -34,6 +33,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { handleError, handleSuccess } from "@/lib/errors/error-utils";
 import { getInitials, getRelativeTime } from "@/lib/shared/format";
 import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
+import { getArticleSlug, getBlogHref } from "@/lib/shared/format";
+import { get } from "http";
 
 type FilterKey = "all" | "unread" | DashboardNotificationType;
 
@@ -115,11 +116,13 @@ function UserHoverCard({
 function ArticleHoverCard({
 	notification,
 	articleLabel,
+	articleUrl,
 	missingLabel,
 	children,
 }: {
 	notification: DashboardNotification;
 	articleLabel: string;
+	articleUrl: string;
 	missingLabel: string;
 	children: ReactNode;
 }) {
@@ -131,9 +134,8 @@ function ArticleHoverCard({
 		<HoverCard openDelay={120} closeDelay={120}>
 			<HoverCardTrigger asChild>
 				<Link
-					href={
-						notification.article.target_url || notification.target_url || "#"
-					}
+					href={articleUrl}
+
 					className="font-medium text-foreground underline-offset-4 transition hover:underline"
 				>
 					{children}
@@ -328,7 +330,8 @@ export default function DashboardNotifications() {
 						const Icon = getTypeIcon(notification.type);
 						const actorName = notification.actor.name || userFallback;
 						const articleTitle = getArticleTitle(notification);
-
+						const articleUrl = `/${locale}${notification.target_url || "#"}`;
+						console.log(articleUrl);
 						const message =
 							notification.type === "reply" || notification.type === "like"
 								? t.rich(
@@ -351,6 +354,7 @@ export default function DashboardNotifications() {
 												<ArticleHoverCard
 													notification={notification}
 													articleLabel={articleLabel}
+													articleUrl={articleUrl}
 													missingLabel={articleMissing}
 												>
 													{chunks}
@@ -402,21 +406,21 @@ export default function DashboardNotifications() {
 									<div className="flex shrink-0 flex-wrap items-center gap-2 md:justify-end">
 										{notification.target_url ? (
 											<Button variant="outline" size="sm" asChild>
-												<Link href={notification.target_url}>
+												<Link href={articleUrl}>
 													{t("actions.view")}
 												</Link>
 											</Button>
 										) : null}
 										{notification.type === "reply" ? (
 											<Button variant="outline" size="sm" asChild>
-												<Link href={notification.target_url || "#"}>
+												<Link href={articleUrl}>
 													{t("actions.reply")}
 												</Link>
 											</Button>
 										) : null}
 										{notification.type === "like" ? (
 											<Button variant="outline" size="sm" asChild>
-												<Link href={notification.target_url || "#"}>
+												<Link href={articleUrl}>
 													{t("actions.likeBack")}
 												</Link>
 											</Button>

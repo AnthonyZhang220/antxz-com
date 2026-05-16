@@ -8,16 +8,16 @@ interface ProjectDetailPageProps {
 	params: Promise<{ locale: string; slug: string }>;
 }
 
-export async function generateStaticParams() {
-	const slugs =
-		await client.fetch<Array<{ slug: string }>>(allProjectSlugsQuery);
+// export async function generateStaticParams() {
+// 	const slugs =
+// 		await client.fetch<Array<{ slug: string }>>(allProjectSlugsQuery);
 
-	const locales = ["en", "zh"];
+// 	const locales = ["en", "zh"];
 
-	return locales.flatMap((locale) =>
-		slugs.map(({ slug }) => ({ slug, locale })),
-	);
-}
+// 	return locales.flatMap((locale) =>
+// 		slugs.map(({ slug }) => ({ slug, locale })),
+// 	);
+// }
 
 export default async function ProjectDetailPage({
 	params,

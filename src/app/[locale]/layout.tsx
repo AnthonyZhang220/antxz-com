@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import { NextIntlClientProvider } from "next-intl";
 import { getTranslations } from "next-intl/server";
-import { NotificationToastListener } from "@/components/providers/notification-toast-listener";
+import { NotificationToastListener } from "@/lib/providers/notification-toast-listener";
+import { PreferencesProvider } from "@/lib/providers/preference-provider";
+import { resolveUserPreferences } from "@/lib/user/preferences-actions";
 
 type LocaleLayoutProps = Readonly<{
 	children: React.ReactNode;
@@ -33,13 +34,21 @@ export async function generateMetadata({
 	};
 }
 
-export default async function LocaleLayout({
-	children,
-}: LocaleLayoutProps) {
+export default async function LocaleLayout({ children }: LocaleLayoutProps) {
+	const result = await resolveUserPreferences();
+
+	const serverSettings = result.success ? result.data : null;
+	const preferenceSettings = {
+		locale: serverSettings?.locale ?? "en",
+		region: serverSettings?.region ?? "global",
+		theme: serverSettings?.theme ?? "system",
+		notifications_enabled: serverSettings?.notifications_enabled ?? true,
+	};
+
 	return (
-		<NextIntlClientProvider>
+		<PreferencesProvider initials={preferenceSettings}>
 			<NotificationToastListener />
 			{children}
-		</NextIntlClientProvider>
+		</PreferencesProvider>
 	);
 }

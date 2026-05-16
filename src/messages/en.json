@@ -629,7 +629,7 @@
             "settings": "Settings",
             "help": "Get Help",
             "search": "AI Search",
-            "account": "Account",
+            "account": "Me",
             "brand": "AntXZ.com"
         },
         "bookmarks": {
@@ -870,8 +870,8 @@
                     "description": "Choose your preferred color scheme"
                 },
                 "notifications": {
-                    "label": "Email Notifications",
-                    "description": "Receive important updates via email"
+                    "label": "Notifications",
+                    "description": "Receive important notifications about likes and replies."
                 }
             },
             "buttons": {

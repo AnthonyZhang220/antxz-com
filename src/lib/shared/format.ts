@@ -47,3 +47,17 @@ export function getInitials(name: string): string {
 	const parts = trimmed.split(/\s+/);
 	return (parts[0]?.[0] || "U").toUpperCase();
 }
+
+export function getBlogHref(articleKey: string, locale: string): string {
+	if (articleKey.startsWith("blog:")) {
+		return `/${locale}/blog/${articleKey.slice(5)}#comments`;
+	}
+	return "#";
+}
+
+export function getArticleSlug(articleKey: string): string {
+	if (articleKey.startsWith("blog:")) {
+		return articleKey.slice(5);
+	}
+	return articleKey;
+}

@@ -1,60 +1,42 @@
 "use client";
 
-import { useMemo } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname } from "@/i18n/navigation";
 import { useLocale } from "next-intl";
-
 import { cn } from "@/lib/utils";
+import { Button } from "../ui/button";
+import { LucideIcon } from "lucide-react";
 
-function withLocale(pathname: string, nextLocale: "en" | "zh") {
-	const segments = pathname.split("/").filter(Boolean);
-	if (segments.length === 0) return `/${nextLocale}`;
+type LanguageItem = {
+	code: string;
+	label: string;
+	icons?: LucideIcon;
+};
 
-	if (segments[0] === "en" || segments[0] === "zh") {
-		segments[0] = nextLocale;
-		return `/${segments.join("/")}`;
-	}
-
-	return `/${nextLocale}/${segments.join("/")}`;
-}
+const languageList: LanguageItem[] = [
+	{ code: "en", label: "English" },
+	{ code: "zh", label: "中文" },
+];
 
 export function AuthLanguageSwitcher() {
-	const locale = useLocale() as "en" | "zh";
+	const locale = useLocale();
 	const pathname = usePathname();
-
-	const targets = useMemo(
-		() => ({
-			en: withLocale(pathname, "en"),
-			zh: withLocale(pathname, "zh"),
-		}),
-		[pathname],
-	);
 
 	return (
 		<div className="inline-flex items-center rounded-full border border-border/70 bg-muted/30 p-1 text-xs">
-			<Link
-				href={targets.en}
-				className={cn(
-					"rounded-full px-2.5 py-1 font-medium transition-colors",
-					locale === "en"
-						? "bg-background text-foreground shadow-sm"
-						: "text-muted-foreground hover:text-foreground",
-				)}
-			>
-				English
-			</Link>
-			<Link
-				href={targets.zh}
-				className={cn(
-					"rounded-full px-2.5 py-1 font-medium transition-colors",
-					locale === "zh"
-						? "bg-background text-foreground shadow-sm"
-						: "text-muted-foreground hover:text-foreground",
-				)}
-			>
-				中文
-			</Link>
+			{languageList.map((l) => (
+				<button
+					key={l.code}
+					onClick={() => (window.location.href = `/${l.code}${pathname}`)}
+					className={cn(
+						"rounded-full px-2.5 py-1 font-medium transition-colors",
+						locale === l.code
+							? "bg-background text-foreground shadow-sm"
+							: "text-muted-foreground hover:text-foreground",
+					)}
+				>
+					{l.code === "en" ? "English" : "中文"}
+				</button>
+			))}
 		</div>
 	);
 }

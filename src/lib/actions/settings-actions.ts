@@ -1,7 +1,7 @@
 "use server";
 
 import {
-	getAuthenticatedUserSettings,
+	resolveUserPreferences,
 	saveUserPreferences,
 } from "@/lib/user/preferences-actions";
 import type { UserSettings } from "@/lib/user/preferences";
@@ -10,7 +10,7 @@ import type { UserSettings } from "@/lib/user/preferences";
  * Read dashboard user settings.
  */
 export async function getUserSettings() {
-	return getAuthenticatedUserSettings();
+	return resolveUserPreferences();
 }
 
 /**

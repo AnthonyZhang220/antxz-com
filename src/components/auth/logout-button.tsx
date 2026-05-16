@@ -1,8 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useLocale } from "next-intl";
-
+import { useRouter } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
@@ -16,7 +14,6 @@ export function LogoutButton() {
 	const t = useTranslations("auth.logoutForm");
 	const tm = useTranslations("toast.auth.logout");
 	const router = useRouter();
-	const locale = useLocale();
 
 	const logout = async () => {
 		const supabase = createClient();
@@ -25,11 +22,11 @@ export function LogoutButton() {
 			const { error } = await supabase.auth.signOut();
 			if (error) throw error;
 			finishLoadingSuccess(toastId, tm("success"));
-			router.push(`/${locale}`);
+			router.push(`/`);
 		} catch (error: unknown) {
 			finishLoadingError(
 				toastId,
-				error instanceof Error && error.message ? error.message : tm("error")
+				error instanceof Error && error.message ? error.message : tm("error"),
 			);
 		}
 	};

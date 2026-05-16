@@ -2,7 +2,7 @@
 
 import { useFormatter, useTranslations } from "next-intl";
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { urlFor } from "@/sanity/lib/image";
 import { BlogPost } from "@/lib/types/blog";
 import { Button } from "@/components/ui/button";

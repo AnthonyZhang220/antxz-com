@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useLocale, useTranslations } from "next-intl";
 
 export function ForgotPasswordForm({
@@ -92,7 +92,7 @@ export function ForgotPasswordForm({
 							<div className="mt-4 text-center text-sm">
 								{t("haveAccount")}{" "}
 								<Link
-									href={`/${locale}/auth/login`}
+									href="/auth/login"
 									className="underline underline-offset-4"
 								>
 									{t("loginLink")}

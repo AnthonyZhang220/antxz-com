@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useSelectedLayoutSegment } from "next/navigation";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { getDashboardTitleKey } from "@/lib/actions/navigation";
 import { Button } from "@/components/ui/button";

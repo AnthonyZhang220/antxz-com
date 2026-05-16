@@ -1,8 +1,7 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { usePathname } from "next/navigation";
-import { useLocale } from "next-intl";
 import { CirclePlus, LucideIcon, Mail } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -27,7 +26,6 @@ export function NavMain({
 	}[];
 }) {
 	const pathname = usePathname();
-	const locale = useLocale();
 	const { isMobile, setOpenMobile } = useSidebar();
 
 	const handleLinkClick = () => {
@@ -61,7 +59,7 @@ export function NavMain({
 				<SidebarMenu>
 					{items.map((item) => {
 						const normalizedPath = pathname.replace(/\/$/, "");
-						const isOverview = item.url === `/${locale}/dashboard`;
+						const isOverview = item.url === `/dashboard`;
 
 						const isActive = isOverview
 							? normalizedPath === item.url

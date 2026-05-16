@@ -1,5 +1,5 @@
 import { client } from "@/sanity/lib/client";
-import { allPostSlugsQuery, postBySlugQuery } from "@/sanity/lib/queries";
+import { postBySlugQuery } from "@/sanity/lib/queries";
 import { getBlogEngagementBySlug } from "@/lib/blog/engagement";
 import { notFound } from "next/navigation";
 import BlogPostPage from "@/components/blog/blog-post";
@@ -12,13 +12,13 @@ interface BlogPostProps {
 	searchParams?: Promise<{ lang?: string }>;
 }
 
-export async function generateStaticParams() {
-	const slugs = await client.fetch<Array<{ slug: string }>>(allPostSlugsQuery);
-	const locales = ["en", "zh"];
-	return locales.flatMap((locale) =>
-		slugs.map(({ slug }) => ({ slug, locale })),
-	);
-}
+// export async function generateStaticParams() {
+// 	const slugs = await client.fetch<Array<{ slug: string }>>(allPostSlugsQuery);
+// 	const locales = ["en", "zh"];
+// 	return locales.flatMap((locale) =>
+// 		slugs.map(({ slug }) => ({ slug, locale })),
+// 	);
+// }
 
 export default async function Page({ params, searchParams }: BlogPostProps) {
 	const supabase = await createSupabaseClient();
@@ -59,7 +59,6 @@ export default async function Page({ params, searchParams }: BlogPostProps) {
 		articleKeys,
 		user?.id ?? null,
 	);
-	console.error("Comment fetch result:", commentResult);
 
 	const comments = commentResult.success ? commentResult.data : [];
 

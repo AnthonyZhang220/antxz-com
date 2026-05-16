@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 
@@ -49,10 +49,16 @@ export function NotificationToastListener() {
 	const viewLabel = t("actions.view");
 	const userFallback = t("hover.userFallback");
 	const articleMissing = t("hover.articleMissing");
-	const replyMessage = (actor: string, article: string) =>
-		t("content.replyMessage", { actor, article });
-	const likeMessage = (actor: string, article: string) =>
-		t("content.likeMessage", { actor, article });
+	const replyMessage = useCallback(
+		(actor: string, article: string) =>
+			t("content.replyMessage", { actor, article }),
+		[t]
+	);
+	const likeMessage = useCallback(
+		(actor: string, article: string) =>
+			t("content.likeMessage", { actor, article }),
+		[t]
+	);
 	const systemMessage = t("content.systemMessage");
 
 	useEffect(() => {

@@ -1,16 +1,15 @@
 "use client";
 
-import { useLocale, useTranslations } from "next-intl";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
+import { usePathname } from "@/i18n/navigation";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { getDashboardNavigation } from "@/lib/actions/navigation";
 
 export default function DashboardMobileNav() {
-	const locale = useLocale();
 	const t = useTranslations();
-	const rawNav = getDashboardNavigation(locale);
+	const rawNav = getDashboardNavigation();
 	const pathname = usePathname();
 
 	const rawMobileNav = {
@@ -22,10 +21,10 @@ export default function DashboardMobileNav() {
 
 	return (
 		<nav className="fixed bottom-0 left-0 right-0 border-t bg-background/90 backdrop-blur md:hidden">
-			<div className="flex h-13 items-center justify-around">
+			<div className="flex h-15 items-center justify-around">
 				{rawMobileNav.navMobile.map((item) => {
 					const normalizedPath = pathname.replace(/\/$/, "");
-					const isOverview = item.url === `/${locale}/dashboard`;
+					const isOverview = item.url === `/dashboard`;
 
 					const isActive = isOverview
 						? normalizedPath === item.url
@@ -34,13 +33,16 @@ export default function DashboardMobileNav() {
 						<Link
 							key={item.url}
 							href={item.url}
-							className={`flex flex-col items-center justify-center text-sm ${isActive ? "text-foreground" : "text-muted-foreground"}`}
+							className={cn(
+								"relative flex flex-col items-center justify-center gap-0.5 px-4 py-2 w-16 rounded-4xl text-sm transition-colors",
+								isActive ? "text-foreground" : "text-muted-foreground",
+							)}
 						>
 							{/* 动画背景/圆点 */}
 							{isActive && (
 								<motion.div
 									layoutId="activeTab"
-									className="absolute inset-0 bg-zinc-100 dark:bg-zinc-800 -z-10"
+									className="absolute top-0 left-1/2 -translate-x-1/2 h-0.5 w-6 rounded-full bg-foreground"
 									transition={{ type: "spring", stiffness: 500, damping: 30 }}
 								/>
 							)}

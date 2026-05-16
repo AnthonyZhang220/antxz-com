@@ -1,5 +1,6 @@
 "use client";
 
+import { Link } from "@/i18n/navigation";
 import { EllipsisVertical } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { UseAuthUserResult } from "@/hooks/useAuthUser";
@@ -8,7 +9,7 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 type NavUserProps = {
@@ -25,10 +26,6 @@ export default function NavUser({
 	isLoading = false,
 }: NavUserProps) {
 	const pathname = usePathname();
-	const router = useRouter();
-	const handleGoToAccount = () => {
-		router.push("/dashboard/account/");
-	};
 
 	if (!user || isLoading) {
 		return null;
@@ -49,21 +46,23 @@ export default function NavUser({
 						"data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground",
 					)}
 					isActive={pathname.endsWith("/dashboard/account/")}
-					onClick={handleGoToAccount}
+					asChild
 				>
-					<Avatar className="h-8 w-8">
-						<AvatarImage src={avatarUrl} alt={displayName} />
-						<AvatarFallback className="rounded-lg bg-zinc-200 dark:bg-zinc-800">
-							{hasAvatar ? null : initials}
-						</AvatarFallback>
-					</Avatar>
-					<div className="grid flex-1 text-left text-sm leading-tight">
-						<span className="truncate font-medium">{displayName}</span>
-						<span className="truncate text-xs text-muted-foreground">
-							{email}
-						</span>
-					</div>
-					<EllipsisVertical className="ml-auto size-4" />
+					<Link href={`/dashboard/account/`}>
+						<Avatar className="h-8 w-8">
+							<AvatarImage src={avatarUrl} alt={displayName} />
+							<AvatarFallback className="rounded-lg bg-zinc-200 dark:bg-zinc-800">
+								{hasAvatar ? null : initials}
+							</AvatarFallback>
+						</Avatar>
+						<div className="grid flex-1 text-left text-sm leading-tight">
+							<span className="truncate font-medium">{displayName}</span>
+							<span className="truncate text-xs text-muted-foreground">
+								{email}
+							</span>
+						</div>
+						<EllipsisVertical className="ml-auto size-4" />
+					</Link>
 				</SidebarMenuButton>
 			</SidebarMenuItem>
 		</SidebarMenu>

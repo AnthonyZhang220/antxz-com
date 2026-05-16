@@ -3,6 +3,7 @@
 import { AlertTriangle, RefreshCw } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { createTranslator } from "next-intl";
+import { Link } from "@/i18n/navigation";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -47,7 +48,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
 								{t("tryAgain")}
 							</Button>
 							<Button variant="outline" asChild>
-								<a href={`/${locale}`}>{t("goHome")}</a>
+								<Link href={`/`}>{t("goHome")}</Link>
 							</Button>
 						</div>
 					</div>

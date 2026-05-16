@@ -13,11 +13,6 @@ import {
 
 export async function readUserSettingsFromCookies(): Promise<UserSettings> {
 	const cookieStore = await cookies();
-	console.log(
-		"cookieStore from readUserSettingsFromCookies:",
-		cookieStore,
-		new Error().stack,
-	);
 
 	const locale = cookieStore.get("preferred_locale")?.value;
 	const region = cookieStore.get("preferred_region")?.value;
