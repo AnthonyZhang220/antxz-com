@@ -73,7 +73,7 @@ export function FeaturedCard({ post }: { post: BlogPost }) {
 			href={`/blog/${post.slug}`}
 			className="group block rounded-xl overflow-hidden border border-border shadow-sm hover:shadow-md transition-shadow duration-300 mb-2"
 		>
-			<div className="relative aspect-21/9 overflow-hidden">
+			<div className="relative aspect-4/3 sm:aspect-21/9 overflow-hidden">
 				{coverSrc ? (
 					<Image
 						src={coverSrc}
@@ -106,7 +106,7 @@ export function FeaturedCard({ post }: { post: BlogPost }) {
 							</span>
 						))}
 					</div>
-					<h2 className="font-serif text-xl md:text-2xl font-bold text-white leading-snug tracking-tight">
+					<h2 className="font-serif text-lg md:text-2xl font-bold text-white leading-snug tracking-tight">
 						{post.title}
 					</h2>
 				</div>
@@ -157,16 +157,17 @@ export function SmallCard({ post }: { post: BlogPost }) {
 	return (
 		<Link
 			href={`/blog/${post.slug}`}
-			className="group flex gap-4 py-4.5 border-b border-border/50 last:border-0"
+			className="group flex flex-row gap-3 py-4 border-b border-border/50 last:border-0 self-start"
 		>
-			<div className="w-36 shrink-0 aspect-3/2 rounded-lg overflow-hidden bg-muted relative hidden sm:block">
+			{/* 图片容器：sm以下宽度100%，在上方；sm及以上宽度固定在左侧 */}
+			<div className="w-24 sm:w-36 shrink-0 rounded-lg aspect-square overflow-hidden bg-muted relative">
 				{coverSrc ? (
 					<Image
 						src={coverSrc}
 						alt={post.title}
 						fill
 						sizes="(max-width: 768px)"
-						className="object-cover transition-transform duration-300 group-hover:scale-[1.06]"
+						className="object-cover object-top-left transition-transform duration-300 group-hover:scale-[1.06]"
 					/>
 				) : (
 					<div className="flex h-full w-full items-center justify-center bg-zinc-200 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
@@ -366,7 +367,7 @@ export default function BlogListPage({
 							</SheetTrigger>
 							<SheetContent
 								side="top"
-								className="h-screen w-screen max-w-none p-0 overflow-y-auto"
+								className="h-dvh w-screen max-w-none p-0 overflow-y-auto"
 							>
 								<SheetTitle className="sr-only">{t("filterLabel")}</SheetTitle>
 								<SheetDescription className="sr-only">

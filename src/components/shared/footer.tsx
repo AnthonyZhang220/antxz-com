@@ -66,7 +66,7 @@ export default function Footer() {
 	return (
 		<footer className="mt-auto bg-white px-4 py-8 pt-16 dark:bg-black sm:px-6 sm:py-10 sm:pt-20 lg:px-10 lg:py-12 lg:pt-24">
 			{showContextNav && (
-				<div className="mr-auto max-w-4xl px-2 py-2 text-xs text-zinc-500 dark:text-zinc-400 sm:px-4 sm:py-3">
+				<div className="mx-auto max-w-7xl px-2 py-2 text-xs text-zinc-500 dark:text-zinc-400 sm:px-4 sm:py-3">
 					<Breadcrumb>
 						<BreadcrumbList className="text-xs text-zinc-500 dark:text-zinc-400">
 							{breadcrumbItems.map((item, index) => (

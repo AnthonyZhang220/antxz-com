@@ -612,7 +612,7 @@
     },
     "dashboard": {
         "navigation": {
-            "overview": "概览",
+            "overview": "总览",
             "bookmarks": "收藏",
             "comments": "评论",
             "notifications": "通知",
@@ -623,7 +623,7 @@
             "brand": "AntXZ.com"
         },
         "mobileNavigation": {
-            "overview": "概览",
+            "overview": "总览",
             "bookmarks": "收藏",
             "comments": "评论",
             "notifications": "通知",

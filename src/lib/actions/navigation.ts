@@ -65,27 +65,27 @@ const dashboardNavDefinitions = {
 	],
 	navMobile: [
 		{
-			titleKey: "dashboard.navigation.overview",
+			titleKey: "dashboard.mobileNavigation.overview",
 			slug: "",
 			icon: LayoutDashboard,
 		},
 		{
-			titleKey: "dashboard.navigation.bookmarks",
+			titleKey: "dashboard.mobileNavigation.bookmarks",
 			slug: "bookmarks",
 			icon: Bookmark,
 		},
 		{
-			titleKey: "dashboard.navigation.comments",
+			titleKey: "dashboard.mobileNavigation.comments",
 			slug: "comments",
 			icon: MessageCircleMore,
 		},
 		{
-			titleKey: "dashboard.navigation.notifications",
+			titleKey: "dashboard.mobileNavigation.notifications",
 			slug: "notifications",
 			icon: Bell,
 		},
 		{
-			titleKey: "dashboard.navigation.account",
+			titleKey: "dashboard.mobileNavigation.account",
 			slug: "account",
 			icon: CircleUserRound,
 		},

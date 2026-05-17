@@ -272,7 +272,7 @@ export default function DashboardNotifications() {
 
 	// ── render ───────────────────────────────────────────────────────────────
 	return (
-		<div className="space-y-6 p-4 lg:p-6 h-[calc(100dvh-var(--header-height))]">
+		<div className="space-y-6 p-4 lg:p-6">
 			<div className="flex flex-wrap gap-2">
 				<Tabs defaultValue={filterOrder[0]}>
 					<TabsList className="**:data-[slot=badge]:size-5 **:data-[slot=badge]:rounded-full **:data-[slot=badge]:bg-muted-foreground/30 **:data-[slot=badge]:px-1 @4xl/main:flex">
