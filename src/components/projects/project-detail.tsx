@@ -10,17 +10,17 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { ProjectItem } from "@/lib/types/project";
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 
 type ProjectDetailProps = {
 	project: ProjectItem;
-	locale: string;
 };
 
-export function ProjectDetail({ project, locale }: ProjectDetailProps) {
+export function ProjectDetail({ project }: ProjectDetailProps) {
 	const tProject = useTranslations("project");
 	const firstScreenshot = project.screenshots?.[0];
 	const remainingScreenshots = project.screenshots?.slice(1) ?? [];
+	const format = useFormatter();
 
 	return (
 		<main className="mx-auto w-full max-w-5xl px-5 py-12 sm:px-8 lg:px-10">
@@ -43,7 +43,9 @@ export function ProjectDetail({ project, locale }: ProjectDetailProps) {
 						{project.publishedAt ? (
 							<Badge variant="outline" className="gap-1">
 								<Calendar className="h-3.5 w-3.5" />
-								{new Date(project.publishedAt).toLocaleDateString(locale)}
+								{format.dateTime(new Date(project.publishedAt), {
+									dateStyle: "medium",
+								})}
 							</Badge>
 						) : null}
 					</div>

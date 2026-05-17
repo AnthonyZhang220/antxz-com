@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { ProjectDetail } from "@/components/projects/project-detail";
 import { client } from "@/sanity/lib/client";
-import { allProjectSlugsQuery, projectBySlugQuery } from "@/sanity/lib/queries";
+import { projectBySlugQuery } from "@/sanity/lib/queries";
 import type { ProjectItem } from "@/lib/types/project";
 
 interface ProjectDetailPageProps {
@@ -22,7 +22,7 @@ interface ProjectDetailPageProps {
 export default async function ProjectDetailPage({
 	params,
 }: ProjectDetailPageProps) {
-	const { locale, slug } = await params;
+	const { slug } = await params;
 	const project = await client.fetch<ProjectItem | null>(projectBySlugQuery, {
 		slug,
 	});
@@ -31,5 +31,5 @@ export default async function ProjectDetailPage({
 		notFound();
 	}
 
-	return <ProjectDetail locale={locale} project={project} />;
+	return <ProjectDetail project={project} />;
 }

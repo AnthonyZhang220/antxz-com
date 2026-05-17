@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
-import { ArrowRight, ExternalLink, Github } from "lucide-react";
+import { ArrowRight, ExternalLink } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -11,18 +11,14 @@ import { Separator } from "@/components/ui/separator";
 import type { ProjectItem } from "@/lib/types/project";
 import { useTranslations } from "next-intl";
 import { ProjectLabels } from "@/lib/i18n/project-labels";
+import { GitHubIcon } from "../shared/github-icon";
 
 export type ProjectsShowcaseProps = {
 	projects: ProjectItem[];
-	locale: string;
 	labels: ProjectLabels;
 };
 
-export function ProjectsShowcase({
-	projects,
-	locale,
-	labels,
-}: ProjectsShowcaseProps) {
+export function ProjectsShowcase({ projects, labels }: ProjectsShowcaseProps) {
 	const t = useTranslations("project");
 	const getPreviewText = (project: ProjectItem) => {
 		const source =
@@ -70,7 +66,7 @@ export function ProjectsShowcase({
 
 			<div className="grid gap-6 lg:grid-cols-2">
 				{projects.map((project) => {
-					const detailsPath = `/${locale}/projects/${project.slug}`;
+					const detailsPath = `/projects/${project.slug}`;
 					const previewText = getPreviewText(project);
 					const screenshotCount = project.screenshots?.length || 0;
 
@@ -145,7 +141,7 @@ export function ProjectsShowcase({
 											target="_blank"
 											rel="noopener noreferrer"
 										>
-											<Github className="h-4 w-4" />
+											<GitHubIcon className="h-4 w-4" />
 											<span className="sr-only">{labels.sourceCode}</span>
 										</Link>
 									</Button>
