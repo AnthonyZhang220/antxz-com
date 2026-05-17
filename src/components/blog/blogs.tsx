@@ -75,7 +75,7 @@ export default function Blogs({
 	};
 
 	return (
-		<section className="relative w-full overflow-hidden pt-12 pb-20 md:pt-14 md:pb-24">
+		<section className="relative w-full overflow-hidden py-12 md:pt-14 md:pb-24">
 			<div className="relative z-10 w-full px-4 sm:px-6 lg:px-8">
 				<div
 					ref={containerRef}
@@ -90,7 +90,7 @@ export default function Blogs({
 							return (
 								<article
 									key={post._id}
-									className="h-[68vh] min-w-[16rem] w-[78vw] shrink-0 overflow-hidden rounded-sm transition-transform duration-300 hover:-translate-y-0.5 sm:w-[52vw] md:w-[40vw] lg:w-[31vw] xl:w-[24vw]"
+									className="min-h-[68vh] min-w-[16rem] w-[78vw] shrink-0 overflow-hidden rounded-sm transition-transform duration-300 hover:-translate-y-0.5 sm:w-[52vw] md:w-[40vw] lg:w-[31vw] xl:w-[24vw]"
 								>
 									<Link
 										href={post.slug ? `/blog/${post.slug}` : "/blog"}

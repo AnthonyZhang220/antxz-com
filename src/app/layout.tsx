@@ -35,7 +35,7 @@ export const metadata: Metadata = {
 	icons: {
 		icon: "/favicon.svg",
 		shortcut: "/favicon.svg",
-		apple: "/favicon.svg",
+		apple: "/apple-icon.png",
 	},
 };
 
@@ -51,17 +51,33 @@ export default async function RootLayout({
 
 	return (
 		<html lang={locale} suppressHydrationWarning>
+			<head>
+				<script
+					dangerouslySetInnerHTML={{
+						__html: `
+            (function() {
+              try {
+                var theme = '${defaultTheme}';
+                var isDark = theme === 'dark' || 
+                  (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+                document.documentElement.classList.toggle('dark', isDark);
+              } catch(e) {}
+            })();
+          `,
+					}}
+				/>
+			</head>
 			<body
 				className={`${geistSans.variable} ${geistMono.variable} ${montserrat.variable} antialiased`}
 			>
-				<NextIntlClientProvider>
-					<SystemEasterEgg />
-					<ThemeProvider
-						attribute="class"
-						defaultTheme={defaultTheme}
-						enableSystem
-						disableTransitionOnChange
-					>
+				<ThemeProvider
+					attribute="class"
+					defaultTheme={defaultTheme}
+					enableSystem
+					disableTransitionOnChange
+				>
+					<NextIntlClientProvider>
+						<SystemEasterEgg />
 						<NextTopLoader
 							color="linear-gradient(to right, #3b82f6, #a855f7)"
 							height={2}
@@ -70,8 +86,8 @@ export default async function RootLayout({
 						/>
 						<TooltipProvider>{children}</TooltipProvider>
 						<ToasterProvider />
-					</ThemeProvider>
-				</NextIntlClientProvider>
+					</NextIntlClientProvider>
+				</ThemeProvider>
 			</body>
 		</html>
 	);
