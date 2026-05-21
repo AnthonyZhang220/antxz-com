@@ -12,8 +12,13 @@ const AUTH_BACKGROUNDS = [
 	"https://picsum.photos/seed/qingjing-05/1600/1200",
 ];
 
-const UNSPLASH_COLLECTION_ID = process.env.NEXT_PUBLIC_UNSPLASH_COLLECTION_ID ?? "kNhCfAx_DLQ";
+const UNSPLASH_COLLECTION_ID =
+	process.env.NEXT_PUBLIC_UNSPLASH_COLLECTION_ID ?? "kNhCfAx_DLQ";
 const UNSPLASH_ACCESS_KEY = process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY;
+const UNSPLASH_API_URL = "https://api.unsplash.com/photos/random";
+const UNSPLASH_API_VERSION = "v1";
+const UNSPLASH_APP_NAME = "antxz.com";
+const UNSPLASH_UTM_SOURCE = `?utm_source=${UNSPLASH_APP_NAME}&utm_medium=referral`;
 
 type UnsplashRandomPhoto = {
 	urls?: {
@@ -56,15 +61,14 @@ async function getUnsplashCoverPhoto(): Promise<CoverPhotoMeta | null> {
 	if (!UNSPLASH_ACCESS_KEY) return null;
 
 	try {
-		const endpoint = new URL("https://api.unsplash.com/photos/random");
+		const endpoint = new URL(UNSPLASH_API_URL);
 		endpoint.searchParams.set("collections", UNSPLASH_COLLECTION_ID);
 		endpoint.searchParams.set("client_id", UNSPLASH_ACCESS_KEY);
-		endpoint.searchParams.set("orientation", "landscape");
 
 		const response = await fetch(endpoint.toString(), {
 			next: { revalidate: 0 },
 			headers: {
-				"Accept-Version": "v1",
+				"Accept-Version": `${UNSPLASH_API_VERSION}`,
 			},
 		});
 
@@ -79,16 +83,18 @@ async function getUnsplashCoverPhoto(): Promise<CoverPhotoMeta | null> {
 
 		const locationText =
 			photo.location?.name ||
-			[photo.location?.city, photo.location?.country].filter(Boolean).join(", ") ||
+			[photo.location?.city, photo.location?.country]
+				.filter(Boolean)
+				.join(", ") ||
 			undefined;
 
 		return {
 			imageUrl,
 			blurDataUrl,
 			photographerName: photo.user?.name,
-			photographerProfile: photo.user?.links?.html,
+			photographerProfile: photo.user?.links?.html + UNSPLASH_UTM_SOURCE,
 			locationText,
-			photoPage: photo.links?.html,
+			photoPage: photo.links?.html + UNSPLASH_UTM_SOURCE,
 		};
 	} catch {
 		return null;
@@ -97,8 +103,11 @@ async function getUnsplashCoverPhoto(): Promise<CoverPhotoMeta | null> {
 
 export default async function AuthLayout({
 	children,
-params,
-}: Readonly<{ children: React.ReactNode; params: Promise<{ locale: string }> }>) {
+	params,
+}: Readonly<{
+	children: React.ReactNode;
+	params: Promise<{ locale: string }>;
+}>) {
 	const { locale } = await params;
 	const currentLocale = locale === "zh" ? "zh" : "en";
 	const tHome = await getTranslations("home");
@@ -153,7 +162,7 @@ params,
 					<div className="absolute bottom-4 right-4 z-20 max-w-sm rounded-lg border border-white/20 bg-black/45 px-3 py-2 text-[11px] text-white/85 backdrop-blur-sm">
 						{coverPhoto.photographerName && (
 							<p>
-								{tAuth("coverPhoto.photoBy")} {" "}
+								{tAuth("coverPhoto.photoBy")}{" "}
 								{coverPhoto.photographerProfile ? (
 									<Link
 										href={coverPhoto.photographerProfile}
@@ -169,7 +178,9 @@ params,
 							</p>
 						)}
 						{coverPhoto.locationText && (
-							<p className="mt-0.5">{tAuth("coverPhoto.location")}: {coverPhoto.locationText}</p>
+							<p className="mt-0.5">
+								{tAuth("coverPhoto.location")}: {coverPhoto.locationText}
+							</p>
 						)}
 						{coverPhoto.photoPage && (
 							<p className="mt-0.5">
