@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Hero from "@/components/hero";
 import Intro from "@/components/intro";
 import Blogs from "@/components/blog/blogs";
@@ -8,12 +9,63 @@ interface MainPageProps {
 	params: Promise<{ locale: string }>;
 }
 
+export async function generateMetadata({
+	params,
+}: MainPageProps): Promise<Metadata> {
+	const { locale } = await params;
+	const canonicalUrl = `https://antxz.com/${locale}`;
+
+	return {
+		alternates: {
+			canonical: canonicalUrl,
+			languages: {
+				en: "https://antxz.com/en",
+				zh: "https://antxz.com/zh",
+			},
+		},
+		openGraph: {
+			url: canonicalUrl,
+			siteName: "ANTXZ",
+			locale: locale === "zh" ? "zh_CN" : "en_US",
+		},
+	};
+}
+
 export default async function Home({ params }: MainPageProps) {
 	const { locale } = await params;
 	const posts = await client.fetch(allPostsQuery, { locale });
 
+	const jsonLd = {
+		"@context": "https://schema.org",
+		"@type": "WebSite",
+		name: "ANTXZ",
+		url: "https://antxz.com",
+		description:
+			locale === "zh"
+				? "Anthony Zhang 的个人网站 — 开发者、创作者"
+				: "Anthony Zhang's personal site — developer and creator",
+		inLanguage: locale === "zh" ? "zh-CN" : "en",
+		author: {
+			"@type": "Person",
+			name: "Anthony Zhang",
+			url: "https://antxz.com",
+		},
+		potentialAction: {
+			"@type": "SearchAction",
+			target: {
+				"@type": "EntryPoint",
+				urlTemplate: `https://antxz.com/${locale}/blog?q={search_term_string}`,
+			},
+			"query-input": "required name=search_term_string",
+		},
+	};
+
 	return (
 		<main className="relative overflow-hidden">
+			<script
+				type="application/ld+json"
+				dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+			/>
 			<div className="pointer-events-none absolute inset-0 bg-linear-to-b from-zinc-50 via-zinc-100 to-zinc-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950" />
 			<div
 				className="pointer-events-none absolute inset-0 opacity-40 dark:opacity-20"

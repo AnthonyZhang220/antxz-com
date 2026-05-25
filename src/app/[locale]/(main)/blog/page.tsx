@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import BlogListPage from "@/components/blog/blog-list";
 import { getBlogEngagementBySlugs } from "@/lib/blog/engagement";
 import { createClient as createSupabaseClient } from "@/lib/supabase/server";
@@ -7,6 +8,38 @@ import type { BlogPost } from "@/lib/types/blog";
 
 interface BlogPageProps {
 	params: Promise<{ locale: string }>;
+}
+
+export async function generateMetadata({
+	params,
+}: BlogPageProps): Promise<Metadata> {
+	const { locale } = await params;
+	const canonicalUrl = `https://antxz.com/${locale}/blog`;
+
+	return {
+		title: locale === "zh" ? "博客" : "Blog",
+		description:
+			locale === "zh"
+				? "技术文章、项目分享与思考"
+				: "Technical articles, project write-ups and thoughts",
+		alternates: {
+			canonical: canonicalUrl,
+			languages: {
+				en: "https://antxz.com/en/blog",
+				zh: "https://antxz.com/zh/blog",
+			},
+		},
+		openGraph: {
+			title: locale === "zh" ? "博客 | ANTXZ" : "Blog | ANTXZ",
+			description:
+				locale === "zh"
+					? "技术文章、项目分享与思考"
+					: "Technical articles, project write-ups and thoughts",
+			url: canonicalUrl,
+			siteName: "ANTXZ",
+			locale: locale === "zh" ? "zh_CN" : "en_US",
+		},
+	};
 }
 
 export default async function Home({ params }: BlogPageProps) {

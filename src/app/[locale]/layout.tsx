@@ -34,10 +34,6 @@ export async function generateMetadata({
 		},
 		alternates: {
 			canonical: `https://antxz.com/${locale}`,
-			languages: {
-				en: "https://antxz.com/en",
-				zh: "https://antxz.com/zh",
-			},
 		},
 		openGraph: {
 			title: t("title"),
