@@ -18,7 +18,11 @@ interface BlogPostProps {
 
 const getPost = cache(
 	async (slug: string, locale: string, contentLang: string) =>
-		client.fetch(postBySlugQuery, { slug, locale, contentLang }),
+		client.fetch(
+			postBySlugQuery,
+			{ slug, locale, contentLang },
+			{ next: { tags: [`post:${slug}`] } },
+		),
 );
 
 function resolveContentLang(

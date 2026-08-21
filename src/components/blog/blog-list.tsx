@@ -72,6 +72,7 @@ export function FeaturedCard({ post }: { post: BlogPost }) {
 		<Link
 			href={`/blog/${post.slug}`}
 			className="group block rounded-xl overflow-hidden border border-border shadow-sm hover:shadow-md transition-shadow duration-300 mb-2"
+			prefetch={false}
 		>
 			<div className="relative aspect-4/3 sm:aspect-21/9 overflow-hidden">
 				{coverSrc ? (
@@ -158,6 +159,7 @@ export function SmallCard({ post }: { post: BlogPost }) {
 		<Link
 			href={`/blog/${post.slug}`}
 			className="group flex flex-row gap-3 py-4 border-b border-border/50 last:border-0 self-start"
+			prefetch={false}
 		>
 			{/* 图片容器：sm以下宽度100%，在上方；sm及以上宽度固定在左侧 */}
 			<div className="w-24 sm:w-36 shrink-0 rounded-lg aspect-square overflow-hidden bg-muted relative">

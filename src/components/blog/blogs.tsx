@@ -95,6 +95,7 @@ export default function Blogs({
 									<Link
 										href={post.slug ? `/blog/${post.slug}` : "/blog"}
 										className="flex h-full flex-col"
+										prefetch={false}
 									>
 										<div className="p-4 flex flex-col justify-start shrink-0">
 											<h4 className="text-[clamp(1.35rem,3.6vw,2.2rem)] leading-tight font-bold text-black dark:text-white">

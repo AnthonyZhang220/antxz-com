@@ -102,6 +102,7 @@ export default function UserComments() {
 										<Link
 											href={getBlogHref(comment.article_key)}
 											className="text-xs font-medium text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+											prefetch={false}
 										>
 											{getArticleSlug(comment.article_key)}
 										</Link>
