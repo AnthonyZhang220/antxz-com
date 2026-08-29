@@ -33,7 +33,11 @@ export async function generateMetadata({
 
 export default async function Home({ params }: MainPageProps) {
 	const { locale } = await params;
-	const posts = await client.fetch(allPostsQuery, { locale });
+	const posts = await client.fetch(
+		allPostsQuery,
+		{ locale },
+		{ next: { revalidate: 86400 } },
+	);
 
 	const jsonLd = {
 		"@context": "https://schema.org",

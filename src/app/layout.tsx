@@ -39,7 +39,6 @@ export const metadata: Metadata = {
 	},
 };
 
-export const revalidate = 86400;
 
 export default async function RootLayout({
 	children,
@@ -52,7 +51,7 @@ export default async function RootLayout({
 	const locale = await getLocale();
 
 	return (
-		<html lang={locale} suppressHydrationWarning>
+		<html lang={locale} suppressHydrationWarning={true}>
 			<head>
 				<script
 					dangerouslySetInnerHTML={{
@@ -71,6 +70,7 @@ export default async function RootLayout({
 			</head>
 			<body
 				className={`${geistSans.variable} ${geistMono.variable} ${montserrat.variable} antialiased`}
+				suppressHydrationWarning={true}
 			>
 				<ThemeProvider
 					attribute="class"

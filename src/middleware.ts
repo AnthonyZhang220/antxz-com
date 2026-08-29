@@ -22,6 +22,18 @@ function detectRegion(req: NextRequest): Region {
 	return "global";
 }
 
+function forwardRequestHeader(
+	response: NextResponse,
+	name: string,
+	value: string,
+) {
+	response.headers.set(`x-middleware-request-${name}`, value);
+	const existing = response.headers.get("x-middleware-override-headers");
+	const names = existing ? existing.split(",") : [];
+	if (!names.includes(name)) names.push(name);
+	response.headers.set("x-middleware-override-headers", names.join(","));
+}
+
 export async function middleware(request: NextRequest) {
 	// =========================
 	// 1. Supabase session (logged-in source)
@@ -114,10 +126,13 @@ export async function middleware(request: NextRequest) {
 
 		return redirectResponse;
 	}
+
 	// =========================
 	// 5. next-intl handles routing
 	// =========================
 	const intlResponse = withI18n(request);
+
+	forwardRequestHeader(intlResponse, "x-region", region);
 
 	// =========================
 	// 6. merge supabase cookies

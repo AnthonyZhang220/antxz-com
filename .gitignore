@@ -49,3 +49,4 @@ next-env.d.ts
 
 # open-next folder
 /.open-next
+*:Zone.Identifier

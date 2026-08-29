@@ -37,7 +37,7 @@ const socialLinks = [
 	},
 ];
 
-export default function Footer() {
+export default function Footer({ region }: { region: string }) {
 	const t = useTranslations("footer");
 	const pathname = usePathname();
 	const year = new Date().getFullYear();
@@ -99,7 +99,9 @@ export default function Footer() {
 							{t("name")}
 							<span className="ml-1.5 inline-block h-1.5 w-1.5 rounded-full bg-emerald-400 align-middle" />
 						</p>
-						<p className="text-xs text-zinc-500 dark:text-zinc-400">{t("tagline")}</p>
+						<p className="text-xs text-zinc-500 dark:text-zinc-400">
+							{t("tagline")}
+						</p>
 					</div>
 
 					<div className="space-y-2 md:text-center">
@@ -128,12 +130,17 @@ export default function Footer() {
 							{t("sections.preferencesContact")}
 						</p>
 						<div className="flex flex-wrap items-center gap-1.5 md:justify-end">
-							<GlobeButton />
+							<GlobeButton region={region} />
 							<ThemeModeButton />
 							{socialLinks.map(({ renderIcon, href, label }) => (
 								<Tooltip key={label}>
 									<TooltipTrigger asChild>
-										<Button asChild variant="ghost" size="sm" className="h-9 w-9 p-0">
+										<Button
+											asChild
+											variant="ghost"
+											size="sm"
+											className="h-9 w-9 p-0"
+										>
 											<a
 												href={href}
 												target="_blank"
@@ -154,7 +161,9 @@ export default function Footer() {
 				<Separator className="my-0" />
 
 				<div className="flex flex-col gap-1 pt-3 text-[11px] text-zinc-500 dark:text-zinc-400 sm:flex-row sm:items-center sm:justify-between">
-					<span className="font-mono">© 2022 - {year} {t("name")}. {t("rights")}</span>
+					<span className="font-mono">
+						© 2022 - {year} {t("name")}. {t("rights")}
+					</span>
 					<span className="font-mono">
 						{t("builtWith")}{" "}
 						{techLinks.map((tech, index) => (

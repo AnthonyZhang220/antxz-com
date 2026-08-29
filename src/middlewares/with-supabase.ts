@@ -23,6 +23,14 @@ export async function updateSession(
 		request,
 	});
 
+	const hasSupabaseCookie = request.cookies
+		.getAll()
+		.some((c) => c.name.startsWith("sb-") && c.name.includes("-auth-token"));
+
+	if (!hasSupabaseCookie) {
+		return { supabaseResponse };
+	}
+
 	// With Fluid compute, don't put this client in a global environment
 	// variable. Always create a new one on each request.
 	const supabase = createServerClient(
@@ -81,7 +89,7 @@ export async function updateSession(
 			serverSettings = {
 				locale: settings.locale as AppLocale,
 				region: settings.region as AppRegion,
-				theme: settings.theme as AppTheme, 
+				theme: settings.theme as AppTheme,
 			};
 
 			supabaseResponse.cookies.set(
