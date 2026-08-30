@@ -1,9 +1,15 @@
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+// import { getTranslations } from "next-intl/server";
 import { NotificationToastListener } from "@/lib/providers/notification-toast-listener";
+import { NextIntlClientProvider } from "next-intl";
+import { setRequestLocale } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
+import enMessages from "@/messages/en.json";
+import zhMessages from "@/messages/zh.json";
 
 type LocaleLayoutProps = Readonly<{
 	children: React.ReactNode;
+	params: Promise<{ locale: string }>;
 }>;
 
 export async function generateMetadata({
@@ -12,6 +18,7 @@ export async function generateMetadata({
 	params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
 	const { locale } = await params;
+	setRequestLocale(locale);
 	const t = await getTranslations({ locale, namespace: "metadata" });
 
 	return {
@@ -64,11 +71,21 @@ export async function generateMetadata({
 	};
 }
 
-export default async function LocaleLayout({ children }: LocaleLayoutProps) {
+export function generateStaticParams() {
+	return [{ locale: "en" }, { locale: "zh" }];
+}
+
+export default async function LocaleLayout({
+	children,
+	params,
+}: LocaleLayoutProps) {
+	const { locale } = await params;
+	setRequestLocale(locale);
+	const messages = locale === "zh" ? zhMessages : enMessages;
 	return (
-		<>
+		<NextIntlClientProvider locale={locale} messages={messages}>
 			<NotificationToastListener />
 			{children}
-		</>
+		</NextIntlClientProvider>
 	);
 }

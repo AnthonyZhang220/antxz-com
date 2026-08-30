@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useFormatter, useTranslations } from "next-intl";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
@@ -36,7 +37,7 @@ import {
 import BlogFilter from "@/components/blog/blog-filter";
 import { useBlogFilter } from "@/hooks/useBlogFilter";
 import { Separator } from "@/components/ui/separator";
-import { User } from "@supabase/supabase-js";
+import { getLikedArticleKeys } from "@/lib/actions/blog";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const PAGE_SIZE = 5;
@@ -72,7 +73,6 @@ export function FeaturedCard({ post }: { post: BlogPost }) {
 		<Link
 			href={`/blog/${post.slug}`}
 			className="group block rounded-xl overflow-hidden border border-border shadow-sm hover:shadow-md transition-shadow duration-300 mb-2"
-			prefetch={false}
 		>
 			<div className="relative aspect-4/3 sm:aspect-21/9 overflow-hidden">
 				{coverSrc ? (
@@ -159,7 +159,6 @@ export function SmallCard({ post }: { post: BlogPost }) {
 		<Link
 			href={`/blog/${post.slug}`}
 			className="group flex flex-row gap-3 py-4 border-b border-border/50 last:border-0 self-start"
-			prefetch={false}
 		>
 			{/* 图片容器：sm以下宽度100%，在上方；sm及以上宽度固定在左侧 */}
 			<div className="w-24 sm:w-36 shrink-0 rounded-lg aspect-square overflow-hidden bg-muted relative">
@@ -296,12 +295,35 @@ interface Props {
 }
 
 export default function BlogListPage({
-	posts,
+	posts: initialPosts,
 	allTags,
 	minYear,
 	maxYear,
 }: Props) {
 	const t = useTranslations("blog");
+	const [posts, setPosts] = useState(initialPosts);
+
+	useEffect(() => {
+		const articleKeys = initialPosts.map((post) => `blog:${post.slug}`);
+		if (articleKeys.length === 0) return;
+
+		let cancelled = false;
+
+		getLikedArticleKeys(articleKeys).then((result) => {
+			if (cancelled || !result.success) return;
+			const likedSet = new Set(result.data.likedKeys);
+			setPosts((prev) =>
+				prev.map((post) => ({
+					...post,
+					userLiked: likedSet.has(`blog:${post.slug}`),
+				})),
+			);
+		});
+
+		return () => {
+			cancelled = true;
+		};
+	}, [initialPosts]);
 
 	// delegate filter state/logic to custom hook
 	const {

@@ -32,25 +32,25 @@ import {
 	User as UserIcon,
 	XIcon,
 } from "lucide-react";
-import type { User } from "@supabase/supabase-js";
 import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Badge } from "../ui/badge";
 
-type NavbarProps = {
-	initialUser?: User | null;
-};
-
 // 在渲染时，你会根据当前的 [locale] 自动拼接前缀
 // 例如：/zh/blog 或 /en/blog
-export default function Navbar({ initialUser }: NavbarProps) {
+export default function Navbar() {
 	const t = useTranslations("navbar");
 	const h = useTranslations("home");
 	const a = useTranslations("auth.loginForm");
 	const um = useTranslations("navbar.userMenu");
-	const { user, displayName, initials, signOut } = useAuthUser(initialUser);
-	const { authHref, accountHref, dashboardHref, notificationsHref, handleLogout } =
-		useAuthNavigation(signOut);
+	const { user, displayName, initials, signOut } = useAuthUser(null);
+	const {
+		authHref,
+		accountHref,
+		dashboardHref,
+		notificationsHref,
+		handleLogout,
+	} = useAuthNavigation(signOut);
 	const avatarUrl = user?.user_metadata?.avatar_url as string | undefined;
 	const supabase = useMemo(() => createClient(), []);
 	const [unreadCount, setUnreadCount] = useState(0);
@@ -160,7 +160,7 @@ export default function Navbar({ initialUser }: NavbarProps) {
 	return (
 		<header className="sticky inset-x-0 top-0 z-50 flex h-14 items-center justify-between px-3 sm:h-16 sm:px-6 bg-background/85 backdrop-blur supports-backdrop-filter:bg-background/70 border-b border-border/60">
 			{/* Logo */}
-			<Link href="/" aria-label={h("logo")}>
+			<Link href="/" aria-label={h("logo")} prefetch={false}>
 				<Image
 					src="/logo.svg"
 					alt={h("logo")}
@@ -182,7 +182,9 @@ export default function Navbar({ initialUser }: NavbarProps) {
 							className="h-9 px-3 sm:h-10 sm:px-4"
 							asChild
 						>
-							<Link href={authHref}>{a("button")}</Link>
+							<Link href={authHref} prefetch={false}>
+								{a("button")}
+							</Link>
 						</Button>
 					)}
 					<SheetTrigger asChild>
@@ -214,7 +216,9 @@ export default function Navbar({ initialUser }: NavbarProps) {
 									className="h-9 px-3 sm:h-10 sm:px-4"
 									asChild
 								>
-									<Link href={authHref}>{a("button")}</Link>
+									<Link href={authHref} prefetch={false}>
+										{a("button")}
+									</Link>
 								</Button>
 							</SheetClose>
 						)}

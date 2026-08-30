@@ -4,7 +4,6 @@ import createNextIntlPlugin from "next-intl/plugin";
 /** @type {import('next').NextConfig} */
 const nextConfig: NextConfig = {
 	/* config options here */
-	trailingSlash: true,
 	reactCompiler: true,
 	images: {
 		unoptimized: true,

@@ -3,7 +3,8 @@
 import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { type ActionResult, ok, err } from "@/lib/actions/action-result";
-
+import { client as SanityClient } from "@/sanity/lib/client";
+import { postBySlugQuery } from "@/sanity/lib/queries";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -18,6 +19,48 @@ function formatSupabaseErrorMessage(
 }
 
 // ─── Like ─────────────────────────────────────────────────────────────────────
+// 加在 getArticleLikeState 附近
+
+export async function getLikedArticleKeys(
+	articleKeys: string[],
+): Promise<ActionResult<{ likedKeys: string[] }>> {
+	const trimmedKeys = articleKeys
+		.map((key) => String(key ?? "").trim())
+		.filter(Boolean);
+
+	if (trimmedKeys.length === 0) {
+		return ok({ likedKeys: [] });
+	}
+
+	const supabase = await createClient();
+	const {
+		data: { user },
+	} = await supabase.auth.getUser();
+
+	if (!user?.id) {
+		return ok({ likedKeys: [] });
+	}
+
+	const { data: rows, error } = await supabase
+		.from("article_likes")
+		.select("article_key")
+		.eq("user_id", user.id)
+		.in("article_key", trimmedKeys);
+
+	if (error) {
+		return err(
+			"ARTICLE_LIKE_STATE_LOAD_FAILED",
+			formatSupabaseErrorMessage(error),
+			500,
+		);
+	}
+
+	const likedKeys = (rows ?? [])
+		.map((row) => row.article_key)
+		.filter((key): key is string => typeof key === "string");
+
+	return ok({ likedKeys });
+}
 
 export async function getArticleLikeState(
 	articleKey: string,
@@ -244,4 +287,22 @@ export async function unbookmarkArticle(
 	}
 
 	return ok();
+}
+
+export async function getTranslatedPost(
+	slug: string,
+	locale: string,
+	contentLang: string | null,
+) {
+	if (!SanityClient) return err("500", "SanityClient Not Found");
+
+	const translatedPost = await SanityClient.fetch(
+		postBySlugQuery,
+		{ slug, locale, contentLang },
+		{ next: { tags: [`post: ${slug}`] } },
+	);
+
+	if (!translatedPost) return err("400", "Can't find post");
+
+	return ok({ translatedPost });
 }

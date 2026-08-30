@@ -66,7 +66,7 @@ async function getUnsplashCoverPhoto(): Promise<CoverPhotoMeta | null> {
 		endpoint.searchParams.set("client_id", UNSPLASH_ACCESS_KEY);
 
 		const response = await fetch(endpoint.toString(), {
-			next: { revalidate: 0 },
+			next: { revalidate: 60 },
 			headers: {
 				"Accept-Version": `${UNSPLASH_API_VERSION}`,
 			},

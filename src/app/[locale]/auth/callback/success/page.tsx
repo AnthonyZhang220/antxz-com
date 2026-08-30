@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
@@ -17,7 +17,7 @@ function normalizeNextPath(next: string | null) {
 	return next;
 }
 
-export default function AuthCallbackSuccessPage() {
+export function AuthCallbackSuccessContent() {
 	const t = useTranslations("auth.callback");
 	const router = useRouter();
 	const searchParams = useSearchParams();
@@ -56,5 +56,19 @@ export default function AuthCallbackSuccessPage() {
 				<p className="text-sm text-muted-foreground">{t("description")}</p>
 			</div>
 		</div>
+	);
+}
+
+export default function AuthCallbackSuccessPage() {
+	return (
+		<Suspense
+			fallback={
+				<div className="flex min-h-screen items-center justify-center">
+					<Loader2 className="size-6 animate-spin text-muted-foreground" />
+				</div>
+			}
+		>
+			<AuthCallbackSuccessContent />
+		</Suspense>
 	);
 }

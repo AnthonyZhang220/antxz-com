@@ -27,6 +27,10 @@ export async function POST(req: NextRequest) {
 		if (!body?._type) {
 			return NextResponse.json({ message: "Bad Request" }, { status: 400 });
 		}
+		
+		if (body._type === "aboutMe") {
+			revalidateTag("aboutMe", "max");
+		}
 
 		// 精确到这一篇文章的缓存
 		if (body.slug?.current) {

@@ -4,7 +4,6 @@ import Intro from "@/components/intro";
 import Blogs from "@/components/blog/blogs";
 import { client } from "@/sanity/lib/client";
 import { allPostsQuery } from "@/sanity/lib/queries";
-
 interface MainPageProps {
 	params: Promise<{ locale: string }>;
 }
@@ -36,7 +35,7 @@ export default async function Home({ params }: MainPageProps) {
 	const posts = await client.fetch(
 		allPostsQuery,
 		{ locale },
-		{ next: { revalidate: 86400 } },
+		{ next: { revalidate: 86400, tags: ["post"] } },
 	);
 
 	const jsonLd = {

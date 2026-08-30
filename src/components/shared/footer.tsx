@@ -37,7 +37,7 @@ const socialLinks = [
 	},
 ];
 
-export default function Footer({ region }: { region: string }) {
+export default function Footer() {
 	const t = useTranslations("footer");
 	const pathname = usePathname();
 	const year = new Date().getFullYear();
@@ -130,7 +130,7 @@ export default function Footer({ region }: { region: string }) {
 							{t("sections.preferencesContact")}
 						</p>
 						<div className="flex flex-wrap items-center gap-1.5 md:justify-end">
-							<GlobeButton region={region} />
+							<GlobeButton />
 							<ThemeModeButton />
 							{socialLinks.map(({ renderIcon, href, label }) => (
 								<Tooltip key={label}>

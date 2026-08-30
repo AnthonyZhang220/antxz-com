@@ -4,16 +4,14 @@ import { getBlogEngagementBySlug } from "@/lib/blog/engagement";
 import { notFound } from "next/navigation";
 import BlogPostPage from "@/components/blog/blog-post";
 import BlogComments from "@/components/blog/blog-comments";
-import { createClient as createSupabaseClient } from "@/lib/supabase/server";
-import { getCommentsByArticleKey } from "@/lib/actions/comments";
 import type { Metadata } from "next";
 import { JsonLd } from "@/components/shared/json-ld";
 import type { Article, WithContext } from "schema-dts";
 import { cache } from "react";
+import { allPostSlugsQuery } from "@/sanity/lib/queries";
 
 interface BlogPostProps {
 	params: Promise<{ slug: string; locale: string }>;
-	searchParams?: Promise<{ lang?: string }>;
 }
 
 const getPost = cache(
@@ -25,23 +23,12 @@ const getPost = cache(
 		),
 );
 
-function resolveContentLang(
-	lang: string | undefined,
-	locale: string,
-): "en" | "zh" {
-	if (lang === "en" || lang === "zh") return lang;
-	return locale === "zh" ? "zh" : "en";
-}
-
 export async function generateMetadata({
 	params,
-	searchParams,
 }: BlogPostProps): Promise<Metadata> {
 	const { slug, locale } = await params;
-	const { lang } = (await searchParams) ?? {};
-	const contentLang = resolveContentLang(lang, locale);
 
-	const post = await getPost(slug, locale, contentLang);
+	const post = await getPost(slug, locale, locale);
 	if (!post) return {};
 
 	const canonicalUrl = `https://antxz.com/${locale}/blog/${slug}`;
@@ -92,19 +79,21 @@ export async function generateMetadata({
 	};
 }
 
-export default async function Page({ params, searchParams }: BlogPostProps) {
+export async function generateStaticParams() {
+	const posts = await client.fetch(allPostSlugsQuery);
+
+	return posts.flatMap((post: { slug: string }) => [
+		{ locale: "en", slug: post.slug },
+		{ locale: "zh", slug: post.slug },
+	]);
+}
+
+export default async function Page({ params }: BlogPostProps) {
 	const { slug, locale } = await params;
-	const { lang } = (await searchParams) ?? {};
-	const contentLang = resolveContentLang(lang, locale);
 	const articleKey = `blog:${slug}`;
 
-	const supabase = await createSupabaseClient();
-	const {
-		data: { user },
-	} = await supabase.auth.getUser();
-
 	const [post, engagement] = await Promise.all([
-		getPost(slug, locale, contentLang),
+		getPost(slug, locale, locale),
 		getBlogEngagementBySlug(slug),
 	]);
 
@@ -115,12 +104,6 @@ export default async function Page({ params, searchParams }: BlogPostProps) {
 		commentCount: engagement.commentCount,
 		likeCount: engagement.likeCount,
 	};
-
-	const commentResult = await getCommentsByArticleKey(
-		articleKey,
-		user?.id ?? null,
-	);
-	const comments = commentResult.success ? commentResult.data : [];
 
 	const jsonLd: WithContext<Article> = {
 		"@context": "https://schema.org",
@@ -137,20 +120,12 @@ export default async function Page({ params, searchParams }: BlogPostProps) {
 	return (
 		<>
 			<JsonLd jsonLd={jsonLd} />
-			<BlogPostPage
-				routeLocale={locale === "zh" ? "zh" : "en"}
-				contentLang={contentLang}
-				post={postWithEngagement}
-			/>
+			<BlogPostPage post={postWithEngagement} />
 			<div
 				id="comments"
 				className="mx-auto max-w-4xl scroll-mt-24 px-5 sm:px-8"
 			>
-				<BlogComments
-					initialUser={user}
-					articleKey={articleKey}
-					initialComments={comments}
-				/>
+				<BlogComments articleKey={articleKey} />
 			</div>
 		</>
 	);

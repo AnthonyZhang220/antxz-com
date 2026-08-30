@@ -32,3 +32,16 @@ export async function createClient() {
 		},
 	);
 }
+
+export async function getAuthenticatedUser() {
+	const cookieStore = await cookies();
+	const hasSupabaseCookie = cookieStore
+		.getAll()
+		.some((c) => c.name.startsWith("sb-") && c.name.includes("-auth-token"));
+
+	if (!hasSupabaseCookie) return null;
+
+	const supabase = await createClient();
+	const { data } = await supabase.auth.getUser();
+	return data.user;
+}

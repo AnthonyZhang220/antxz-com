@@ -117,7 +117,7 @@ export function ProjectsShowcase({ projects, labels }: ProjectsShowcaseProps) {
 
 							<CardFooter className="flex items-center gap-2 pt-0">
 								<Button asChild>
-									<Link href={detailsPath} prefetch={false}>
+									<Link href={detailsPath}>
 										{labels.viewDetails}
 										<ArrowRight className="ml-1 h-4 w-4" />
 									</Link>
@@ -128,7 +128,6 @@ export function ProjectsShowcase({ projects, labels }: ProjectsShowcaseProps) {
 											href={project.websiteUrl}
 											target="_blank"
 											rel="noopener noreferrer"
-											prefetch={false}
 										>
 											<ExternalLink className="h-4 w-4" />
 											<span className="sr-only">{labels.liveSite}</span>
@@ -141,7 +140,6 @@ export function ProjectsShowcase({ projects, labels }: ProjectsShowcaseProps) {
 											href={project.githubUrl}
 											target="_blank"
 											rel="noopener noreferrer"
-											prefetch={false}
 										>
 											<GitHubIcon className="h-4 w-4" />
 											<span className="sr-only">{labels.sourceCode}</span>

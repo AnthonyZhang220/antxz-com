@@ -3,9 +3,9 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { PortableText, PortableTextComponents } from "next-sanity";
-import { useFormatter, useTranslations } from "next-intl";
+import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { urlFor } from "@/sanity/lib/image";
 import { ActionError, getActionErrorMessage } from "@/lib/errors/action-error";
 import { cn } from "@/lib/utils";
@@ -45,11 +45,10 @@ import {
 	Star,
 	MessageCircleMore,
 } from "lucide-react";
+import { getTranslatedPost } from "@/lib/actions/blog";
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 interface BlogPostPageProps {
-	routeLocale: "en" | "zh";
-	contentLang: "en" | "zh";
 	post: {
 		_id: string;
 		slug: string;
@@ -84,12 +83,17 @@ interface BlogPostPageProps {
 	};
 }
 
-export default function BlogPostPage({
-	routeLocale,
-	contentLang,
-	post,
-}: BlogPostPageProps) {
+function resolveContentLang(lang: string | null, locale: string): "en" | "zh" {
+	if (lang === "en" || lang === "zh") return lang;
+	return locale === "zh" ? "zh" : "en";
+}
+
+export default function BlogPostPage({ post: initialPost }: BlogPostPageProps) {
+	const [post, setPost] = useState(initialPost);
 	const router = useRouter();
+	const searchParam = useSearchParams();
+	const langParam = searchParam.get("lang");
+	const locale = useLocale();
 	const t = useTranslations("blog");
 	const fmt = useFormatter();
 	const articleKey = useMemo(() => `blog:${post.slug}`, [post.slug]);
@@ -128,17 +132,20 @@ export default function BlogPostPage({
 			: null);
 	const canSwitchToEn = Boolean(post.hasEn);
 	const canSwitchToZh = Boolean(post.hasZh);
-	const toEnHref = `/${routeLocale}/blog/${post.slug}?lang=en`;
-	const toZhHref = `/${routeLocale}/blog/${post.slug}?lang=zh`;
+	const toEnHref = `/${locale}/blog/${post.slug}?lang=en`;
+	const toZhHref = `/${locale}/blog/${post.slug}?lang=zh`;
 	const originalLanguage = post.originalLanguage === "zh" ? "zh" : "en";
 	const originalLanguageLabel =
 		originalLanguage === "zh"
 			? t("originalLanguageZh")
 			: t("originalLanguageEn");
 	const currentLanguageLabel =
-		contentLang === "zh" ? t("filterLanguageZh") : t("filterLanguageEn");
+		langParam === "zh" ? t("filterLanguageZh") : t("filterLanguageEn");
+	const contentLang = resolveContentLang(
+		langParam ? langParam : locale,
+		locale,
+	);
 	const showTranslationNotice = contentLang !== originalLanguage;
-
 	const showAuthRequiredDialog = useCallback((message: string) => {
 		setAuthDialogMessage(message);
 		setIsAuthDialogOpen(true);
@@ -206,6 +213,29 @@ export default function BlogPostPage({
 
 		return () => observer.disconnect();
 	}, [hasToc, headingItems]);
+
+	useEffect(() => {
+		if (!langParam) {
+			setPost(initialPost);
+			return;
+		}
+		let mounted = true;
+		const loadTranslatedPost = async () => {
+			try {
+				const res = await getTranslatedPost(post.slug, locale, contentLang);
+
+				if (!mounted) return;
+				if (res.success) {
+					setPost(res.data.translatedPost);
+				}
+			} catch {}
+		};
+		loadTranslatedPost();
+
+		return () => {
+			mounted = false;
+		};
+	}, [post.slug, locale, contentLang, langParam, initialPost]);
 
 	useEffect(() => {
 		let mounted = true;
@@ -307,12 +337,12 @@ export default function BlogPostPage({
 					<AlertDialogFooter>
 						<AlertDialogCancel>{t("authPromptCancel")}</AlertDialogCancel>
 						<AlertDialogAction
-							onClick={() => router.push(`/${routeLocale}/auth/sign-up`)}
+							onClick={() => router.push(`/${locale}/auth/sign-up`)}
 						>
 							{t("authPromptSignup")}
 						</AlertDialogAction>
 						<AlertDialogAction
-							onClick={() => router.push(`/${routeLocale}/auth/login`)}
+							onClick={() => router.push(`/${locale}/auth/login`)}
 						>
 							{t("authPromptLogin")}
 						</AlertDialogAction>
@@ -394,11 +424,13 @@ export default function BlogPostPage({
 										size="sm"
 										variant="ghost"
 										role="tab"
-										aria-selected={contentLang === "en"}
+										aria-selected={
+											langParam === "en" || (!langParam && locale === "en")
+										}
 										onClick={() => router.push(toEnHref)}
 										className={cn(
 											"h-8 w-16 rounded-lg px-3.5 font-mono text-xs transition-all duration-150",
-											contentLang === "en"
+											langParam === "en" || (!langParam && locale === "en")
 												? "bg-foreground text-background shadow-sm"
 												: "text-muted-foreground hover:bg-background/70 hover:text-foreground",
 										)}
@@ -410,11 +442,13 @@ export default function BlogPostPage({
 										size="sm"
 										variant="ghost"
 										role="tab"
-										aria-selected={contentLang === "zh"}
+										aria-selected={
+											langParam === "zh" || (!langParam && locale === "zh")
+										}
 										onClick={() => router.push(toZhHref)}
 										className={cn(
 											"h-8 w-16 rounded-lg px-3.5 font-mono text-xs transition-all duration-150",
-											contentLang === "zh"
+											langParam === "zh" || (!langParam && locale === "zh")
 												? "bg-foreground text-background shadow-sm"
 												: "text-muted-foreground hover:bg-background/70 hover:text-foreground",
 										)}

@@ -1,5 +1,3 @@
-import { getTranslations } from "next-intl/server";
-
 export interface ProjectLabels {
 	title: string;
 	subtitle: string;
@@ -23,9 +21,7 @@ export interface ProjectLabels {
 	openStudio: string;
 }
 
-export function mapProjectLabels(
-	t: Awaited<ReturnType<typeof getTranslations>>,
-): ProjectLabels {
+export function mapProjectLabels(t: (key: string) => string): ProjectLabels {
 	return {
 		title: t("title"),
 		subtitle: t("subtitle"),

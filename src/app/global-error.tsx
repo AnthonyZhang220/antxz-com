@@ -1,9 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { AlertTriangle, RefreshCw } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { createTranslator } from "next-intl";
-import { Link } from "@/i18n/navigation";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";

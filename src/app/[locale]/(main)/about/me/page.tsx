@@ -4,11 +4,14 @@ import Me from "@/components/about/me";
 import { aboutMeQuery } from "@/sanity/lib/queries";
 import { client } from "@/sanity/lib/client";
 import BlogComments from "@/components/blog/blog-comments";
-import { createClient as createSupabaseClient } from "@/lib/supabase/server";
-import { getCommentsByArticleKey } from "@/lib/actions/comments";
 import { notFound } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
 import { JsonLd } from "@/components/shared/json-ld";
+import { routing } from "@/i18n/routing";
+
+export async function generateStaticParams() {
+	return routing.locales.map((locale) => ({ locale }));
+}
 
 interface AboutPageProps {
 	params: Promise<{ locale: string }>;
@@ -43,28 +46,19 @@ export async function generateMetadata({
 export default async function AboutPage({ params }: AboutPageProps) {
 	const { locale } = await params;
 
-	const doc = await client.fetch(aboutMeQuery);
-	if (!doc) notFound();
-
-	const supabase = await createSupabaseClient();
-	const {
-		data: { user },
-	} = await supabase.auth.getUser();
-
-	const commentResult = await getCommentsByArticleKey(
-		"about:me",
-		user?.id ?? null,
+	const doc = await client.fetch(
+		aboutMeQuery,
+		{ locale },
+		{ next: { revalidate: 86400, tags: ["aboutMe"] } },
 	);
-	const comments = commentResult.success ? commentResult.data : [];
+	if (!doc) notFound();
 
 	const jsonLd: WithContext<Person> = {
 		"@context": "https://schema.org",
 		"@type": "Person",
 		name: "Anthony Zhang",
 		url: "https://antxz.com",
-		sameAs: [
-			"https://github.com/AnthonyZhang220",
-		],
+		sameAs: ["https://github.com/AnthonyZhang220"],
 		jobTitle: locale === "zh" ? "全栈开发者" : "Full-stack Developer",
 		description:
 			locale === "zh"
@@ -79,11 +73,7 @@ export default async function AboutPage({ params }: AboutPageProps) {
 			<Me locale={locale} doc={doc} />
 			<section className="relative mx-auto w-full max-w-6xl overflow-x-clip px-5 sm:px-8 lg:px-10">
 				<Separator className="my-10" />
-				<BlogComments
-					initialUser={user}
-					articleKey="about:me"
-					initialComments={comments}
-				/>
+				<BlogComments articleKey="about:me" />
 			</section>
 		</>
 	);

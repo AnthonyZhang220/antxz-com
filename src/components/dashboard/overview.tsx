@@ -16,7 +16,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { createClient } from "@/lib/supabase/client";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { AccountProfile } from "@/lib/actions/account-actions";
-import { cn } from "@/lib/utils";
 
 type OverviewStats = {
 	totalComments: number;

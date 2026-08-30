@@ -1,7 +1,7 @@
 "use client";
 
 import { Link } from "@/i18n/navigation";
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState, useEffect } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import {
 	submitComment as submitCommentAction,
@@ -48,13 +48,14 @@ import {
 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { User } from "@supabase/supabase-js";
+import { createClient as CreateBroswerSupabaseClient } from "@/lib/supabase/client";
 import {
 	renderCommentContent,
 	getInitials,
 	buildTree,
 } from "./blog-comments-render";
 import { getCommentErrorMessageKey } from "@/lib/i18n/comment-labels";
-import { CommentItem } from "@/lib/actions/comments";
+import { CommentItem, getCommentsByArticleKey } from "@/lib/actions/comments";
 
 export type ErrorState = {
 	message: string | null;
@@ -62,23 +63,19 @@ export type ErrorState = {
 };
 export interface BlogCommentsProps {
 	articleKey: string;
-	initialUser: User | null;
-	initialComments: CommentItem[];
 }
 
-export default function BlogComments({
-	articleKey,
-	initialUser,
-	initialComments,
-}: BlogCommentsProps) {
+export default function BlogComments({ articleKey }: BlogCommentsProps) {
 	const t = useTranslations("blog");
 	const locale = useLocale();
 	const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
+	//userstate
+	const [currentUser, setCurrentUser] = useState<User | null>(null);
 	//comments state
-	const [isLoading, setIsLoading] = useState(false);
+	const [isLoading, setIsLoading] = useState(true);
 	const [isSubmitting, setIsSubmitting] = useState(false);
-	const [comments, setComments] = useState<CommentItem[]>(initialComments);
+	const [comments, setComments] = useState<CommentItem[]>([]);
 	const commentTree = useMemo(() => buildTree(comments), [comments]);
 
 	const [message, setMessage] = useState("");
@@ -101,26 +98,56 @@ export default function BlogComments({
 		string | null
 	>(null);
 
+	useEffect(() => {
+		let cancelled = false;
+
+		async function load() {
+			setIsLoading(true);
+
+			// 1. 浏览器端拿当前用户（走 Supabase 客户端 SDK，读的是浏览器里的 session，不需要打你自己的后端）
+			const supabase = CreateBroswerSupabaseClient();
+			const {
+				data: { user },
+			} = await supabase.auth.getUser();
+
+			// 2. 拿评论列表（Server Action 可以被 Client Component 直接调用）
+			const result = await getCommentsByArticleKey(
+				articleKey,
+				user?.id ?? null,
+			);
+
+			if (!cancelled) {
+				setCurrentUser(user);
+				setComments(result.success ? result.data : []);
+				setIsLoading(false);
+			}
+		}
+
+		load();
+		return () => {
+			cancelled = true;
+		};
+	}, [articleKey]);
+
 	const currentUserProfile = useMemo(() => {
-		if (!initialUser) return null;
+		if (!currentUser) return null;
 		return {
 			avatar_url: String(
-				initialUser.user_metadata?.avatar_url ||
-					initialUser.user_metadata?.picture ||
+				currentUser.user_metadata?.avatar_url ||
+					currentUser.user_metadata?.picture ||
 					"",
 			),
 			display_name: String(
-				initialUser.user_metadata?.full_name ||
-					initialUser.user_metadata?.name ||
-					initialUser.email ||
+				currentUser.user_metadata?.full_name ||
+					currentUser.user_metadata?.name ||
+					currentUser.email ||
 					"User",
 			),
 		};
-	}, [initialUser]);
+	}, [currentUser]);
 
-	//user state
-	const isLoggedIn = !!initialUser;
-	const currentUserId = initialUser?.id ?? null;
+	const isLoggedIn = !!currentUser;
+	const currentUserId = currentUser?.id ?? null;
 
 	const applyWrap = (prefix: string, suffix = prefix) => {
 		const textarea = textareaRef.current;

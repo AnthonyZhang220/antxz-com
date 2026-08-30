@@ -95,7 +95,6 @@ export default function Blogs({
 									<Link
 										href={post.slug ? `/blog/${post.slug}` : "/blog"}
 										className="flex h-full flex-col"
-										prefetch={false}
 									>
 										<div className="p-4 flex flex-col justify-start shrink-0">
 											<h4 className="text-[clamp(1.35rem,3.6vw,2.2rem)] leading-tight font-bold text-black dark:text-white">
@@ -121,7 +120,9 @@ export default function Blogs({
 												/>
 											) : (
 												<div className="flex h-full w-full items-center justify-center bg-zinc-200 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
-														<span className="text-sm">{t("carouselNoCoverImage")}</span>
+													<span className="text-sm">
+														{t("carouselNoCoverImage")}
+													</span>
 												</div>
 											)}
 										</div>
@@ -153,10 +154,10 @@ export default function Blogs({
 							>
 								<div>
 									<p className="text-xl font-semibold text-zinc-700 dark:text-zinc-300">
-												{t("carouselSeeMore")}
+										{t("carouselSeeMore")}
 									</p>
 									<p className="mt-2 text-sm text-zinc-500 dark:text-zinc-600">
-												{t("carouselExploreAll")}
+										{t("carouselExploreAll")}
 									</p>
 								</div>
 							</Link>
