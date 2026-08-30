@@ -3,8 +3,6 @@ import type { Metadata } from "next";
 import { NotificationToastListener } from "@/lib/providers/notification-toast-listener";
 import { setRequestLocale } from "next-intl/server";
 import { getTranslations } from "next-intl/server";
-import enMessages from "@/messages/en.json";
-import zhMessages from "@/messages/zh.json";
 
 type LocaleLayoutProps = Readonly<{
 	children: React.ReactNode;
