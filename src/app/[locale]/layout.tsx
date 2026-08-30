@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 // import { getTranslations } from "next-intl/server";
 import { NotificationToastListener } from "@/lib/providers/notification-toast-listener";
-import { NextIntlClientProvider } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import { getTranslations } from "next-intl/server";
 import enMessages from "@/messages/en.json";
@@ -81,11 +80,11 @@ export default async function LocaleLayout({
 }: LocaleLayoutProps) {
 	const { locale } = await params;
 	setRequestLocale(locale);
-	const messages = locale === "zh" ? zhMessages : enMessages;
+
 	return (
-		<NextIntlClientProvider locale={locale} messages={messages}>
+		<>
 			<NotificationToastListener />
 			{children}
-		</NextIntlClientProvider>
+		</>
 	);
 }

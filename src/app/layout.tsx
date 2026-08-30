@@ -7,6 +7,7 @@ import { SystemEasterEgg } from "@/components/shared/system-easter-egg";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 import "./globals.css";
+import { NextIntlClientProvider } from "next-intl";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -72,15 +73,17 @@ export default async function RootLayout({
 					enableSystem
 					disableTransitionOnChange
 				>
-					<SystemEasterEgg />
-					<NextTopLoader
-						color="linear-gradient(to right, #3b82f6, #a855f7)"
-						height={2}
-						showSpinner={false}
-						shadow={false}
-					/>
-					<TooltipProvider>{children}</TooltipProvider>
-					<ToasterProvider />
+					<NextIntlClientProvider>
+						<SystemEasterEgg />
+						<NextTopLoader
+							color="linear-gradient(to right, #3b82f6, #a855f7)"
+							height={2}
+							showSpinner={false}
+							shadow={false}
+						/>
+						<TooltipProvider>{children}</TooltipProvider>
+						<ToasterProvider />
+					</NextIntlClientProvider>
 				</ThemeProvider>
 			</body>
 		</html>
