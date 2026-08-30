@@ -5,9 +5,9 @@ import NextTopLoader from "nextjs-toploader";
 import { ToasterProvider } from "@/lib/providers/toaster-provider";
 import { SystemEasterEgg } from "@/components/shared/system-easter-egg";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { NextIntlClientProvider } from "next-intl";
 
 import "./globals.css";
-import { NextIntlClientProvider } from "next-intl";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
